@@ -19,3 +19,11 @@ class EventLogCorruption(ResearchSkillsError):
 
 class InvalidStateTransition(ResearchSkillsError):
     """An event cannot be applied to the current project state."""
+
+
+class CheckpointNotFound(ResearchSkillsError):
+    """A requested checkpoint is not present in the project."""
+
+
+class CheckpointIntegrityError(ResearchSkillsError):
+    """A checkpoint cannot be created or trusted for resume."""

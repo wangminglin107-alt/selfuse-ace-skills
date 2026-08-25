@@ -11,3 +11,11 @@ class ProjectPathViolation(ResearchSkillsError):
 
 class ArtifactNotFound(ResearchSkillsError):
     """A declared artifact does not exist as a regular file."""
+
+
+class EventLogCorruption(ResearchSkillsError):
+    """An append-only event log contains unreadable or invalid data."""
+
+
+class InvalidStateTransition(ResearchSkillsError):
+    """An event cannot be applied to the current project state."""

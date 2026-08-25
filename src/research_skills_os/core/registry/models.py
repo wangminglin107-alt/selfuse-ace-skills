@@ -40,6 +40,12 @@ class WorkflowEdge(SpecModel):
     condition: str | None = None
 
 
+class ArtifactMapping(SpecModel):
+    from_node: str = Field(min_length=1)
+    artifact_types: list[str] = Field(min_length=1)
+    to_node: str = Field(min_length=1)
+
+
 class ModeStops(SpecModel):
     interactive_after_each: bool = True
     checkpointed_nodes: list[str] = Field(default_factory=list)
@@ -55,6 +61,7 @@ class WorkflowSpec(SpecModel):
     terminal_nodes: list[str] = Field(min_length=1)
     nodes: list[WorkflowNode] = Field(min_length=1)
     edges: list[WorkflowEdge] = Field(default_factory=list)
+    artifact_mappings: list[ArtifactMapping] = Field(default_factory=list)
     global_gates: list[str] = Field(default_factory=list)
     mode_stops: ModeStops = Field(default_factory=ModeStops)
 
@@ -73,6 +80,12 @@ class WorkflowSpec(SpecModel):
             if edge.from_node not in known or edge.to_node not in known:
                 raise ValueError(
                     f"workflow edge references unknown node: {edge.from_node} -> {edge.to_node}"
+                )
+        for mapping in self.artifact_mappings:
+            if mapping.from_node not in known or mapping.to_node not in known:
+                raise ValueError(
+                    "workflow artifact mapping references unknown node: "
+                    f"{mapping.from_node} -> {mapping.to_node}"
                 )
         if _contains_cycle(known, self.edges):
             raise ValueError("workflow graph contains a cycle; V1 workflows must be acyclic")

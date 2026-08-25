@@ -12,7 +12,11 @@ from uuid import uuid4
 from pydantic import BaseModel, ConfigDict, Field
 
 from research_skills_os.core.checkpoint.service import CheckpointService
-from research_skills_os.core.contracts.enums import RunStatus, TargetKind
+from research_skills_os.core.contracts.enums import (
+    GateSeverity,
+    GateStatus,
+    RunStatus,
+)
 from research_skills_os.core.contracts.models import (
     ExecutionRequest,
     ExecutionResult,
@@ -22,7 +26,7 @@ from research_skills_os.core.errors import InvalidStateTransition
 from research_skills_os.core.gates.builtin import builtin_gates
 from research_skills_os.core.gates.protocol import GateContext
 from research_skills_os.core.gates.registry import GateRegistry
-from research_skills_os.core.gates.runner import GateRunner
+from research_skills_os.core.gates.runner import GateRunner, GateRunSummary
 from research_skills_os.core.orchestrator.stop_policy import (
     StopAction,
     StopPolicy,
@@ -50,6 +54,7 @@ class RunContext(BaseModel):
     target_id: str
     mode: str
     lifecycle: RunLifecycle
+    next_target_id: str | None = None
 
 
 class TransitionOutcome(BaseModel):
@@ -124,6 +129,21 @@ class RunCoordinator:
             raise InvalidStateTransition("target begin requires the active running run")
         request = self._load_request(run_id)
         self._resolve_allowed_capability(request, target_id)
+        rerun = self._validate_workflow_boundary(request, target_id, state.completed_targets)
+        if rerun:
+            self.repository.append(
+                ProjectEvent(
+                    event_id=f"rerun-consumed-{uuid4().hex}",
+                    type=EventType.DECISION_RECORDED,
+                    payload={
+                        "decision": {
+                            "decision_id": f"rerun-consumed-{uuid4().hex}",
+                            "description": f"Resume rerun consumed: {target_id}",
+                            "made_by": "system",
+                        }
+                    },
+                )
+            )
         self.repository.append(
             ProjectEvent(
                 event_id=f"target-start-{uuid4().hex}",
@@ -179,13 +199,18 @@ class RunCoordinator:
                 )
             )
 
-        gate_summary = self.gates.run(
-            spec.exit_gates,
+        requested = self.router.resolve(request.target)
+        gate_ids = list(spec.exit_gates)
+        if isinstance(requested, WorkflowSpec):
+            gate_ids.extend(requested.global_gates)
+        gate_summary = self._run_combined_gates(
+            gate_ids,
             GateContext(
                 request=request,
                 result=result,
                 material_uncertainty_detected=any(item.material for item in result.uncertainties),
             ),
+            result.gate_results,
         )
         for gate_result in gate_summary.results:
             self.repository.append(
@@ -216,8 +241,9 @@ class RunCoordinator:
                 payload={"target_id": result.target_id},
             )
         )
-        effective_signals = signals or StopSignals(
-            is_terminal=request.target.kind is TargetKind.CAPABILITY,
+        effective_signals = signals or self._stop_signals(
+            request,
+            result.target_id,
             material_uncertainty=any(item.material for item in result.uncertainties),
         )
         action = self.stop_policy.decide(request.mode, effective_signals)
@@ -266,13 +292,19 @@ class RunCoordinator:
 
     def resume(self, resume_token: str, decision: ResumeDecision) -> RunContext:
         verification = self.checkpoints.verify_resume(resume_token)
-        if verification.status == "drifted" and decision is not ResumeDecision.ACCEPT_DRIFT:
+        if verification.status == "drifted" and decision not in {
+            ResumeDecision.ACCEPT_DRIFT,
+            ResumeDecision.RERUN,
+        }:
             raise InvalidStateTransition("resume drift requires explicit acceptance or rerun")
         checkpoint = self.checkpoints.load(resume_token)
         state = self.repository.load()
         if state.lifecycle not in {ProjectLifecycle.PAUSED, ProjectLifecycle.BLOCKED}:
             raise InvalidStateTransition("only paused or blocked runs can resume")
-        if state.lifecycle is ProjectLifecycle.BLOCKED:
+        if state.lifecycle is ProjectLifecycle.BLOCKED or decision in {
+            ResumeDecision.ACCEPT_DRIFT,
+            ResumeDecision.RERUN,
+        }:
             self.repository.append(
                 ProjectEvent(
                     event_id=f"resume-decision-{uuid4().hex}",
@@ -294,7 +326,17 @@ class RunCoordinator:
             )
         )
         request = self._load_request(checkpoint.run_id)
-        return self._context(checkpoint.run_id, request, RunLifecycle.RUNNING)
+        next_target_id = (
+            checkpoint.completed_target
+            if decision is ResumeDecision.RERUN
+            else self._next_workflow_target(request, self.repository.load().completed_targets)
+        )
+        return self._context(
+            checkpoint.run_id,
+            request,
+            RunLifecycle.RUNNING,
+            next_target_id=next_target_id,
+        )
 
     def fail(self, run_id: str, reason: str) -> None:
         state = self.repository.load()
@@ -323,6 +365,126 @@ class RunCoordinator:
             raise InvalidStateTransition("capability is not a node in the requested workflow")
         return candidate
 
+    def _validate_workflow_boundary(
+        self,
+        request: ExecutionRequest,
+        capability_id: str,
+        completed_targets: list[str],
+    ) -> bool:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            return False
+        nodes = {node.capability_id: node for node in requested.nodes}
+        node = nodes[capability_id]
+        rerun = self._rerun_is_authorized(capability_id)
+        if capability_id in completed_targets and not rerun:
+            raise InvalidStateTransition(
+                f"workflow capability is already completed: {capability_id}"
+            )
+        predecessors = {
+            next(item.capability_id for item in requested.nodes if item.id == edge.from_node)
+            for edge in requested.edges
+            if edge.to_node == node.id
+        }
+        missing_predecessors = sorted(predecessors - set(completed_targets))
+        if missing_predecessors:
+            raise InvalidStateTransition(
+                "workflow predecessors are incomplete: " + ", ".join(missing_predecessors)
+            )
+        if not predecessors and node.id != requested.entry_node:
+            raise InvalidStateTransition("workflow must begin at its declared entry node")
+        required_types = {
+            artifact_type
+            for mapping in requested.artifact_mappings
+            if mapping.to_node == node.id
+            for artifact_type in mapping.artifact_types
+        }
+        present_types = {artifact.type for artifact in self.repository.load().artifacts.values()}
+        missing_types = sorted(required_types - present_types)
+        if missing_types:
+            raise InvalidStateTransition(
+                "workflow artifact mappings are unsatisfied: " + ", ".join(missing_types)
+            )
+        return rerun
+
+    def _rerun_is_authorized(self, capability_id: str) -> bool:
+        state = self.repository.load()
+        if not state.decisions or state.decisions[-1].description != "Resume decision: rerun":
+            return False
+        checkpoint = self.checkpoints.current()
+        return checkpoint is not None and checkpoint.completed_target == capability_id
+
+    def _run_combined_gates(
+        self,
+        gate_ids: list[str],
+        context: GateContext,
+        supplied_results: list[GateResult],
+    ) -> GateRunSummary:
+        builtin_ids = [gate_id for gate_id in gate_ids if self.gates.registry.contains(gate_id)]
+        custom_ids = sorted(set(gate_ids) - set(builtin_ids))
+        builtin_summary = self.gates.run(builtin_ids, context)
+        supplied_by_id: dict[str, list[GateResult]] = {}
+        for item in supplied_results:
+            supplied_by_id.setdefault(item.gate_id, []).append(item)
+        custom_results: list[GateResult] = []
+        for gate_id in custom_ids:
+            matches = supplied_by_id.get(gate_id, [])
+            if len(matches) == 1:
+                custom_results.append(matches[0])
+            else:
+                custom_results.append(
+                    GateResult(
+                        gate_id=gate_id,
+                        gate_version="1.0",
+                        status=GateStatus.FAIL,
+                        severity=GateSeverity.BLOCKING,
+                        findings=["Required capability gate result is missing or duplicated."],
+                        remediation=["Run the capability gate evaluator and resubmit the result."],
+                    )
+                )
+        results = sorted([*builtin_summary.results, *custom_results], key=lambda item: item.gate_id)
+        return GateRunSummary(
+            results=results,
+            failed_gate_ids=[item.gate_id for item in results if item.status is GateStatus.FAIL],
+            blocked=any(self.gates.policy.blocks(item) for item in results),
+        )
+
+    def _stop_signals(
+        self,
+        request: ExecutionRequest,
+        capability_id: str,
+        *,
+        material_uncertainty: bool,
+    ) -> StopSignals:
+        requested = self.router.resolve(request.target)
+        if isinstance(requested, CapabilitySpec):
+            return StopSignals(is_terminal=True, material_uncertainty=material_uncertainty)
+        node = next(node for node in requested.nodes if node.capability_id == capability_id)
+        return StopSignals(
+            is_terminal=node.id in requested.terminal_nodes,
+            human_review=(node.human_review or node.id in requested.mode_stops.checkpointed_nodes),
+            material_uncertainty=material_uncertainty,
+        )
+
+    def _next_workflow_target(
+        self, request: ExecutionRequest, completed_targets: list[str]
+    ) -> str | None:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            return None
+        completed = set(completed_targets)
+        for node in requested.nodes:
+            if node.capability_id in completed:
+                continue
+            predecessors = {
+                next(item.capability_id for item in requested.nodes if item.id == edge.from_node)
+                for edge in requested.edges
+                if edge.to_node == node.id
+            }
+            if predecessors <= completed:
+                return node.capability_id
+        return None
+
     def _request_path(self, run_id: str) -> Path:
         return self.project_root / ".research-os" / "runs" / run_id / "request.json"
 
@@ -333,7 +495,13 @@ class RunCoordinator:
         return ExecutionRequest.model_validate_json(path.read_text(encoding="utf-8"))
 
     @staticmethod
-    def _context(run_id: str, request: ExecutionRequest, lifecycle: RunLifecycle) -> RunContext:
+    def _context(
+        run_id: str,
+        request: ExecutionRequest,
+        lifecycle: RunLifecycle,
+        *,
+        next_target_id: str | None = None,
+    ) -> RunContext:
         return RunContext(
             run_id=run_id,
             request_id=request.request_id,
@@ -341,4 +509,5 @@ class RunCoordinator:
             target_id=request.target.id,
             mode=request.mode.value,
             lifecycle=lifecycle,
+            next_target_id=next_target_id,
         )

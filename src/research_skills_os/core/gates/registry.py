@@ -26,5 +26,8 @@ class GateRegistry:
             registered = ", ".join(sorted(self._gates)) or "<none>"
             raise UnknownGate(f"unknown gate {gate_id}; registered gates: {registered}") from exc
 
+    def contains(self, gate_id: str) -> bool:
+        return gate_id in self._gates
+
     def all(self) -> list[Gate]:
         return [self._gates[gate_id] for gate_id in sorted(self._gates)]

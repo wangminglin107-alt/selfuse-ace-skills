@@ -45,10 +45,19 @@ class RegistryLoader:
             workflows[workflow_spec.id] = workflow_spec
 
         for workflow in workflows.values():
+            nodes = {node.id: node for node in workflow.nodes}
             for node in workflow.nodes:
                 if node.capability_id not in capabilities:
                     raise SpecLoadError(
                         f"workflow {workflow.id} references unknown capability {node.capability_id}"
+                    )
+            for mapping in workflow.artifact_mappings:
+                source = capabilities[nodes[mapping.from_node].capability_id]
+                unknown_types = sorted(set(mapping.artifact_types) - set(source.output_types))
+                if unknown_types:
+                    raise SpecLoadError(
+                        f"workflow {workflow.id} maps undeclared outputs from "
+                        f"{source.id}: {', '.join(unknown_types)}"
                     )
         return RegistryCatalog(
             capabilities={key: capabilities[key] for key in sorted(capabilities)},

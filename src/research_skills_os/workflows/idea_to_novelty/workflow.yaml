@@ -1,0 +1,45 @@
+spec_version: "1.0"
+kind: workflow
+id: idea-to-novelty
+version: "1.0"
+entry_node: frame
+terminal_nodes:
+  - novelty
+nodes:
+  - id: frame
+    capability_id: research-framing
+    checkpoint: true
+    human_review: true
+  - id: literature
+    capability_id: literature-intelligence
+    checkpoint: true
+    human_review: false
+  - id: novelty
+    capability_id: novelty-audit
+    checkpoint: true
+    human_review: false
+edges:
+  - from: frame
+    to: literature
+  - from: literature
+    to: novelty
+artifact_mappings:
+  - from_node: frame
+    artifact_types:
+      - research_brief_markdown
+      - research_brief_metadata
+    to_node: literature
+  - from_node: literature
+    artifact_types:
+      - search_ledger
+      - source_registry
+      - evidence_map
+    to_node: novelty
+global_gates:
+  - artifacts.integrity
+  - provider.policy
+mode_stops:
+  interactive_after_each: true
+  checkpointed_nodes:
+    - frame
+  autonomous_terminal_only: true

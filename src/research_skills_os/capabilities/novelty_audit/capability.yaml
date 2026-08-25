@@ -1,0 +1,27 @@
+spec_version: "1.0"
+kind: capability
+id: novelty-audit
+version: "1.0"
+input_types: []
+output_types:
+  - novelty_matrix
+  - novelty_audit
+entry_gates:
+  - contract.valid
+  - provider.policy
+exit_gates:
+  - novelty.required
+  - novelty.evidence_support
+  - novelty.certainty_consistency
+  - novelty.verdict_consistency
+  - provenance.complete
+  - uncertainty.explicit
+specializations:
+  - communication
+  - sociology
+providers:
+  - local-manual
+resumable: true
+network: none
+side_effects:
+  - write_project_artifacts

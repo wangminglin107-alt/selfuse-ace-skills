@@ -87,3 +87,62 @@ sources:
         - tests/unit/capabilities/test_literature_intelligence_gates.py
         - tests/acceptance/literature-intelligence/fake-citation-pressure.md
     notes: Citation freshness is represented by hashes and status consistency in offline V1.
+  - capability: novelty-audit
+    source_kind: git
+    upstream_repo: Hsin-Hung/Academic-Skills
+    upstream_commit: 71e9c42c60636602e87985f4306d134a3b63809e
+    source_file: idea-generation/SKILL.md
+    source_sha256: f388806a510c2b009a79ffe1c241b2ebfb72873660b512a7e9000da364de9a1f
+    reuse_mode: conceptual
+    local_target: skills/novelty-audit/references/novelty-framework.md
+    modifications:
+      - Retain divergent comparison dimensions and convergent revision logic without fixed idea counts, weights, scores, platforms, or time boxes.
+      - Replace confirmation of being not-yet-done with evidence-bounded nearest-work verdicts.
+      - Treat contradicted or insufficient novelty as successful scholarly outcomes.
+    license:
+      spdx: MIT
+      source: upstream LICENSE at locked commit
+      notice_required: true
+    security:
+      network: optional
+      secrets: []
+      subprocess: false
+      filesystem_scope: Read-only conceptual reference; no upstream search automation executed.
+      review_status: approved
+    tests:
+      upstream: []
+      local:
+        - tests/unit/capabilities/test_novelty_audit_gates.py
+        - tests/acceptance/novelty-audit/insufficient-evidence.md
+    notes: Domain-specific CS examples and numeric evaluation matrices are excluded.
+  - capability: novelty-audit
+    source_kind: git
+    upstream_repo: Spark-To-Paper-Skills/spark-to-paper-skills
+    upstream_commit: c17149def034bc777462de612926c8e3b6d01b8c
+    source_file: skills/ts-idea2story/scripts/novelty_check.py
+    source_sha256: 113002bfcec33addd0ebf329b483843e163791de8b42b52f99b69c1fec7e9fac
+    reuse_mode: conceptual
+    local_target: src/research_skills_os/capabilities/novelty_audit/gates.py
+    modifications:
+      - Replace embedding similarity bands and pivot limits with explicit nearest-work comparison rows and claim-level evidence links.
+      - Change graceful no-reference degradation from an acceptable signal into insufficient_evidence.
+      - Remove endpoint, API-key, NumPy, knowledge-graph, fixed-threshold, and CS story assumptions.
+    license:
+      spdx: MIT
+      source: upstream LICENSE at locked commit
+      notice_required: true
+    security:
+      network: required
+      secrets:
+        - TS_EMBED_API_KEY
+        - TS_EMBED_BASE_URL
+        - TS_EMBED_MODEL
+      subprocess: false
+      filesystem_scope: Upstream reads/writes a workdir and may call a remote embedding endpoint; none of that code is copied or run in V1.
+      review_status: approved
+    tests:
+      upstream: []
+      local:
+        - tests/unit/capabilities/test_novelty_audit_gates.py
+        - tests/acceptance/novelty-audit/overclaim-request.md
+    notes: Working-tree blob matches the locked commit; the inspected upstream checkout has unrelated pre-existing sparse/deletion status.

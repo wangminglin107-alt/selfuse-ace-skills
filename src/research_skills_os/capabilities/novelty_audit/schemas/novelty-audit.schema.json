@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/novelty-audit/1.0",
+  "title": "Novelty Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "research_question",
+    "candidate_contribution",
+    "nearest_work",
+    "novelty_claims",
+    "verdict",
+    "verdict_rationale",
+    "revision_recommendation",
+    "search_absence_as_evidence",
+    "coverage_limits"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "research_question": { "type": "string", "minLength": 1 },
+    "candidate_contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "statement"],
+      "properties": {
+        "classification": { "enum": ["theoretical", "empirical", "methodological", "conceptual", "integrative"] },
+        "statement": { "type": "string", "minLength": 1 }
+      }
+    },
+    "nearest_work": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "title", "verification_status", "comparisons"],
+        "properties": {
+          "source_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "verification_status": { "enum": ["candidate", "retrieved", "screened", "verified_metadata", "verified_content", "excluded"] },
+          "comparisons": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["dimension", "candidate_position", "nearest_work_position", "evidence_refs"],
+              "properties": {
+                "dimension": { "type": "string", "minLength": 1 },
+                "candidate_position": { "type": "string", "minLength": 1 },
+                "nearest_work_position": { "type": "string", "minLength": 1 },
+                "evidence_refs": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "novelty_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "statement", "dimension", "evidence_refs", "certainty"],
+        "properties": {
+          "claim_id": { "type": "string", "minLength": 1 },
+          "statement": { "type": "string", "minLength": 1 },
+          "dimension": { "type": "string", "minLength": 1 },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "certainty": { "enum": ["low", "moderate", "high"] }
+        }
+      }
+    },
+    "verdict": { "enum": ["defensible", "conditional", "insufficient_evidence", "contradicted"] },
+    "verdict_rationale": { "type": "string", "minLength": 1 },
+    "revision_recommendation": { "type": ["string", "null"] },
+    "search_absence_as_evidence": { "type": "boolean" },
+    "coverage_limits": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+  }
+}

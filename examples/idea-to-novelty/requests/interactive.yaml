@@ -1,0 +1,8 @@
+contract_version: "1.0"
+request_id: example-interactive-1
+project_id: example-project
+target: {kind: workflow, id: idea-to-novelty}
+mode: interactive
+goal: Develop the seed idea through a bounded novelty audit.
+constraints: {language: bilingual, domain: communication, network: deny}
+

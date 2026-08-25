@@ -1,0 +1,8 @@
+contract_version: "1.0"
+request_id: example-checkpointed-1
+project_id: example-project
+target: {kind: workflow, id: idea-to-novelty}
+mode: checkpointed
+goal: Develop the seed idea and pause for review at declared boundaries.
+constraints: {language: bilingual, domain: communication, network: deny}
+

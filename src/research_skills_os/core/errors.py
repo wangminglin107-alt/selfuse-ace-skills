@@ -27,3 +27,11 @@ class CheckpointNotFound(ResearchSkillsError):
 
 class CheckpointIntegrityError(ResearchSkillsError):
     """A checkpoint cannot be created or trusted for resume."""
+
+
+class DuplicateGate(ResearchSkillsError):
+    """Two gate implementations declare the same stable identifier."""
+
+
+class UnknownGate(ResearchSkillsError):
+    """A requested gate identifier is not registered."""

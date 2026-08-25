@@ -35,3 +35,15 @@ class DuplicateGate(ResearchSkillsError):
 
 class UnknownGate(ResearchSkillsError):
     """A requested gate identifier is not registered."""
+
+
+class SpecLoadError(ResearchSkillsError):
+    """A capability or workflow specification is invalid."""
+
+
+class DuplicateSpec(ResearchSkillsError):
+    """Two specifications declare the same identifier and kind."""
+
+
+class UnknownTarget(ResearchSkillsError):
+    """A request names no exactly registered capability or workflow."""

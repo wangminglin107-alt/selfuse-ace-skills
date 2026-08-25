@@ -1,0 +1,13 @@
+spec_version: "1.0"
+kind: workflow
+id: invalid-workflow
+version: "1.0"
+entry_node: framing
+terminal_nodes:
+  - framing
+nodes:
+  - id: framing
+    capability_id: research-framing
+    prompt: "Write the research question here."
+edges: []
+

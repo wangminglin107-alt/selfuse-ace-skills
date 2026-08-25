@@ -2,12 +2,18 @@ spec_version: "1.0"
 kind: capability
 id: novelty-audit
 version: "1.0"
-input_types: []
+input_types:
+  - research_brief_metadata
+  - search_ledger
+  - source_registry
+  - evidence_map
 output_types:
   - novelty_matrix
   - novelty_audit
 entry_gates:
   - contract.valid
+  - inputs.required
+  - artifacts.integrity
   - provider.policy
 exit_gates:
   - novelty.required

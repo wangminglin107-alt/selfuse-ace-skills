@@ -105,4 +105,3 @@ def load_manifest(path: str | Path) -> SourceManifest:
         return SourceManifest.model_validate(raw)
     except (OSError, yaml.YAMLError, ValidationError) as exc:
         raise ManifestValidationError(str(exc)) from exc
-

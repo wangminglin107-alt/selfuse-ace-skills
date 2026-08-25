@@ -7,4 +7,3 @@ from research_skills_os.core.provenance.manifest import (
 )
 
 __all__ = ["ManifestValidationError", "SourceManifest", "load_manifest"]
-

@@ -76,4 +76,9 @@ def test_artifact_mappings_connect_nodes_without_copying_capability_contracts():
             "artifact_types": ["search_ledger", "source_registry", "evidence_map"],
             "to_node": "novelty",
         },
+        {
+            "from_node": "frame",
+            "artifact_types": ["research_brief_metadata"],
+            "to_node": "novelty",
+        },
     ]

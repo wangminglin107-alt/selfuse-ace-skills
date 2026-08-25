@@ -67,6 +67,8 @@ class ProjectState(StateModel):
     lifecycle: ProjectLifecycle = ProjectLifecycle.INITIALIZED
     active_run_id: str | None = None
     active_target: str | None = None
+    active_input_artifact_ids: list[str] = Field(default_factory=list)
+    current_run_artifact_ids: list[str] = Field(default_factory=list)
     completed_targets: list[str] = Field(default_factory=list)
     artifacts: dict[str, ArtifactEnvelope] = Field(default_factory=dict)
     decisions: list[DecisionRecord] = Field(default_factory=list)

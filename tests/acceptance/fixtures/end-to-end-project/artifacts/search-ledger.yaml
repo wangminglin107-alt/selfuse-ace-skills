@@ -1,0 +1,17 @@
+schema_version: "1.0"
+search_question: What inspected work is nearest to obligation framing in creator exit announcements?
+searches:
+  - search_id: local-search-1
+    query: creator platform exit obligation framing
+    searched_at: 2026-08-25T12:00:00Z
+    provider: local-manual
+    status: executed
+    result_count: 1
+inclusion_criteria:
+  - Directly addresses creator withdrawal or platform obligations.
+exclusion_criteria:
+  - Does not address creators, withdrawal, or obligations.
+coverage_limits:
+  - One candidate record is present but its content is unavailable.
+blockers:
+  - Candidate full text has not been retrieved or inspected.

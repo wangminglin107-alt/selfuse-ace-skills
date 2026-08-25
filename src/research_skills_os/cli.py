@@ -14,6 +14,7 @@ from research_skills_os.core.checkpoint.service import CheckpointService
 from research_skills_os.core.contracts.models import ExecutionRequest, ExecutionResult
 from research_skills_os.core.errors import (
     ArtifactNotFound,
+    BlockedGateError,
     CheckpointIntegrityError,
     CheckpointNotFound,
     EventLogCorruption,
@@ -22,7 +23,7 @@ from research_skills_os.core.errors import (
     SpecLoadError,
     UnknownTarget,
 )
-from research_skills_os.core.orchestrator.coordinator import RunCoordinator
+from research_skills_os.core.orchestrator.coordinator import ResumeDecision, RunCoordinator
 from research_skills_os.core.orchestrator.stop_policy import StopAction
 from research_skills_os.core.registry.loader import RegistryLoader
 from research_skills_os.core.registry.models import RegistryCatalog
@@ -72,6 +73,14 @@ def build_parser() -> argparse.ArgumentParser:
     run_status = run_commands.add_parser("status")
     run_status.add_argument("--project", required=True)
     run_status.add_argument("--json", action="store_true")
+    run_resume = run_commands.add_parser("resume")
+    run_resume.add_argument("--project", default=".")
+    run_resume.add_argument("--checkpoint", required=True)
+    run_resume.add_argument(
+        "--decision",
+        required=True,
+        choices=[decision.value for decision in ResumeDecision],
+    )
 
     target = commands.add_parser("target")
     target_commands = target.add_subparsers(dest="target_command", required=True)
@@ -124,8 +133,32 @@ def execute(arguments: argparse.Namespace) -> ExitCode:
         state = StateRepository(Path(arguments.project)).load()
         emit_json(state.model_dump(mode="json"))
         return ExitCode.SUCCESS
+    if arguments.command == "run" and arguments.run_command == "resume":
+        coordinator = _coordinator(arguments.project)
+        decision = ResumeDecision(arguments.decision)
+        verification = coordinator.checkpoints.verify_resume(arguments.checkpoint)
+        if verification.status == "drifted" and decision is ResumeDecision.CONTINUE:
+            emit_json(verification.model_dump(mode="json"))
+            emit_diagnostic("integrity", "checkpoint drift requires accept_drift or rerun")
+            return ExitCode.INTEGRITY_SECURITY
+        context = coordinator.resume(arguments.checkpoint, decision)
+        emit_json(context.model_dump(mode="json"))
+        return ExitCode.SUCCESS
     if arguments.command == "target" and arguments.target_command == "begin":
-        context = _coordinator(arguments.project).begin_target(arguments.run, arguments.target)
+        try:
+            context = _coordinator(arguments.project).begin_target(arguments.run, arguments.target)
+        except BlockedGateError as exc:
+            emit_json(
+                {
+                    "action": "block",
+                    "status": "blocked",
+                    "failed_gates": list(exc.failed_gate_ids),
+                    "findings": list(exc.findings),
+                    "remediation": list(exc.remediation),
+                }
+            )
+            emit_diagnostic("blocked gate", str(exc))
+            return ExitCode.BLOCKED_GATE
         emit_json(context.model_dump(mode="json"))
         return ExitCode.SUCCESS
     if arguments.command == "target" and arguments.target_command == "complete":

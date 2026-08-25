@@ -21,6 +21,22 @@ class InvalidStateTransition(ResearchSkillsError):
     """An event cannot be applied to the current project state."""
 
 
+class BlockedGateError(ResearchSkillsError):
+    """A target cannot begin because one or more blocking gates failed."""
+
+    def __init__(
+        self,
+        failed_gate_ids: list[str],
+        *,
+        findings: list[str] | None = None,
+        remediation: list[str] | None = None,
+    ) -> None:
+        self.failed_gate_ids = tuple(failed_gate_ids)
+        self.findings = tuple(findings or [])
+        self.remediation = tuple(remediation or [])
+        super().__init__("entry gates blocked: " + ", ".join(failed_gate_ids))
+
+
 class CheckpointNotFound(ResearchSkillsError):
     """A requested checkpoint is not present in the project."""
 

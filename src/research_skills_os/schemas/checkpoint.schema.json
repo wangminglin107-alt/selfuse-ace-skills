@@ -252,6 +252,13 @@
       "title": "Failed Gates",
       "type": "array"
     },
+    "input_artifacts": {
+      "items": {
+        "$ref": "#/$defs/ArtifactEnvelope"
+      },
+      "title": "Input Artifacts",
+      "type": "array"
+    },
     "inputs_used": {
       "items": {
         "minLength": 1,

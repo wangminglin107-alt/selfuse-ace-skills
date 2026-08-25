@@ -89,4 +89,3 @@ def test_drifted_checkpoint_returns_integrity_exit_code_four(tmp_path: Path):
     assert verified.returncode == 4
     assert json.loads(verified.stdout)["status"] == "drifted"
     assert "integrity" in verified.stderr.casefold()
-

@@ -29,6 +29,15 @@ def _required_text(payload: dict[str, Any], field: str, event: ProjectEvent) -> 
     return value.strip()
 
 
+def _text_list(payload: dict[str, Any], field: str, event: ProjectEvent) -> list[str]:
+    value = payload.get(field, [])
+    if not isinstance(value, list) or any(
+        not isinstance(item, str) or not item.strip() for item in value
+    ):
+        raise InvalidStateTransition(f"{event.type} requires {field} to contain text IDs")
+    return [item.strip() for item in value]
+
+
 def _validated_payload(
     payload: dict[str, Any],
     field: str,
@@ -71,7 +80,10 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
 
         if state is None:
             raise InvalidStateTransition("project_initialized must be the first event")
-        if state.lifecycle in {ProjectLifecycle.COMPLETED, ProjectLifecycle.FAILED}:
+        if (
+            state.lifecycle in {ProjectLifecycle.COMPLETED, ProjectLifecycle.FAILED}
+            and event.type is not EventType.RUN_STARTED
+        ):
             raise InvalidStateTransition("project is already terminal")
 
         updates: dict[str, Any] = {"last_sequence": event.sequence}
@@ -81,25 +93,50 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
                 ProjectLifecycle.INITIALIZED,
                 ProjectLifecycle.PAUSED,
                 ProjectLifecycle.BLOCKED,
+                ProjectLifecycle.COMPLETED,
+                ProjectLifecycle.FAILED,
             }:
                 raise InvalidStateTransition("a run is already active")
+            fresh_run = (
+                state.lifecycle
+                in {
+                    ProjectLifecycle.INITIALIZED,
+                    ProjectLifecycle.COMPLETED,
+                    ProjectLifecycle.FAILED,
+                }
+                or event.payload.get("replace_blocked") is True
+            )
             updates.update(
                 lifecycle=ProjectLifecycle.RUNNING,
                 active_run_id=_required_text(event.payload, "run_id", event),
                 active_target=None,
+                active_input_artifact_ids=[],
+                current_run_artifact_ids=([] if fresh_run else state.current_run_artifact_ids),
+                completed_targets=[] if fresh_run else state.completed_targets,
+                current_checkpoint=None if fresh_run else state.current_checkpoint,
             )
+            if fresh_run and isinstance(event.payload.get("goal"), str):
+                updates["goal"] = event.payload["goal"]
         elif event.type is EventType.TARGET_STARTED:
             _require_running(state, event)
             if state.active_target is not None:
                 raise InvalidStateTransition("a target is already active")
-            updates["active_target"] = _required_text(event.payload, "target_id", event)
+            updates.update(
+                active_target=_required_text(event.payload, "target_id", event),
+                active_input_artifact_ids=_text_list(event.payload, "input_artifact_ids", event),
+            )
         elif event.type is EventType.ARTIFACT_REGISTERED:
             _require_running(state, event)
             artifact = _validated_payload(event.payload, "artifact", ArtifactEnvelope, event)
             assert isinstance(artifact, ArtifactEnvelope)
             artifacts = dict(state.artifacts)
             artifacts[artifact.artifact_id] = artifact
-            updates["artifacts"] = artifacts
+            updates.update(
+                artifacts=artifacts,
+                current_run_artifact_ids=list(
+                    dict.fromkeys([*state.current_run_artifact_ids, artifact.artifact_id])
+                ),
+            )
         elif event.type is EventType.DECISION_RECORDED:
             decision = _validated_payload(event.payload, "decision", DecisionRecord, event)
             assert isinstance(decision, DecisionRecord)
@@ -119,6 +156,7 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
                 raise InvalidStateTransition("completed target is not the active target")
             updates.update(
                 active_target=None,
+                active_input_artifact_ids=[],
                 completed_targets=[*state.completed_targets, target_id],
             )
         elif event.type is EventType.CHECKPOINT_CREATED:
@@ -139,7 +177,11 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
                 EventType.RUN_COMPLETED: ProjectLifecycle.COMPLETED,
                 EventType.RUN_FAILED: ProjectLifecycle.FAILED,
             }[event.type]
-            updates.update(lifecycle=lifecycle, active_target=None)
+            updates.update(
+                lifecycle=lifecycle,
+                active_target=None,
+                active_input_artifact_ids=[],
+            )
             if event.type in {EventType.RUN_COMPLETED, EventType.RUN_FAILED}:
                 updates["active_run_id"] = None
         else:

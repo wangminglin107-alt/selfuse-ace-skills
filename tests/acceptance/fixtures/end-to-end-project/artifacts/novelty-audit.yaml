@@ -1,0 +1,21 @@
+schema_version: "1.0"
+research_question: How do public creator exit announcements position platform obligations?
+candidate_contribution:
+  classification: empirical
+  statement: Describe obligation framing within a bounded creator-exit corpus.
+nearest_work:
+  - source_id: source-1
+    title: Candidate work supplied for offline fixture validation
+    verification_status: candidate
+    comparisons:
+      - dimension: phenomenon
+        candidate_position: Public creator exit announcements.
+        nearest_work_position: Unknown until the candidate content is retrieved and inspected.
+        evidence_refs: [source-1#candidate-record]
+novelty_claims: []
+verdict: insufficient_evidence
+verdict_rationale: The only nearest-work record is an unverified candidate with unavailable content.
+revision_recommendation: Retrieve and inspect source-1 before asserting a material difference.
+search_absence_as_evidence: false
+coverage_limits:
+  - The verdict applies only to the supplied offline fixture and establishes no field-wide novelty.

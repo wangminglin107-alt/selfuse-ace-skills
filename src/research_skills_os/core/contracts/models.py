@@ -195,6 +195,7 @@ class Checkpoint(ContractModel):
     run_id: NonEmptyStr
     completed_target: NonEmptyStr
     inputs_used: list[NonEmptyStr] = Field(default_factory=list)
+    input_artifacts: list[ArtifactEnvelope] = Field(default_factory=list)
     artifacts_created: list[ArtifactEnvelope] = Field(default_factory=list)
     key_decisions: list[DecisionRecord] = Field(default_factory=list)
     evidence_added: list[EvidenceRecord] = Field(default_factory=list)

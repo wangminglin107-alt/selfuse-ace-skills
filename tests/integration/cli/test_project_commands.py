@@ -61,4 +61,3 @@ def test_invalid_request_uses_validation_exit_code_and_stderr(tmp_path: Path):
     assert completed.returncode == 2
     assert completed.stdout == ""
     assert "validation" in completed.stderr.casefold()
-

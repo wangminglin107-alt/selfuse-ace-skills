@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from research_skills_os.core.artifacts.store import ArtifactStore
 from research_skills_os.core.contracts.enums import GateStatus
-from research_skills_os.core.contracts.models import Checkpoint
+from research_skills_os.core.contracts.models import ArtifactEnvelope, Checkpoint
 from research_skills_os.core.errors import (
     CheckpointIntegrityError,
     CheckpointNotFound,
@@ -86,7 +86,14 @@ class CheckpointService:
         self.checkpoint_directory = self.project_root / ".research-os" / "checkpoints"
         self.current_pointer = self.project_root / ".research-os" / "current-checkpoint"
 
-    def create(self, state: ProjectState, completed_target: str) -> Checkpoint:
+    def create(
+        self,
+        state: ProjectState,
+        completed_target: str,
+        *,
+        inputs_used: list[str] | None = None,
+        artifacts_created: list[ArtifactEnvelope] | None = None,
+    ) -> Checkpoint:
         """Validate and publish a checkpoint before recording its history event."""
 
         if completed_target not in state.completed_targets:
@@ -95,16 +102,38 @@ class CheckpointService:
             raise CheckpointIntegrityError("checkpoint requires an active resumable run")
 
         now = datetime.now(UTC)
+        resolved_inputs = (
+            sorted(inputs_used)
+            if inputs_used is not None
+            else sorted(
+                artifact.artifact_id
+                for artifact in state.artifacts.values()
+                if artifact.producing_capability != completed_target
+            )
+        )
+        resolved_outputs = (
+            list(artifacts_created)
+            if artifacts_created is not None
+            else [
+                artifact
+                for artifact in state.artifacts.values()
+                if artifact.producing_capability == completed_target
+            ]
+        )
+        try:
+            input_artifacts = [state.artifacts[artifact_id] for artifact_id in resolved_inputs]
+        except KeyError as exc:
+            raise CheckpointIntegrityError(
+                f"checkpoint input is not registered: {exc.args[0]}"
+            ) from exc
         checkpoint = Checkpoint(
             checkpoint_id=_checkpoint_id(now),
             project_id=state.project_id,
             run_id=state.active_run_id,
             completed_target=completed_target,
-            artifacts_created=[
-                artifact
-                for artifact in state.artifacts.values()
-                if artifact.producing_capability == completed_target
-            ],
+            inputs_used=resolved_inputs,
+            input_artifacts=input_artifacts,
+            artifacts_created=resolved_outputs,
             key_decisions=state.decisions,
             uncertainties=state.uncertainties,
             failed_gates=[
@@ -169,7 +198,7 @@ class CheckpointService:
             reasons.append("project state changed after the checkpoint")
 
         artifacts: list[ResumeArtifactStatus] = []
-        for envelope in checkpoint.artifacts_created:
+        for envelope in [*checkpoint.input_artifacts, *checkpoint.artifacts_created]:
             try:
                 verification = self.artifact_store.verify(envelope)
             except FileNotFoundError:

@@ -35,6 +35,10 @@ artifact_mappings:
       - source_registry
       - evidence_map
     to_node: novelty
+  - from_node: frame
+    artifact_types:
+      - research_brief_metadata
+    to_node: novelty
 global_gates:
   - artifacts.integrity
   - provider.policy

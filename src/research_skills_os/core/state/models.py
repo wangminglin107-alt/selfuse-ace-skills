@@ -29,6 +29,7 @@ class EventType(StrEnum):
     RUN_PAUSED = "run_paused"
     RUN_BLOCKED = "run_blocked"
     RUN_COMPLETED = "run_completed"
+    RUN_FAILED = "run_failed"
 
 
 class ProjectLifecycle(StrEnum):
@@ -37,6 +38,7 @@ class ProjectLifecycle(StrEnum):
     PAUSED = "paused"
     BLOCKED = "blocked"
     COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class StateModel(BaseModel):

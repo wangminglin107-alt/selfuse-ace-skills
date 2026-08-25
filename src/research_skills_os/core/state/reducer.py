@@ -71,7 +71,7 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
 
         if state is None:
             raise InvalidStateTransition("project_initialized must be the first event")
-        if state.lifecycle is ProjectLifecycle.COMPLETED:
+        if state.lifecycle in {ProjectLifecycle.COMPLETED, ProjectLifecycle.FAILED}:
             raise InvalidStateTransition("project is already terminal")
 
         updates: dict[str, Any] = {"last_sequence": event.sequence}
@@ -123,7 +123,12 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
             )
         elif event.type is EventType.CHECKPOINT_CREATED:
             updates["current_checkpoint"] = _required_text(event.payload, "checkpoint_id", event)
-        elif event.type in {EventType.RUN_PAUSED, EventType.RUN_BLOCKED, EventType.RUN_COMPLETED}:
+        elif event.type in {
+            EventType.RUN_PAUSED,
+            EventType.RUN_BLOCKED,
+            EventType.RUN_COMPLETED,
+            EventType.RUN_FAILED,
+        }:
             _require_running(state, event)
             run_id = _required_text(event.payload, "run_id", event)
             if state.active_run_id != run_id:
@@ -132,9 +137,10 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
                 EventType.RUN_PAUSED: ProjectLifecycle.PAUSED,
                 EventType.RUN_BLOCKED: ProjectLifecycle.BLOCKED,
                 EventType.RUN_COMPLETED: ProjectLifecycle.COMPLETED,
+                EventType.RUN_FAILED: ProjectLifecycle.FAILED,
             }[event.type]
             updates.update(lifecycle=lifecycle, active_target=None)
-            if event.type is EventType.RUN_COMPLETED:
+            if event.type in {EventType.RUN_COMPLETED, EventType.RUN_FAILED}:
                 updates["active_run_id"] = None
         else:
             raise InvalidStateTransition(f"unsupported event type: {event.type}")

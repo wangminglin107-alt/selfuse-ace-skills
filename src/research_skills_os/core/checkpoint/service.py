@@ -122,15 +122,27 @@ class CheckpointService:
             indent=2,
             sort_keys=True,
         )
+        previous_pointer = (
+            self.current_pointer.read_text(encoding="utf-8")
+            if self.current_pointer.is_file()
+            else None
+        )
         _atomic_write_text(checkpoint_path, f"{serialized}\n")
         _atomic_write_text(self.current_pointer, f"{validated.checkpoint_id}\n")
-        self.repository.append(
-            ProjectEvent(
-                event_id=f"checkpoint-event-{validated.checkpoint_id}",
-                type=EventType.CHECKPOINT_CREATED,
-                payload={"checkpoint_id": validated.checkpoint_id},
+        try:
+            self.repository.append(
+                ProjectEvent(
+                    event_id=f"checkpoint-event-{validated.checkpoint_id}",
+                    type=EventType.CHECKPOINT_CREATED,
+                    payload={"checkpoint_id": validated.checkpoint_id},
+                )
             )
-        )
+        except Exception:
+            if previous_pointer is None:
+                self.current_pointer.unlink(missing_ok=True)
+            else:
+                _atomic_write_text(self.current_pointer, previous_pointer)
+            raise
         return validated
 
     def load(self, checkpoint_id: str) -> Checkpoint:

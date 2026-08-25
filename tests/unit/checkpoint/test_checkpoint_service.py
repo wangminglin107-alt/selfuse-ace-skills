@@ -124,3 +124,22 @@ def test_pointer_replace_failure_preserves_previous_current_checkpoint(
 
     assert service.current() == first
     assert repository.load().current_checkpoint == first.checkpoint_id
+
+
+def test_event_append_failure_rolls_pointer_back_to_previous_checkpoint(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    project_root, repository = prepared_project(tmp_path)
+    service = CheckpointService(project_root, repository=repository)
+    first = service.create(repository.load(), "research-framing")
+
+    def fail_event_append(event: ProjectEvent) -> ProjectEvent:
+        raise OSError("simulated event append failure")
+
+    monkeypatch.setattr(repository, "append", fail_event_append)
+
+    with pytest.raises(OSError, match="simulated event"):
+        service.create(repository.load(), "research-framing")
+
+    assert service.current() == first
+    assert repository.load().current_checkpoint == first.checkpoint_id

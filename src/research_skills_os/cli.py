@@ -7,11 +7,23 @@ import json
 from pathlib import Path
 from typing import Any
 
-from research_skills_os.cli_io import emit_error, emit_json
+from pydantic import ValidationError
+
+from research_skills_os.cli_io import ExitCode, emit_diagnostic, emit_json
 from research_skills_os.core.checkpoint.service import CheckpointService
 from research_skills_os.core.contracts.models import ExecutionRequest, ExecutionResult
-from research_skills_os.core.errors import ResearchSkillsError
+from research_skills_os.core.errors import (
+    ArtifactNotFound,
+    CheckpointIntegrityError,
+    CheckpointNotFound,
+    EventLogCorruption,
+    ProjectPathViolation,
+    ResearchSkillsError,
+    SpecLoadError,
+    UnknownTarget,
+)
 from research_skills_os.core.orchestrator.coordinator import RunCoordinator
+from research_skills_os.core.orchestrator.stop_policy import StopAction
 from research_skills_os.core.registry.loader import RegistryLoader
 from research_skills_os.core.registry.models import RegistryCatalog
 from research_skills_os.core.state.models import EventType, ProjectEvent
@@ -47,10 +59,15 @@ def build_parser() -> argparse.ArgumentParser:
     project_init.add_argument("--root", required=True)
     project_init.add_argument("--project-id", required=True)
 
+    validate = commands.add_parser("validate")
+    validate_commands = validate.add_subparsers(dest="validate_command", required=True)
+    validate_request = validate_commands.add_parser("request")
+    validate_request.add_argument("file")
+
     run = commands.add_parser("run")
     run_commands = run.add_subparsers(dest="run_command", required=True)
     run_start = run_commands.add_parser("start")
-    run_start.add_argument("--project", required=True)
+    run_start.add_argument("--project", default=".")
     run_start.add_argument("--request", required=True)
     run_status = run_commands.add_parser("status")
     run_status.add_argument("--project", required=True)
@@ -59,23 +76,25 @@ def build_parser() -> argparse.ArgumentParser:
     target = commands.add_parser("target")
     target_commands = target.add_subparsers(dest="target_command", required=True)
     target_begin = target_commands.add_parser("begin")
-    target_begin.add_argument("--project", required=True)
+    target_begin.add_argument("--project", default=".")
     target_begin.add_argument("--run", required=True)
     target_begin.add_argument("--target", required=True)
     target_complete = target_commands.add_parser("complete")
-    target_complete.add_argument("--project", required=True)
+    target_complete.add_argument("--project", default=".")
     target_complete.add_argument("--run", required=True)
     target_complete.add_argument("--result", required=True)
 
     checkpoint = commands.add_parser("checkpoint")
     checkpoint_commands = checkpoint.add_subparsers(dest="checkpoint_command", required=True)
+    checkpoint_list = checkpoint_commands.add_parser("list")
+    checkpoint_list.add_argument("--project", required=True)
     checkpoint_verify = checkpoint_commands.add_parser("verify")
     checkpoint_verify.add_argument("--project", required=True)
     checkpoint_verify.add_argument("--id", required=True)
     return parser
 
 
-def execute(arguments: argparse.Namespace) -> None:
+def execute(arguments: argparse.Namespace) -> ExitCode:
     if arguments.command == "project" and arguments.project_command == "init":
         root = Path(arguments.root).resolve()
         root.mkdir(parents=True, exist_ok=True)
@@ -90,32 +109,53 @@ def execute(arguments: argparse.Namespace) -> None:
             )
         )
         emit_json({"project_id": arguments.project_id, "sequence": stored.sequence})
-        return
+        return ExitCode.SUCCESS
+    if arguments.command == "validate" and arguments.validate_command == "request":
+        request = ExecutionRequest.model_validate(_load_json(arguments.file))
+        emit_json(request.model_dump(mode="json"))
+        return ExitCode.SUCCESS
     if arguments.command == "run" and arguments.run_command == "start":
         context = _coordinator(arguments.project).start(
             ExecutionRequest.model_validate(_load_json(arguments.request))
         )
         emit_json(context.model_dump(mode="json"))
-        return
+        return ExitCode.SUCCESS
     if arguments.command == "run" and arguments.run_command == "status":
         state = StateRepository(Path(arguments.project)).load()
         emit_json(state.model_dump(mode="json"))
-        return
+        return ExitCode.SUCCESS
     if arguments.command == "target" and arguments.target_command == "begin":
         context = _coordinator(arguments.project).begin_target(arguments.run, arguments.target)
         emit_json(context.model_dump(mode="json"))
-        return
+        return ExitCode.SUCCESS
     if arguments.command == "target" and arguments.target_command == "complete":
         outcome = _coordinator(arguments.project).complete_target(
             arguments.run,
             ExecutionResult.model_validate(_load_json(arguments.result)),
         )
         emit_json(outcome.model_dump(mode="json"))
-        return
+        if outcome.action is StopAction.BLOCK:
+            emit_diagnostic("blocked gate", "target completion was blocked")
+            return ExitCode.BLOCKED_GATE
+        return ExitCode.SUCCESS
+    if arguments.command == "checkpoint" and arguments.checkpoint_command == "list":
+        service = CheckpointService(Path(arguments.project))
+        checkpoint_paths = sorted(service.checkpoint_directory.glob("*.json"))
+        emit_json(
+            {
+                "checkpoints": [
+                    service.load(path.stem).model_dump(mode="json") for path in checkpoint_paths
+                ]
+            }
+        )
+        return ExitCode.SUCCESS
     if arguments.command == "checkpoint" and arguments.checkpoint_command == "verify":
         verification = CheckpointService(Path(arguments.project)).verify_resume(arguments.id)
         emit_json(verification.model_dump(mode="json"))
-        return
+        if verification.status == "drifted":
+            emit_diagnostic("integrity", "checkpoint state or artifacts drifted")
+            return ExitCode.INTEGRITY_SECURITY
+        return ExitCode.SUCCESS
     raise ResearchSkillsError("unsupported command")
 
 
@@ -123,11 +163,25 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     arguments = parser.parse_args(argv)
     try:
-        execute(arguments)
+        return int(execute(arguments))
+    except (ValidationError, json.JSONDecodeError) as exc:
+        emit_diagnostic("validation", str(exc))
+        return int(ExitCode.VALIDATION)
+    except (UnknownTarget, SpecLoadError) as exc:
+        emit_diagnostic("validation", str(exc))
+        return int(ExitCode.VALIDATION)
+    except (
+        ArtifactNotFound,
+        CheckpointIntegrityError,
+        CheckpointNotFound,
+        EventLogCorruption,
+        ProjectPathViolation,
+    ) as exc:
+        emit_diagnostic("integrity/security", str(exc))
+        return int(ExitCode.INTEGRITY_SECURITY)
     except (ResearchSkillsError, ValueError, OSError) as exc:
-        emit_error(str(exc))
-        return 5
-    return 0
+        emit_diagnostic("execution failure", str(exc))
+        return int(ExitCode.EXECUTION_FAILURE)
 
 
 if __name__ == "__main__":

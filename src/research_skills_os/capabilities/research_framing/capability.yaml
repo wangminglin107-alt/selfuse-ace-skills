@@ -1,0 +1,26 @@
+spec_version: "1.0"
+kind: capability
+id: research-framing
+version: "1.0"
+input_types: []
+output_types:
+  - research_brief_markdown
+  - research_brief_metadata
+entry_gates:
+  - contract.valid
+  - provider.policy
+exit_gates:
+  - framing.required
+  - framing.scope_traceable
+  - framing.claim_boundaries
+  - provenance.complete
+  - uncertainty.explicit
+specializations:
+  - communication
+  - sociology
+providers:
+  - local-manual
+resumable: true
+network: none
+side_effects:
+  - write_project_artifacts

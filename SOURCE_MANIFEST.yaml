@@ -1,3 +1,32 @@
 manifest_version: "1.0"
-sources: []
-
+sources:
+  - capability: research-framing
+    source_kind: local
+    upstream_repo: local/codex-skill-ssci-research-framing
+    upstream_commit: null
+    source_file: C:/Users/10710/.codex/skills/ssci-research-framing/SKILL.md
+    source_sha256: 4bcb2d328a5c0e16b17dbc8947340f8232380f7c27304d8156d42e6b1fcac6c1
+    reuse_mode: conceptual
+    local_target: skills/research-framing/SKILL.md
+    modifications:
+      - Add OS request, lifecycle CLI, checkpoint, and three-mode semantics.
+      - Add machine-readable schema, traceability gates, templates, and five-field status.
+      - Preserve explicit uncertainty while prohibiting novelty and unsupported literature claims.
+    license:
+      spdx: LicenseRef-Local-User-Content
+      source: User-controlled local Codex skill; no upstream package metadata present.
+      notice_required: false
+    security:
+      network: none
+      secrets: []
+      subprocess: false
+      filesystem_scope: Read-only local seed; generated artifacts remain project-scoped.
+      review_status: approved
+    tests:
+      upstream: []
+      local:
+        - tests/unit/capabilities/test_research_framing_gates.py
+        - tests/acceptance/research-framing/normal.md
+        - tests/acceptance/research-framing/underspecified.md
+        - tests/acceptance/research-framing/no-fabrication.md
+    notes: Local source is content-addressed because no Git commit metadata is available.

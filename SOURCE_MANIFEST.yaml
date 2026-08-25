@@ -30,3 +30,60 @@ sources:
         - tests/acceptance/research-framing/underspecified.md
         - tests/acceptance/research-framing/no-fabrication.md
     notes: Local source is content-addressed because no Git commit metadata is available.
+  - capability: literature-intelligence
+    source_kind: git
+    upstream_repo: jin-s13/ai-research-writing-skill
+    upstream_commit: 5d6e4244e532189099ca5a9c5585b23febcae955
+    source_file: scripts/check_research_handoff.py
+    source_sha256: de3ed7acbeff8eda6380a35f660ba505ccf058e4f3b0458a2b2237dafb4cbf9c
+    reuse_mode: conceptual
+    local_target: src/research_skills_os/capabilities/literature_intelligence/gates.py
+    modifications:
+      - Replace paper-writing handoff fields with search ledger, source registry, evidence map, coverage limits, and explicit blockers.
+      - Reuse project-contained artifact and blocker semantics through existing OS contracts rather than upstream CLI code.
+    license:
+      spdx: MIT
+      source: upstream LICENSE at locked commit
+      notice_required: true
+    security:
+      network: none
+      secrets: []
+      subprocess: false
+      filesystem_scope: Conceptual adaptation only; project paths use the OS artifact boundary.
+      review_status: approved
+    tests:
+      upstream:
+        - tests/test_quality_tools.py::ResearchHandoffTests
+      local:
+        - tests/unit/capabilities/test_literature_intelligence_gates.py
+        - tests/acceptance/literature-intelligence/missing-source.md
+    notes: No upstream code is copied or executed.
+  - capability: literature-intelligence
+    source_kind: git
+    upstream_repo: jin-s13/ai-research-writing-skill
+    upstream_commit: 5d6e4244e532189099ca5a9c5585b23febcae955
+    source_file: scripts/citation_lock.py
+    source_sha256: e412b07f187ddde30936ae0f17c24aa3f70303faed988b5a09d7d2ac4f94e05e
+    reuse_mode: conceptual
+    local_target: src/research_skills_os/capabilities/literature_intelligence/gates.py
+    modifications:
+      - Adapt stale-lock thinking into source content hashes and separate metadata/content verification states.
+      - Replace DOI/arXiv and live provider assumptions with provider-neutral local/manual provenance.
+      - Preserve nonterminal error and conflict states as visible blockers or coverage limits.
+    license:
+      spdx: MIT
+      source: upstream LICENSE at locked commit
+      notice_required: true
+    security:
+      network: none
+      secrets: []
+      subprocess: false
+      filesystem_scope: Deterministic metadata validation only; no upstream network verifier copied.
+      review_status: approved
+    tests:
+      upstream:
+        - tests/test_quality_tools.py::CitationLockTests
+      local:
+        - tests/unit/capabilities/test_literature_intelligence_gates.py
+        - tests/acceptance/literature-intelligence/fake-citation-pressure.md
+    notes: Citation freshness is represented by hashes and status consistency in offline V1.

@@ -1,0 +1,17 @@
+schema_version: "1.0"
+fixture_notice: Synthetic records for behavior tests; not real publications.
+sources:
+  - source_id: fixture-creator-exit-1
+    title: Negotiating Exit from Platform Work
+    abstract: >-
+      This synthetic fixture describes how creator withdrawal accounts negotiate obligations to
+      audiences, sponsors, and platform visibility systems.
+    local_path: tests/fixtures/literature/fixture-creator-exit-1.md
+    content_sha256: fae5752a1cc99c4b7008d8955bc83f69e52abd3053ebd70a5b9537dcf97d92af
+  - source_id: fixture-creator-exit-2
+    title: Burnout Narratives in Creator Careers
+    abstract: >-
+      This synthetic fixture describes burnout narratives but does not establish platform
+      causality or population prevalence.
+    local_path: tests/fixtures/literature/fixture-creator-exit-2.md
+    content_sha256: 2f245b7cfff306f3d8c5b6f28b649b023e529341a45c65bde8422800346f4992

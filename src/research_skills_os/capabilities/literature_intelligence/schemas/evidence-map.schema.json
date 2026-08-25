@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/evidence-map/1.0",
+  "title": "Evidence Map",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "claims", "coverage_limits", "unsupported_claims"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "statement", "links"],
+        "properties": {
+          "claim_id": { "type": "string", "minLength": 1 },
+          "statement": { "type": "string", "minLength": 1 },
+          "links": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source_id", "relation", "evidence_note"],
+              "properties": {
+                "source_id": { "type": "string", "minLength": 1 },
+                "relation": { "enum": ["supports", "contradicts", "context", "partial"] },
+                "evidence_note": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "coverage_limits": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "unsupported_claims": { "type": "array", "items": { "type": "string" } }
+  }
+}

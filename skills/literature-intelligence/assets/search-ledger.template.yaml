@@ -1,0 +1,16 @@
+schema_version: "1.0"
+search_question: ""
+searches:
+  - search_id: search-1
+    query: ""
+    searched_at: ""
+    provider: local-manual
+    status: planned
+    result_count: null
+inclusion_criteria:
+  - ""
+exclusion_criteria:
+  - ""
+coverage_limits:
+  - ""
+blockers: []

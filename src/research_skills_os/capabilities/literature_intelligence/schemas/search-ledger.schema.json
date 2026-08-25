@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/search-ledger/1.0",
+  "title": "Search Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "search_question", "searches", "inclusion_criteria", "exclusion_criteria", "coverage_limits", "blockers"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "search_question": { "type": "string", "minLength": 1 },
+    "searches": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["search_id", "query", "searched_at", "provider", "status", "result_count"],
+        "properties": {
+          "search_id": { "type": "string", "minLength": 1 },
+          "query": { "type": "string", "minLength": 1 },
+          "searched_at": { "type": "string", "format": "date-time" },
+          "provider": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["planned", "executed", "blocked"] },
+          "result_count": { "type": ["integer", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "inclusion_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "exclusion_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "coverage_limits": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  }
+}

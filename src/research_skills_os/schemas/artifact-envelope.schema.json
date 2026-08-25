@@ -1,0 +1,98 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "minLength": 1,
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "human_edited": {
+      "default": false,
+      "title": "Human Edited",
+      "type": "boolean"
+    },
+    "path": {
+      "minLength": 1,
+      "title": "Path",
+      "type": "string"
+    },
+    "producing_capability": {
+      "minLength": 1,
+      "title": "Producing Capability",
+      "type": "string"
+    },
+    "provenance_references": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Provenance References",
+      "type": "array"
+    },
+    "schema_version": {
+      "minLength": 1,
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sensitivity": {
+      "default": "internal",
+      "enum": [
+        "public",
+        "internal",
+        "sensitive"
+      ],
+      "title": "Sensitivity",
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Sha256",
+      "type": "string"
+    },
+    "source_artifact_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Source Artifact Ids",
+      "type": "array"
+    },
+    "type": {
+      "minLength": 1,
+      "title": "Type",
+      "type": "string"
+    },
+    "verification_state": {
+      "default": "unverified",
+      "enum": [
+        "unverified",
+        "verified",
+        "drifted"
+      ],
+      "title": "Verification State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "type",
+    "schema_version",
+    "producing_capability",
+    "created_at",
+    "path",
+    "sha256"
+  ],
+  "title": "ArtifactEnvelope",
+  "type": "object"
+}

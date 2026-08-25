@@ -1,0 +1,429 @@
+{
+  "$defs": {
+    "ArtifactEnvelope": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "contract_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "human_edited": {
+          "default": false,
+          "title": "Human Edited",
+          "type": "boolean"
+        },
+        "path": {
+          "minLength": 1,
+          "title": "Path",
+          "type": "string"
+        },
+        "producing_capability": {
+          "minLength": 1,
+          "title": "Producing Capability",
+          "type": "string"
+        },
+        "provenance_references": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Provenance References",
+          "type": "array"
+        },
+        "schema_version": {
+          "minLength": 1,
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "sensitivity": {
+          "default": "internal",
+          "enum": [
+            "public",
+            "internal",
+            "sensitive"
+          ],
+          "title": "Sensitivity",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "source_artifact_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Source Artifact Ids",
+          "type": "array"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        },
+        "verification_state": {
+          "default": "unverified",
+          "enum": [
+            "unverified",
+            "verified",
+            "drifted"
+          ],
+          "title": "Verification State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "type",
+        "schema_version",
+        "producing_capability",
+        "created_at",
+        "path",
+        "sha256"
+      ],
+      "title": "ArtifactEnvelope",
+      "type": "object"
+    },
+    "DecisionRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "decision_id": {
+          "minLength": 1,
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "made_by": {
+          "enum": [
+            "user",
+            "system"
+          ],
+          "title": "Made By",
+          "type": "string"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rationale"
+        }
+      },
+      "required": [
+        "decision_id",
+        "description",
+        "made_by"
+      ],
+      "title": "DecisionRecord",
+      "type": "object"
+    },
+    "EvidenceRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence_id": {
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "source_artifact_ids": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Source Artifact Ids",
+          "type": "array"
+        },
+        "verification_state": {
+          "default": "candidate",
+          "enum": [
+            "candidate",
+            "verified_metadata",
+            "verified_content"
+          ],
+          "title": "Verification State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "description"
+      ],
+      "title": "EvidenceRecord",
+      "type": "object"
+    },
+    "GateResult": {
+      "additionalProperties": false,
+      "properties": {
+        "contract_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "gate_id": {
+          "minLength": 1,
+          "title": "Gate Id",
+          "type": "string"
+        },
+        "gate_version": {
+          "minLength": 1,
+          "title": "Gate Version",
+          "type": "string"
+        },
+        "remediation": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Remediation",
+          "type": "array"
+        },
+        "severity": {
+          "$ref": "#/$defs/GateSeverity"
+        },
+        "status": {
+          "$ref": "#/$defs/GateStatus"
+        }
+      },
+      "required": [
+        "gate_id",
+        "gate_version",
+        "status",
+        "severity"
+      ],
+      "title": "GateResult",
+      "type": "object"
+    },
+    "GateSeverity": {
+      "enum": [
+        "info",
+        "advisory",
+        "blocking"
+      ],
+      "title": "GateSeverity",
+      "type": "string"
+    },
+    "GateStatus": {
+      "enum": [
+        "pass",
+        "warn",
+        "fail",
+        "not_applicable"
+      ],
+      "title": "GateStatus",
+      "type": "string"
+    },
+    "NextAction": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "target_id": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Id"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "NextAction",
+      "type": "object"
+    },
+    "RunStatus": {
+      "enum": [
+        "completed",
+        "completed_with_uncertainty",
+        "paused",
+        "blocked",
+        "failed"
+      ],
+      "title": "RunStatus",
+      "type": "string"
+    },
+    "UncertaintyRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "material": {
+          "default": true,
+          "title": "Material",
+          "type": "boolean"
+        },
+        "uncertainty_id": {
+          "minLength": 1,
+          "title": "Uncertainty Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "uncertainty_id",
+        "description"
+      ],
+      "title": "UncertaintyRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/ArtifactEnvelope"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "decisions": {
+      "items": {
+        "$ref": "#/$defs/DecisionRecord"
+      },
+      "title": "Decisions",
+      "type": "array"
+    },
+    "evidence_added": {
+      "items": {
+        "$ref": "#/$defs/EvidenceRecord"
+      },
+      "title": "Evidence Added",
+      "type": "array"
+    },
+    "failed_gates": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Failed Gates",
+      "type": "array"
+    },
+    "gate_results": {
+      "items": {
+        "$ref": "#/$defs/GateResult"
+      },
+      "title": "Gate Results",
+      "type": "array"
+    },
+    "next_action": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NextAction"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "request_id": {
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "resume_token": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Resume Token"
+    },
+    "run_id": {
+      "minLength": 1,
+      "title": "Run Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/RunStatus"
+    },
+    "target_id": {
+      "minLength": 1,
+      "title": "Target Id",
+      "type": "string"
+    },
+    "uncertainties": {
+      "items": {
+        "$ref": "#/$defs/UncertaintyRecord"
+      },
+      "title": "Uncertainties",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "run_id",
+    "target_id",
+    "status"
+  ],
+  "title": "ExecutionResult",
+  "type": "object"
+}

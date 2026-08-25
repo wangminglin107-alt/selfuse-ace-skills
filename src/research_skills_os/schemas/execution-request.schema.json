@@ -1,0 +1,205 @@
+{
+  "$defs": {
+    "InputArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "minLength": 1,
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "path_or_uri": {
+          "minLength": 1,
+          "title": "Path Or Uri",
+          "type": "string"
+        },
+        "type": {
+          "minLength": 1,
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "type",
+        "path_or_uri"
+      ],
+      "title": "InputArtifactRef",
+      "type": "object"
+    },
+    "RequestConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "default": "other",
+          "minLength": 1,
+          "title": "Domain",
+          "type": "string"
+        },
+        "language": {
+          "default": "bilingual",
+          "enum": [
+            "zh",
+            "en",
+            "bilingual"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "network": {
+          "default": "deny",
+          "enum": [
+            "deny",
+            "allow_declared_providers"
+          ],
+          "title": "Network",
+          "type": "string"
+        },
+        "stop_after": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop After"
+        }
+      },
+      "title": "RequestConstraints",
+      "type": "object"
+    },
+    "RunMode": {
+      "enum": [
+        "interactive",
+        "checkpointed",
+        "autonomous"
+      ],
+      "title": "RunMode",
+      "type": "string"
+    },
+    "TargetKind": {
+      "enum": [
+        "capability",
+        "workflow"
+      ],
+      "title": "TargetKind",
+      "type": "string"
+    },
+    "TargetRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/TargetKind"
+        }
+      },
+      "required": [
+        "kind",
+        "id"
+      ],
+      "title": "TargetRef",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "constraints": {
+      "$ref": "#/$defs/RequestConstraints"
+    },
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "goal": {
+      "minLength": 1,
+      "title": "Goal",
+      "type": "string"
+    },
+    "inputs": {
+      "items": {
+        "$ref": "#/$defs/InputArtifactRef"
+      },
+      "title": "Inputs",
+      "type": "array"
+    },
+    "mode": {
+      "$ref": "#/$defs/RunMode"
+    },
+    "prior_checkpoint": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Prior Checkpoint"
+    },
+    "project_id": {
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "request_id": {
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/$defs/TargetRef"
+    },
+    "user_decisions": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "items": {},
+            "type": "array"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "title": "User Decisions",
+      "type": "object"
+    }
+  },
+  "required": [
+    "request_id",
+    "project_id",
+    "target",
+    "mode",
+    "goal"
+  ],
+  "title": "ExecutionRequest",
+  "type": "object"
+}

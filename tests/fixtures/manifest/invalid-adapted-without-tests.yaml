@@ -1,0 +1,29 @@
+manifest_version: "1.0"
+sources:
+  - capability: fixture
+    source_kind: git
+    upstream_repo: example/source
+    upstream_commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    source_file: source.py
+    source_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    reuse_mode: adapted
+    local_target: src/fixture.py
+    modifications:
+      - Changed behavior.
+    license:
+      spdx: MIT
+      source: LICENSE
+      status: confirmed
+      notice_required: true
+    security:
+      network: none
+      endpoints: []
+      network_notes: No network access.
+      secrets: []
+      subprocess: false
+      filesystem_scope: Project scoped.
+      review_status: approved
+    tests:
+      upstream: []
+      local: []
+

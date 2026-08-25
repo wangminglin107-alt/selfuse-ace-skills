@@ -1,35 +1,5 @@
 manifest_version: "1.0"
 sources:
-  - capability: research-framing
-    source_kind: local
-    upstream_repo: local/codex-skill-ssci-research-framing
-    upstream_commit: null
-    source_file: C:/Users/10710/.codex/skills/ssci-research-framing/SKILL.md
-    source_sha256: 4bcb2d328a5c0e16b17dbc8947340f8232380f7c27304d8156d42e6b1fcac6c1
-    reuse_mode: conceptual
-    local_target: skills/research-framing/SKILL.md
-    modifications:
-      - Add OS request, lifecycle CLI, checkpoint, and three-mode semantics.
-      - Add machine-readable schema, traceability gates, templates, and five-field status.
-      - Preserve explicit uncertainty while prohibiting novelty and unsupported literature claims.
-    license:
-      spdx: LicenseRef-Local-User-Content
-      source: User-controlled local Codex skill; no upstream package metadata present.
-      notice_required: false
-    security:
-      network: none
-      secrets: []
-      subprocess: false
-      filesystem_scope: Read-only local seed; generated artifacts remain project-scoped.
-      review_status: approved
-    tests:
-      upstream: []
-      local:
-        - tests/unit/capabilities/test_research_framing_gates.py
-        - tests/acceptance/research-framing/normal.md
-        - tests/acceptance/research-framing/underspecified.md
-        - tests/acceptance/research-framing/no-fabrication.md
-    notes: Local source is content-addressed because no Git commit metadata is available.
   - capability: literature-intelligence
     source_kind: git
     upstream_repo: jin-s13/ai-research-writing-skill
@@ -39,25 +9,22 @@ sources:
     reuse_mode: conceptual
     local_target: src/research_skills_os/capabilities/literature_intelligence/gates.py
     modifications:
-      - Replace paper-writing handoff fields with search ledger, source registry, evidence map, coverage limits, and explicit blockers.
-      - Reuse project-contained artifact and blocker semantics through existing OS contracts rather than upstream CLI code.
-    license:
-      spdx: MIT
-      source: upstream LICENSE at locked commit
-      notice_required: true
+      - Replaced paper-writing handoff fields with search ledger, source registry, evidence map, coverage limits, and explicit blockers.
+      - Reused project-contained artifact and blocker semantics through OS contracts instead of upstream CLI code.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
     security:
       network: none
+      endpoints: []
+      network_notes: The inspected source is local validation code; no endpoint is invoked.
       secrets: []
       subprocess: false
       filesystem_scope: Conceptual adaptation only; project paths use the OS artifact boundary.
       review_status: approved
     tests:
-      upstream:
-        - tests/test_quality_tools.py::ResearchHandoffTests
-      local:
-        - tests/unit/capabilities/test_literature_intelligence_gates.py
-        - tests/acceptance/literature-intelligence/missing-source.md
+      upstream: [tests/test_quality_tools.py::ResearchHandoffTests]
+      local: [tests/unit/capabilities/test_literature_intelligence_gates.py, tests/acceptance/literature-intelligence/missing-source.md]
     notes: No upstream code is copied or executed.
+
   - capability: literature-intelligence
     source_kind: git
     upstream_repo: jin-s13/ai-research-writing-skill
@@ -67,54 +34,22 @@ sources:
     reuse_mode: conceptual
     local_target: src/research_skills_os/capabilities/literature_intelligence/gates.py
     modifications:
-      - Adapt stale-lock thinking into source content hashes and separate metadata/content verification states.
-      - Replace DOI/arXiv and live provider assumptions with provider-neutral local/manual provenance.
-      - Preserve nonterminal error and conflict states as visible blockers or coverage limits.
-    license:
-      spdx: MIT
-      source: upstream LICENSE at locked commit
-      notice_required: true
+      - Adapted stale-lock thinking into content hashes and distinct metadata/content verification states.
+      - Removed live-provider assumptions and retained conflict states as visible blockers.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
     security:
       network: none
+      endpoints: []
+      network_notes: The lock implementation is inspected offline; its network verifier is not reused.
       secrets: []
       subprocess: false
-      filesystem_scope: Deterministic metadata validation only; no upstream network verifier copied.
+      filesystem_scope: Deterministic metadata validation only.
       review_status: approved
     tests:
-      upstream:
-        - tests/test_quality_tools.py::CitationLockTests
-      local:
-        - tests/unit/capabilities/test_literature_intelligence_gates.py
-        - tests/acceptance/literature-intelligence/fake-citation-pressure.md
-    notes: Citation freshness is represented by hashes and status consistency in offline V1.
-  - capability: novelty-audit
-    source_kind: git
-    upstream_repo: Hsin-Hung/Academic-Skills
-    upstream_commit: 71e9c42c60636602e87985f4306d134a3b63809e
-    source_file: idea-generation/SKILL.md
-    source_sha256: f388806a510c2b009a79ffe1c241b2ebfb72873660b512a7e9000da364de9a1f
-    reuse_mode: conceptual
-    local_target: skills/novelty-audit/references/novelty-framework.md
-    modifications:
-      - Retain divergent comparison dimensions and convergent revision logic without fixed idea counts, weights, scores, platforms, or time boxes.
-      - Replace confirmation of being not-yet-done with evidence-bounded nearest-work verdicts.
-      - Treat contradicted or insufficient novelty as successful scholarly outcomes.
-    license:
-      spdx: MIT
-      source: upstream LICENSE at locked commit
-      notice_required: true
-    security:
-      network: optional
-      secrets: []
-      subprocess: false
-      filesystem_scope: Read-only conceptual reference; no upstream search automation executed.
-      review_status: approved
-    tests:
-      upstream: []
-      local:
-        - tests/unit/capabilities/test_novelty_audit_gates.py
-        - tests/acceptance/novelty-audit/insufficient-evidence.md
-    notes: Domain-specific CS examples and numeric evaluation matrices are excluded.
+      upstream: [tests/test_quality_tools.py::CitationLockTests]
+      local: [tests/unit/capabilities/test_literature_intelligence_gates.py, tests/acceptance/literature-intelligence/fake-citation-pressure.md]
+    notes: Offline V1 represents freshness with hashes and explicit verification states.
+
   - capability: novelty-audit
     source_kind: git
     upstream_repo: Spark-To-Paper-Skills/spark-to-paper-skills
@@ -124,25 +59,156 @@ sources:
     reuse_mode: conceptual
     local_target: src/research_skills_os/capabilities/novelty_audit/gates.py
     modifications:
-      - Replace embedding similarity bands and pivot limits with explicit nearest-work comparison rows and claim-level evidence links.
-      - Change graceful no-reference degradation from an acceptable signal into insufficient_evidence.
-      - Remove endpoint, API-key, NumPy, knowledge-graph, fixed-threshold, and CS story assumptions.
-    license:
-      spdx: MIT
-      source: upstream LICENSE at locked commit
-      notice_required: true
+      - Replaced embedding bands and fixed pivot limits with nearest-work rows and claim-level evidence links.
+      - Changed no-reference degradation into insufficient evidence and removed endpoint execution.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
     security:
       network: required
-      secrets:
-        - TS_EMBED_API_KEY
-        - TS_EMBED_BASE_URL
-        - TS_EMBED_MODEL
+      endpoints: ['${TS_EMBED_BASE_URL}']
+      network_notes: Upstream calls a configurable embedding endpoint; V1 copies no client code and performs no call.
+      secrets: [TS_EMBED_API_KEY, TS_EMBED_BASE_URL, TS_EMBED_MODEL]
       subprocess: false
-      filesystem_scope: Upstream reads/writes a workdir and may call a remote embedding endpoint; none of that code is copied or run in V1.
+      filesystem_scope: Upstream may read and write a work directory; V1 uses project-scoped contracts.
       review_status: approved
     tests:
       upstream: []
-      local:
-        - tests/unit/capabilities/test_novelty_audit_gates.py
-        - tests/acceptance/novelty-audit/overclaim-request.md
-    notes: Working-tree blob matches the locked commit; the inspected upstream checkout has unrelated pre-existing sparse/deletion status.
+      local: [tests/unit/capabilities/test_novelty_audit_gates.py, tests/acceptance/novelty-audit/overclaim-request.md]
+    notes: Upstream code is inspected but neither copied nor executed.
+
+  - capability: novelty-audit
+    source_kind: git
+    upstream_repo: Hsin-Hung/Academic-Skills
+    upstream_commit: 71e9c42c60636602e87985f4306d134a3b63809e
+    source_file: idea-generation/SKILL.md
+    source_sha256: f388806a510c2b009a79ffe1c241b2ebfb72873660b512a7e9000da364de9a1f
+    reuse_mode: conceptual
+    local_target: skills/novelty-audit/references/novelty-framework.md
+    modifications:
+      - Retained divergent comparison dimensions and convergent revision logic without fixed counts or scores.
+      - Replaced positive novelty confirmation with evidence-bounded nearest-work verdicts.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security:
+      network: optional
+      endpoints: [user-authorized scholarly search provider]
+      network_notes: Upstream guidance can involve search; V1 defaults to offline local/manual evidence.
+      secrets: []
+      subprocess: false
+      filesystem_scope: Read-only conceptual reference.
+      review_status: approved
+    tests:
+      upstream: []
+      local: [tests/unit/capabilities/test_novelty_audit_gates.py, tests/acceptance/novelty-audit/insufficient-evidence.md]
+    notes: Computer-science examples and numeric evaluation matrices are excluded.
+
+  - capability: future-figure-quality
+    source_kind: git
+    upstream_repo: Haojae/SciPilot-Figure-Skill
+    upstream_commit: 43098ddb9e6a6d142218540c114f9ed38922fc42
+    source_file: scripts/check_figure.py
+    source_sha256: cd997052a62cbd0673a9c13297d3936ff896facd6d12a345077c85587ad1f59e
+    reuse_mode: reference_only
+    modifications: []
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security:
+      network: none
+      endpoints: []
+      network_notes: The checker reads local figures and imports optional local libraries; it performs no network call.
+      secrets: []
+      subprocess: false
+      filesystem_scope: Accepts operator-selected figure paths; it is not executed in V1.
+      review_status: approved
+    tests: {upstream: [], local: []}
+    notes: Reserved for a later figure-quality capability; no runtime or content reuse in V1.
+
+  - capability: optional-literature-provider
+    source_kind: git
+    upstream_repo: LeonChaoX/Qinyan-Academic-Skills
+    upstream_commit: 646429a4eeb765360f6ce13b5936334225d52af8
+    source_file: skills/沁言学术skills/qinyan-paper-search/SKILL.md
+    source_sha256: 4110ae0fb584cbe5b0607a8bb8722f755388ef44800fdd0e221e4deb10e52124
+    reuse_mode: reference_only
+    modifications: []
+    license:
+      spdx: MIT
+      source: LICENSE at the locked commit; the selected skill has no narrower license
+      status: confirmed
+      notice_required: true
+    security:
+      network: required
+      endpoints: ['https://api.qinyanai.com/v1/paper-search/{source}']
+      network_notes: Upstream invokes curl through Bash and sends the query with a bearer token; V1 does not execute it.
+      secrets: [QINYAN_API_KEY]
+      subprocess: true
+      filesystem_scope: Reads arguments and environment only; V1 does not install or invoke it.
+      review_status: approved
+    tests: {upstream: [], local: []}
+    notes: Optional provider candidate only; output is never automatically verified evidence.
+
+  - &local_reference
+    capability: future-argument-architecture
+    source_kind: local
+    upstream_repo: local/codex-skill-ssci-argument-architecture
+    upstream_commit: null
+    source_file: C:/Users/10710/.codex/skills/ssci-argument-architecture/SKILL.md
+    source_sha256: 75a806b44409fc614449363370533831985454c80bfc61423a8bc95d13b9405c
+    reuse_mode: reference_only
+    modifications: []
+    license: &local_license
+      spdx: LicenseRef-Local-User-Content
+      source: User-controlled local Codex skill; no package license metadata present
+      status: confirmed
+      notice_required: false
+    security: &local_security
+      network: none
+      endpoints: []
+      network_notes: The recorded source is read-only local content.
+      secrets: []
+      subprocess: false
+      filesystem_scope: Read-only source file outside the project; no runtime import.
+      review_status: approved
+    tests: &no_tests {upstream: [], local: []}
+    notes: Preserved unchanged and content-addressed for possible later work.
+
+  - <<: *local_reference
+    capability: future-bilingual-writing
+    upstream_repo: local/codex-skill-ssci-bilingual-writing
+    source_file: C:/Users/10710/.codex/skills/ssci-bilingual-writing/SKILL.md
+    source_sha256: 6606cc7a84fb2b626814dfad57b1bd6090e4b923b26e61d0523b1a03a44b9ae0
+
+  - <<: *local_reference
+    capability: research-os
+    upstream_repo: local/codex-skill-ssci-paper-writer
+    source_file: C:/Users/10710/.codex/skills/ssci-paper-writer/SKILL.md
+    source_sha256: 186db7e52e43a0c06a1e68660f4935d3ee1f126f68d553390374b9c6c649b367
+    notes: Preserved unchanged; V1 routing is independently implemented and tested.
+
+  - <<: *local_reference
+    capability: future-peer-review
+    upstream_repo: local/codex-skill-ssci-peer-review
+    source_file: C:/Users/10710/.codex/skills/ssci-peer-review/SKILL.md
+    source_sha256: 1c64e3322521189f949291850fb59712083707043fc6b7b9e2c483f59a9d78c6
+
+  - <<: *local_reference
+    capability: research-framing
+    upstream_repo: local/codex-skill-ssci-research-framing
+    source_file: C:/Users/10710/.codex/skills/ssci-research-framing/SKILL.md
+    source_sha256: 4bcb2d328a5c0e16b17dbc8947340f8232380f7c27304d8156d42e6b1fcac6c1
+    reuse_mode: conceptual
+    local_target: skills/research-framing/SKILL.md
+    modifications:
+      - Added OS lifecycle, checkpoint and mode semantics, schemas, gates, and explicit uncertainty handling.
+    tests:
+      upstream: []
+      local: [tests/unit/capabilities/test_research_framing_gates.py, tests/acceptance/research-framing/normal.md]
+
+  - <<: *local_reference
+    capability: future-revision-audit
+    upstream_repo: local/codex-skill-ssci-revision-audit
+    source_file: C:/Users/10710/.codex/skills/ssci-revision-audit/SKILL.md
+    source_sha256: cdf01018f0d416d985852bd6066b3a86e28e8bab43743243a82a41f8d1f060d3
+
+  - <<: *local_reference
+    capability: future-section-drafting
+    upstream_repo: local/codex-skill-ssci-section-drafting
+    source_file: C:/Users/10710/.codex/skills/ssci-section-drafting/SKILL.md
+    source_sha256: 1d49b6db5018907c68b6c16d9c35b7d6c205de0fbb3261d99e6178f57125048e

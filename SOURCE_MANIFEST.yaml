@@ -207,8 +207,15 @@ sources:
     capability: citation-verification
     source_file: src/scripts/citation_quality_audit.py
     source_sha256: 4d2f1717ddc19e06eb0f490d808e6ad9253d242b004eb2048ad47685196e3963
-    reuse_mode: reference_only
-    notes: Candidate for narrow audit-structure adaptation after local tests exist.
+    reuse_mode: adapted
+    local_target: src/research_skills_os/capabilities/citation_verification/gates.py
+    modifications:
+      - Retained separate identity, support, route, publication-status, and blocker audit structure.
+      - Removed fixed recency, venue, and computer-science thresholds and all live provider calls.
+    tests:
+      upstream: []
+      local: [tests/unit/capabilities/test_citation_verification_gates.py]
+    notes: The local implementation is offline, source-type aware, and evidence-row linked.
 
   - <<: *paperspine_v2a
     capability: evidence-synthesis

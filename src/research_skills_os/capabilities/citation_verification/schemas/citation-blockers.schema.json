@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/citation-blockers/1.0",
+  "title": "Citation Blockers",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "blockers"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "blockers": {"type": "array", "items": {"type": "object", "required": ["blocker_id", "citation_id", "kind", "description", "resolution_state"]}}
+  }
+}

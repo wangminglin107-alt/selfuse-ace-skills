@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/citation-identity-audit/1.0",
+  "title": "Citation Identity Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "records"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "records": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["citation_id", "source_id", "source_type", "claimed_title", "claimed_authors", "claimed_container", "claimed_year", "claimed_identifier", "verified_title", "verified_authors", "verified_container", "verified_year", "verified_identifier", "route", "official_record_locator", "identity_state", "publication_status", "status_note"]}}
+  }
+}

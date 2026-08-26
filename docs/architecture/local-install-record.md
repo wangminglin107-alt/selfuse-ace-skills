@@ -10,6 +10,14 @@ Skill home: `C:\Users\10710\.codex\skills`
 
 Machine record: `C:\Users\10710\.codex\skills\.research-skills-os-install.json`
 
+Runtime installed at: `2026-08-26T02:47:08.7381716Z`
+
+Runtime root: `C:\Users\10710\.codex\research-skills-os-runtime`
+
+PATH launcher: `C:\Users\10710\bin\research-os.cmd`
+
+Runtime installation ID: `f252a1ece2f24cb6ad3b4afe7213f439`
+
 ## Installed Skills
 
 | Skill | Installed SHA-256 |
@@ -42,6 +50,13 @@ seven existing Skills:
 
 - Temporary skill-home integration suite: `5 passed`.
 - Native Windows PowerShell 5.1 install, idempotent reinstall, and uninstall smoke: PASS.
+- Runtime installer contract suite: `4 passed`; its seven runtime distributions are exact pins
+  with SHA-256 hashes.
+- Fresh ordinary PowerShell resolved `research-os` from `C:\Users\10710\bin\research-os.cmd`;
+  `research-os --help` and a real `project init` smoke both passed. A second runtime install
+  returned `status: unchanged`.
+- An actual record-scoped runtime uninstall removed both runtime and launcher; reinstall restored
+  both, and another fresh PowerShell command passed.
 - Actual `-WhatIf`: five `install` actions; zero collisions; zero `ssci-*` targets.
 - Fresh ephemeral Codex context: opened all five installed `SKILL.md` files, inspected the offline
   fixture, preserved standalone/workflow separation, and returned `SMOKE_STATUS: PASS` with no
@@ -60,3 +75,12 @@ Run:
 
 The uninstaller acts only on destinations in the machine install record, refuses to remove a
 modified installed tree, and restores any recorded pre-install backup.
+
+To remove the isolated Python runtime and PATH launcher, run:
+
+```powershell
+& 'C:\Users\10710\Documents\Codex\2026-08-25\referenced-chatgpt-conversation-this-is-an\work\research-skills-os-v1-implementation\scripts\uninstall-runtime.ps1'
+```
+
+The runtime uninstaller verifies the exact recorded runtime and launcher paths plus the launcher
+hash before removal. It does not modify the user's global Python installation or PATH value.

@@ -39,12 +39,17 @@ The alternatives were rejected:
 - Repository: the existing isolated `research-skills-os-v1-implementation` worktree.
 - Active vault: `C:\Users\10710\Documents\日常学习`, resolved from Obsidian's local config rather
   than hard-coded in reusable code.
-- Zotero: local Zotero 7 API at `127.0.0.1:23119`; no account password or API key is stored.
+- Zotero: local Zotero 10+ API at `127.0.0.1:23119`; no account password or web API key is
+  stored. The detected Zotero 9.0.5 installation may be used for read-only preview but cannot
+  perform the authorized local writes required by this bridge.
 - Zotero collection: `Pilot｜GSMA情绪与互动`.
 - Obsidian project root: `Research/GSMA情绪与互动`.
 
-Live writes require Zotero to be running with local application communication enabled. A closed
-or unavailable Zotero instance blocks cleanly before Obsidian mutation.
+Live writes require Zotero 10 or later to be running with local application communication enabled.
+On the first write, the bridge asks Zotero for a short-lived local authorization and Zotero shows
+the user an approval dialog. The bridge keeps the returned key in memory only. A closed,
+unavailable, older, or denied Zotero instance blocks cleanly before Obsidian mutation. Zotero Web
+API credentials are a deferred fallback, not a hidden requirement.
 
 ## Components
 
@@ -60,8 +65,9 @@ not replace bibliographic identity; they decide whether reading output is stale.
 ### Zotero adapter
 
 The adapter exposes a small protocol so tests use an in-memory implementation and live runs use
-the local Zotero API. It lists/creates a collection, finds matching items, creates missing items,
-and attaches them to the collection. It never deletes items or collections.
+the Zotero 10 local API. It lists/creates a collection, finds matching items, creates missing
+items, and attaches them to the collection. It never deletes items or collections. The client
+refuses local writes on a detected major version below 10.
 
 ### Obsidian writer
 

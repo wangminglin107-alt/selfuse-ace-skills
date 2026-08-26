@@ -578,7 +578,9 @@ V2A is complete only when:
 - material contradictions cannot be silently bypassed;
 - theory selection remains human-owned and descriptive work remains allowed;
 - the default test suite is offline and passes on Windows;
-- every reused or referenced source has a complete, validated manifest record;
+- every runtime-used or source-adapted upstream file has a complete, validated manifest record;
+- rejected, unlicensed, or license-incompatible references are recorded in the source-audit
+  document and remain absent from runtime reuse;
 - prohibited sources/mechanisms are absent from runtime and tests;
 - the seven existing local SSCI Skills remain byte-identical;
 - the real NORC project reaches a reviewable V2A theory-decision checkpoint with genuine sources;

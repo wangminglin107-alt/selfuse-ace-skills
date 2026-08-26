@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 from collections.abc import Mapping
 from pathlib import Path
@@ -9,11 +10,23 @@ from typing import Any
 
 import yaml
 
+from research_skills_os.capabilities.citation_verification.gates import (
+    evaluate_citation_verification,
+)
+from research_skills_os.capabilities.evidence_synthesis.gates import (
+    evaluate_evidence_synthesis,
+)
 from research_skills_os.capabilities.literature_intelligence.gates import (
     evaluate_literature_artifacts,
 )
 from research_skills_os.capabilities.novelty_audit.gates import evaluate_novelty_audit
+from research_skills_os.capabilities.paper_knowledge_base.gates import (
+    evaluate_paper_knowledge_base,
+)
 from research_skills_os.capabilities.research_framing.gates import evaluate_research_brief
+from research_skills_os.capabilities.theory_architecture.gates import (
+    evaluate_theory_architecture,
+)
 from research_skills_os.core.artifacts.paths import resolve_project_path
 from research_skills_os.core.contracts.enums import GateStatus
 from research_skills_os.core.contracts.models import ArtifactEnvelope, GateResult
@@ -41,6 +54,41 @@ def _load_text(project_root: Path, artifact: ArtifactEnvelope | None) -> str:
         return resolve_project_path(project_root, artifact.path).read_text(encoding="utf-8")
     except (OSError, UnicodeError):
         return ""
+
+
+def _load_json(project_root: Path, artifact: ArtifactEnvelope | None) -> Mapping[str, Any]:
+    if artifact is None:
+        return {}
+    try:
+        raw = json.loads(
+            resolve_project_path(project_root, artifact.path).read_text(encoding="utf-8")
+        )
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return {}
+    return raw if isinstance(raw, Mapping) else {}
+
+
+def _load_jsonl(project_root: Path, artifact: ArtifactEnvelope | None) -> list[Mapping[str, Any]]:
+    if artifact is None:
+        return []
+    try:
+        lines = resolve_project_path(project_root, artifact.path).read_text(
+            encoding="utf-8"
+        ).splitlines()
+    except (OSError, UnicodeError):
+        return [{"line 0": "JSONL artifact cannot be read"}]
+    records: list[Mapping[str, Any]] = []
+    for line_number, line in enumerate(lines, start=1):
+        if not line.strip():
+            continue
+        try:
+            raw = json.loads(line)
+        except json.JSONDecodeError:
+            return [{f"line {line_number}": "malformed JSONL record"}]
+        if not isinstance(raw, Mapping):
+            return [{f"line {line_number}": "JSONL record must be an object"}]
+        records.append(raw)
+    return records
 
 
 def _fail_gate(results: list[GateResult], gate_id: str, finding: str) -> list[GateResult]:
@@ -109,4 +157,29 @@ def evaluate_capability_artifacts(
                 "Novelty matrix does not report the authoritative audit verdict.",
             )
         return results
+    if capability_id == "paper-knowledge-base":
+        return evaluate_paper_knowledge_base(
+            _load_json(project_root, by_type.get("document_index")),
+            _load_json(project_root, by_type.get("corpus_status")),
+        )
+    if capability_id == "evidence-synthesis":
+        return evaluate_evidence_synthesis(
+            _load_jsonl(project_root, by_type.get("evidence_rows")),
+            _load_json(project_root, by_type.get("synthesis_matrix")),
+            _load_json(project_root, by_type.get("contradiction_ledger")),
+            _load_json(project_root, by_type.get("coverage_report")),
+        )
+    if capability_id == "citation-verification":
+        return evaluate_citation_verification(
+            _load_json(project_root, by_type.get("citation_identity_audit")),
+            _load_json(project_root, by_type.get("citation_support_audit")),
+            _load_json(project_root, by_type.get("citation_blockers")),
+        )
+    if capability_id == "theory-architecture":
+        return evaluate_theory_architecture(
+            _load_json(project_root, by_type.get("theory_candidates")),
+            _load_json(project_root, by_type.get("construct_map")),
+            _load_json(project_root, by_type.get("theory_decision_packet")),
+            _load_text(project_root, by_type.get("theory_rationale")),
+        )
     return []

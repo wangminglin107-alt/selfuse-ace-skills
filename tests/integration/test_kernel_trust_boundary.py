@@ -1,3 +1,4 @@
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -306,3 +307,116 @@ def test_clean_audit_yaml_cannot_hide_first_study_claim_in_novelty_matrix(tmp_pa
     assert outcome.action is StopAction.BLOCK
     assert evidence_gate.status is GateStatus.FAIL
     assert any("matrix" in finding.casefold() for finding in evidence_gate.findings)
+
+
+def test_v2a_kernel_rejects_forged_pass_for_metadata_only_corpus(tmp_path: Path):
+    inputs = []
+    for artifact_type in ("source_registry", "source_document"):
+        relative = f"inputs/{artifact_type}.json"
+        destination = tmp_path / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_text("{}", encoding="utf-8", newline="\n")
+        inputs.append(
+            InputArtifactRef(
+                artifact_id=f"input-{artifact_type}",
+                type=artifact_type,
+                path_or_uri=relative,
+            )
+        )
+    execution_request = ExecutionRequest(
+        request_id="v2a-trust-request",
+        project_id="v2a-trust-project",
+        target=TargetRef(kind=TargetKind.CAPABILITY, id="paper-knowledge-base"),
+        mode=RunMode.INTERACTIVE,
+        goal="Reject forged V2A gates",
+        inputs=inputs,
+    )
+    coordinator = RunCoordinator(tmp_path, catalog())
+    context = coordinator.start(execution_request)
+    coordinator.begin_target(context.run_id, "paper-knowledge-base")
+
+    index = {
+        "schema_version": "1.0",
+        "documents": [
+            {
+                "source_id": "source-1",
+                "title": "Metadata-only source",
+                "authors": ["Researcher, A."],
+                "identifiers": {},
+                "artifact_id": "source-artifact",
+                "path": "inputs/source_document.json",
+                "artifact_sha256": "a" * 64,
+                "imported_at": "2026-08-26T12:00:00Z",
+                "document_type": "article",
+                "language": "en",
+                "access_state": "metadata_only",
+                "privacy_label": "public",
+                "content_availability": "metadata_only",
+                "locators": [],
+                "extraction_method": "metadata-provider",
+                "extraction_warnings": [],
+                "version_state": "current",
+                "supersedes_source_id": None,
+                "superseded_by_source_id": None,
+                "metadata_verification": "verified",
+            }
+        ],
+    }
+    status = {
+        "schema_version": "1.0",
+        "artifact_hashes": {"source-1": "a" * 64},
+        "unresolved_duplicate_groups": [],
+        "privacy_declared": True,
+        "coverage_limits": ["Metadata only."],
+    }
+    output_dir = tmp_path / "artifacts" / "paper-knowledge-base"
+    output_dir.mkdir(parents=True)
+    (output_dir / "document_index.json").write_text(
+        json.dumps(index), encoding="utf-8", newline="\n"
+    )
+    (output_dir / "corpus_status.json").write_text(
+        json.dumps(status), encoding="utf-8", newline="\n"
+    )
+    store = ArtifactStore(tmp_path)
+    artifacts = [
+        store.register(
+            "artifacts/paper-knowledge-base/document_index.json",
+            artifact_id="document-index",
+            artifact_type="document_index",
+            schema_version="1.0",
+            producing_capability="paper-knowledge-base",
+        ),
+        store.register(
+            "artifacts/paper-knowledge-base/corpus_status.json",
+            artifact_id="corpus-status",
+            artifact_type="corpus_status",
+            schema_version="1.0",
+            producing_capability="paper-knowledge-base",
+        ),
+    ]
+    forged = [
+        GateResult(
+            gate_id=gate_id,
+            gate_version="999",
+            status=GateStatus.PASS,
+            severity=GateSeverity.INFO,
+        )
+        for gate_id in catalog().capabilities["paper-knowledge-base"].exit_gates
+    ]
+    result = ExecutionResult(
+        request_id=execution_request.request_id,
+        run_id=context.run_id,
+        target_id="paper-knowledge-base",
+        status=RunStatus.COMPLETED,
+        artifacts=artifacts,
+        gate_results=forged,
+    )
+
+    outcome = coordinator.complete_target(context.run_id, result)
+
+    locator_gate = next(
+        item for item in outcome.gate_results if item.gate_id == "corpus.locators"
+    )
+    assert outcome.action is StopAction.BLOCK
+    assert locator_gate.status is GateStatus.FAIL
+    assert locator_gate.gate_version == "1.0"

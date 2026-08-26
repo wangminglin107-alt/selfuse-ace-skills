@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/theory-decision-packet/1.0",
+  "title": "Theory Decision Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "recommendation", "selected_candidate_id", "authorization_state", "user_decision_id", "rationale", "acknowledged_contradiction_ids"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "recommendation": {"enum": ["single_theory", "bounded_integration", "mechanism_framework", "descriptive"]},
+    "selected_candidate_id": {"type": ["string", "null"]},
+    "authorization_state": {"enum": ["proposed", "selected"]},
+    "user_decision_id": {"type": ["string", "null"]},
+    "rationale": {"type": "string", "minLength": 1},
+    "acknowledged_contradiction_ids": {"type": "array", "items": {"type": "string"}}
+  }
+}

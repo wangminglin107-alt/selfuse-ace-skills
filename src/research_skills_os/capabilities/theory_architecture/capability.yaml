@@ -1,0 +1,22 @@
+spec_version: "1.0"
+kind: capability
+id: theory-architecture
+version: "1.0"
+input_types: [research_brief_metadata, novelty_audit, synthesis_matrix, contradiction_ledger, citation_support_audit]
+output_types: [theory_candidates, construct_map, theory_rationale, theory_decision_packet]
+entry_gates: [contract.valid, synthesis.material_contradictions, citation.content_support]
+exit_gates:
+  - theory.required
+  - theory.evidence_fit
+  - theory.construct_consistency
+  - theory.level_consistency
+  - theory.contradictions_acknowledged
+  - theory.no_forced_theory
+  - theory.user_decision
+  - provenance.complete
+  - uncertainty.explicit
+specializations: [communication, sociology]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

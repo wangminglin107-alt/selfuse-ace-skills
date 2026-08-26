@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "artifact_hashes": {
+    "source-a": "a504d982c35a30d65a76f0a65959bfa334909525acb7045ff6c441e8aeee4fed",
+    "source-b": "95b1c26cf51dc77cf05228e5cab3b20038dafccafeac3bbf77424fed646b3171"
+  },
+  "unresolved_duplicate_groups": [],
+  "privacy_declared": true,
+  "coverage_limits": ["Synthetic offline fixture only."]
+}

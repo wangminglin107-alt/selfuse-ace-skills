@@ -4,7 +4,7 @@ id: theory-architecture
 version: "1.0"
 input_types: [research_brief_metadata, novelty_audit, synthesis_matrix, contradiction_ledger, citation_support_audit]
 output_types: [theory_candidates, construct_map, theory_rationale, theory_decision_packet]
-entry_gates: [contract.valid, synthesis.material_contradictions, citation.content_support]
+entry_gates: [contract.valid, provider.policy]
 exit_gates:
   - theory.required
   - theory.evidence_fit

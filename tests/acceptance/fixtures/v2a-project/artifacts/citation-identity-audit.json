@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "records": [
+    {
+      "citation_id": "citation-a",
+      "source_id": "source-a",
+      "source_type": "report",
+      "claimed_title": "Fixture Source A",
+      "claimed_authors": ["Fixture Author A"],
+      "claimed_container": "Local Acceptance Fixtures",
+      "claimed_year": 2026,
+      "claimed_identifier": null,
+      "verified_title": "Fixture Source A",
+      "verified_authors": ["Fixture Author A"],
+      "verified_container": "Local Acceptance Fixtures",
+      "verified_year": 2026,
+      "verified_identifier": null,
+      "route": "official_source",
+      "official_record_locator": "https://research-skills-os.local/fixtures/source-a",
+      "identity_state": "verified",
+      "publication_status": "current",
+      "status_note": "Local synthetic fixture identity checked."
+    },
+    {
+      "citation_id": "citation-b",
+      "source_id": "source-b",
+      "source_type": "report",
+      "claimed_title": "Fixture Source B",
+      "claimed_authors": ["Fixture Author B"],
+      "claimed_container": "Local Acceptance Fixtures",
+      "claimed_year": 2026,
+      "claimed_identifier": null,
+      "verified_title": "Fixture Source B",
+      "verified_authors": ["Fixture Author B"],
+      "verified_container": "Local Acceptance Fixtures",
+      "verified_year": 2026,
+      "verified_identifier": null,
+      "route": "official_source",
+      "official_record_locator": "https://research-skills-os.local/fixtures/source-b",
+      "identity_state": "verified",
+      "publication_status": "current",
+      "status_note": "Local synthetic fixture identity checked."
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "content_claims_requested": true,
+  "records": [
+    {
+      "support_id": "support-a",
+      "citation_id": "citation-a",
+      "claim_id": "claim-association",
+      "claim_text": "The first synthetic subset reports a positive association.",
+      "evidence_row_id": "row-a",
+      "evidence_content_sha256": "4bee83a06838420b43293169df2ded47dcf910f111b1594784b60ba0e6178838",
+      "locator": {"page": null, "section": "Findings", "block_id": "source-a-findings", "content_sha256": "4bee83a06838420b43293169df2ded47dcf910f111b1594784b60ba0e6178838"},
+      "support_state": "supports",
+      "claim_strength": "associational",
+      "passage_strength": "associational",
+      "verifier_note": "Exact passage supports the bounded claim."
+    },
+    {
+      "support_id": "support-b",
+      "citation_id": "citation-b",
+      "claim_id": "claim-null",
+      "claim_text": "The second synthetic subset reports a null association.",
+      "evidence_row_id": "row-b",
+      "evidence_content_sha256": "a299acc0e0a0a784f49e8fff795e624c3356dddf7ab970a6cb52af59b7e6a387",
+      "locator": {"page": null, "section": "Findings", "block_id": "source-b-findings", "content_sha256": "a299acc0e0a0a784f49e8fff795e624c3356dddf7ab970a6cb52af59b7e6a387"},
+      "support_state": "supports",
+      "claim_strength": "associational",
+      "passage_strength": "associational",
+      "verifier_note": "Exact passage supports the bounded null claim."
+    }
+  ]
+}

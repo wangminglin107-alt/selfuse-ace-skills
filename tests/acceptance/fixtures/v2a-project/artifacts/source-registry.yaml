@@ -1,0 +1,26 @@
+schema_version: "1.0"
+sources:
+  - source_id: source-a
+    title: Fixture Source A
+    status: verified_content
+    decision: include
+    decision_reason: Synthetic passage for offline acceptance.
+    provenance:
+      provider: local-manual
+      locator: sources/source-a.md
+      retrieved_at: 2026-08-26T12:00:00Z
+      content_sha256: a504d982c35a30d65a76f0a65959bfa334909525acb7045ff6c441e8aeee4fed
+    metadata_verification: verified
+    content_verification: verified
+  - source_id: source-b
+    title: Fixture Source B
+    status: verified_content
+    decision: include
+    decision_reason: Synthetic null passage for offline acceptance.
+    provenance:
+      provider: local-manual
+      locator: sources/source-b.md
+      retrieved_at: 2026-08-26T12:00:00Z
+      content_sha256: 95b1c26cf51dc77cf05228e5cab3b20038dafccafeac3bbf77424fed646b3171
+    metadata_verification: verified
+    content_verification: verified

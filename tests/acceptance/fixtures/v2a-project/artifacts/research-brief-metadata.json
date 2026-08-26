@@ -1,0 +1,6 @@
+{
+  "schema_version": "1.0",
+  "research_question": "How does account type relate to thirty-day engagement in the bounded archive?",
+  "unit_of_analysis": "account-day",
+  "claim_boundary": "associational"
+}

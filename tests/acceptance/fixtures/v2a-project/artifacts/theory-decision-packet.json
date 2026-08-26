@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "recommendation": "descriptive",
+  "selected_candidate_id": null,
+  "authorization_state": "proposed",
+  "user_decision_id": null,
+  "rationale": "Verified evidence does not establish a defensible mechanism.",
+  "acknowledged_contradiction_ids": ["conflict-1"]
+}

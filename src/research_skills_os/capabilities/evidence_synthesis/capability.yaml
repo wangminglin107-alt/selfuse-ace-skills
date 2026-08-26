@@ -4,7 +4,7 @@ id: evidence-synthesis
 version: "1.0"
 input_types: [research_brief_metadata, novelty_audit, document_index]
 output_types: [evidence_rows, synthesis_matrix, contradiction_ledger, coverage_report]
-entry_gates: [contract.valid, corpus.identity_integrity, corpus.locators]
+entry_gates: [contract.valid, provider.policy]
 exit_gates:
   - synthesis.required
   - synthesis.content_trace

@@ -1,0 +1,4 @@
+{
+  "schema_version": "1.0",
+  "entries": [{"contradiction_id": "conflict-1", "synthesis_group": "account-engagement", "row_ids": ["row-a", "row-b"], "competing_claims": ["Positive bounded association.", "Null bounded association."], "possible_scope_explanations": ["Different synthetic subsets."], "unresolved_issue": "The fixture cannot identify the source of heterogeneity.", "material": false, "resolution_state": "open", "boundary_note": "Treat the pattern as heterogeneous and descriptive."}]
+}

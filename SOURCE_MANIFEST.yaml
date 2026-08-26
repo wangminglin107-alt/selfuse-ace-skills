@@ -151,8 +151,11 @@ sources:
     upstream_commit: 3817cd194c31010febb1312ab786e53cd8154333
     source_file: skills/nature-academic-search/scripts/converters.py
     source_sha256: 25155cd7070e34f344b20c7841c22918f1733b1cd95b5cf4ca51899728692d6d
-    reuse_mode: reference_only
-    modifications: []
+    reuse_mode: adapted
+    local_target: src/research_skills_os/capabilities/paper_knowledge_base/models.py
+    modifications:
+      - Retained deterministic HTML removal and whitespace normalization for identity comparison.
+      - Removed RIS output, provider assumptions, and permissive untyped dispatch.
     license: &apache_v2a {spdx: Apache-2.0, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
     security: &offline_v2a
       network: none
@@ -162,19 +165,28 @@ sources:
       subprocess: false
       filesystem_scope: Read-only locked checkout outside the runtime package.
       review_status: approved
-    tests: &unreused_v2a {upstream: [], local: []}
-    notes: Candidate for narrow adaptation after the target implementation and regression tests exist.
+    tests:
+      upstream: []
+      local: [tests/unit/capabilities/test_paper_knowledge_base_gates.py]
+    notes: Narrow text normalization adaptation only; no provider or format-conversion code runs.
 
   - <<: *nature_v2a
     source_file: skills/nature-academic-search/scripts/academic_search.py
     source_sha256: 48a749c71f66ab000bf28795fc7e2388b26e5c22d7c0eb0500b8fc7f5d13a96f
     reuse_mode: conceptual
+    local_target: null
+    modifications: []
+    tests: &unreused_v2a {upstream: [], local: []}
     notes: Provider clients are excluded; only normalization and provider-separation ideas are retained.
 
   - <<: *nature_v2a
     capability: citation-verification
     source_file: skills/nature-citation/scripts/nature_citation.py
     source_sha256: 0cdc8290bc7b9294bcc8ba99cf57f202ad24251cd8fcc4b8d07c4bbfbe9f9079
+    reuse_mode: reference_only
+    local_target: null
+    modifications: []
+    tests: *unreused_v2a
     notes: Candidate for narrow status-model adaptation; live provider code is not reused.
 
   - &paperspine_v2a

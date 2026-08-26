@@ -1,0 +1,29 @@
+spec_version: "1.0"
+kind: capability
+id: paper-knowledge-base
+version: "1.0"
+input_types:
+  - source_registry
+  - source_document
+output_types:
+  - document_index
+  - corpus_status
+entry_gates:
+  - contract.valid
+  - provider.policy
+exit_gates:
+  - corpus.required
+  - corpus.identity_integrity
+  - corpus.locators
+  - corpus.privacy_declared
+  - provenance.complete
+  - uncertainty.explicit
+specializations:
+  - communication
+  - sociology
+providers:
+  - local-manual
+resumable: true
+network: none
+side_effects:
+  - write_project_artifacts

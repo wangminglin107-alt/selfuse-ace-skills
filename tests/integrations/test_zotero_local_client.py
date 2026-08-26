@@ -2,16 +2,33 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
+from typing import ClassVar
 
 import pytest
 
+import research_skills_os.integrations.zotero_obsidian.zotero as zotero_module
 from research_skills_os.integrations.zotero_obsidian import SyncSource
 from research_skills_os.integrations.zotero_obsidian.zotero import (
     HttpResult,
     LocalZoteroClient,
+    UrllibTransport,
     ZoteroIdentityCollision,
     ZoteroVersionUnsupported,
 )
+
+
+class FakeUrlResponse:
+    status = 200
+    headers: ClassVar[dict[str, str]] = {}
+
+    def __enter__(self) -> FakeUrlResponse:
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+    def read(self) -> bytes:
+        return b"{}"
 
 
 @dataclass(frozen=True)
@@ -60,6 +77,22 @@ def source_record() -> SyncSource:
         note_source="notes/brady.md",
         inspected_content=True,
     )
+
+
+def test_default_transport_allows_time_for_human_authorization(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: dict[str, float] = {}
+
+    def fake_urlopen(request: object, *, timeout: float) -> FakeUrlResponse:
+        observed["timeout"] = timeout
+        return FakeUrlResponse()
+
+    monkeypatch.setattr(zotero_module, "urlopen", fake_urlopen)
+
+    UrllibTransport().request("GET", "/api/", {}, None)
+
+    assert observed["timeout"] == 60
 
 
 def test_zotero_9_is_rejected_before_any_write() -> None:

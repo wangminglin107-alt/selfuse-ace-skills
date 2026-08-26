@@ -1,4 +1,23 @@
 {
   "version": 1,
-  "records": {}
+  "records": {
+    "norc-gsma-method": {
+      "identity": "url:https://gss.norc.org/gsma.html",
+      "content_sha256": "5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5",
+      "zotero_item_key": "FYU3BR8Y",
+      "obsidian_note": "Research/GSMA情绪与互动/Sources/Papers/norc-gsma-method.md"
+    },
+    "brady-2017": {
+      "identity": "doi:10.1073/pnas.1618923114",
+      "content_sha256": "4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae",
+      "zotero_item_key": "LLWLLZ5B",
+      "obsidian_note": "Research/GSMA情绪与互动/Sources/Papers/brady-2017.md"
+    },
+    "najafizada-2022": {
+      "identity": "doi:10.1186/s42238-022-00132-1",
+      "content_sha256": "be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61",
+      "zotero_item_key": "YBKGY5GP",
+      "obsidian_note": "Research/GSMA情绪与互动/Sources/Papers/najafizada-2022.md"
+    }
+  }
 }

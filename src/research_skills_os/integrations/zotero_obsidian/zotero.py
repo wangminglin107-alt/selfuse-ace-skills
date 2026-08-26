@@ -53,8 +53,14 @@ class HttpTransport(Protocol):
 
 
 class UrllibTransport:
-    def __init__(self, base_url: str = "http://127.0.0.1:23119") -> None:
+    def __init__(
+        self,
+        base_url: str = "http://127.0.0.1:23119",
+        *,
+        timeout_seconds: float = 60,
+    ) -> None:
         self._base_url = base_url.rstrip("/")
+        self._timeout_seconds = timeout_seconds
 
     def request(
         self, method: str, path: str, headers: dict[str, str], body: bytes | None
@@ -63,7 +69,7 @@ class UrllibTransport:
             f"{self._base_url}{path}", data=body, headers=headers, method=method
         )
         try:
-            with urlopen(request, timeout=10) as response:
+            with urlopen(request, timeout=self._timeout_seconds) as response:
                 return HttpResult(
                     status=response.status,
                     headers=dict(response.headers.items()),

@@ -12,6 +12,9 @@ $RuntimeRootPath = [IO.Path]::GetFullPath($RuntimeRoot)
 $LauncherDirectoryPath = [IO.Path]::GetFullPath($LauncherDirectory)
 $LauncherPath = [IO.Path]::GetFullPath((Join-Path $LauncherDirectoryPath 'research-os.cmd'))
 $RecordPath = Join-Path $RuntimeRootPath '.research-skills-os-runtime-install.json'
+$ExpectedBackupRoot = [IO.Path]::GetFullPath((Join-Path (
+            [IO.Path]::GetDirectoryName($RuntimeRootPath)
+        ) '.research-skills-os-runtime-backups'))
 
 function Assert-SafeRuntimeRoot {
     param([string]$Path)
@@ -33,17 +36,45 @@ function Assert-PathEquals {
     }
 }
 
-function Assert-BackupPath {
-    param([string]$BackupRoot, [string]$Candidate)
-    $root = [IO.Path]::GetFullPath($BackupRoot).TrimEnd('\', '/')
+function Assert-NoReparsePoint {
+    param([string]$Path)
+    if (-not (Test-Path -LiteralPath $Path)) { return }
+    $items = @((Get-Item -LiteralPath $Path -Force))
+    if ($items[0].PSIsContainer) {
+        $items += @(Get-ChildItem -LiteralPath $Path -Force -Recurse)
+    }
+    foreach ($item in $items) {
+        if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) {
+            throw "Reparse points are not allowed in runtime uninstall trees: $($item.FullName)"
+        }
+    }
+}
+
+function Assert-BackupSession {
+    param([string]$Candidate)
+    $actual = [IO.Path]::GetFullPath($Candidate).TrimEnd('\', '/')
+    $parent = [IO.Path]::GetDirectoryName($actual)
+    if (-not $parent.Equals($ExpectedBackupRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        throw 'Install record contains an unsafe backup root.'
+    }
+    if (-not (Test-Path -LiteralPath $actual -PathType Container)) {
+        throw 'Recorded backup root is missing.'
+    }
+    Assert-NoReparsePoint -Path $actual
+    return $actual
+}
+
+function Assert-BackupChild {
+    param([string]$SessionRoot, [string]$Candidate, [string]$ExpectedName)
+    $expected = [IO.Path]::GetFullPath((Join-Path $SessionRoot $ExpectedName))
     $actual = [IO.Path]::GetFullPath($Candidate)
-    $prefix = $root + [IO.Path]::DirectorySeparatorChar
-    if (-not $actual.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) {
+    if (-not $actual.Equals($expected, [StringComparison]::OrdinalIgnoreCase)) {
         throw 'Install record contains an unsafe backup path.'
     }
 }
 
 Assert-SafeRuntimeRoot -Path $RuntimeRootPath
+Assert-NoReparsePoint -Path $RuntimeRootPath
 if (-not (Test-Path -LiteralPath $RecordPath -PathType Leaf)) {
     if (Test-Path -LiteralPath $RuntimeRootPath) {
         throw 'Runtime exists without a managed install record; refusing uninstall.'
@@ -64,6 +95,7 @@ Assert-PathEquals -Expected $LauncherPath -Actual $Record.launcher -Label 'launc
 if (-not (Test-Path -LiteralPath $LauncherPath -PathType Leaf)) {
     throw 'Recorded launcher is missing; refusing partial uninstall.'
 }
+Assert-NoReparsePoint -Path $LauncherPath
 $LauncherDigest = (Get-FileHash -LiteralPath $LauncherPath -Algorithm SHA256).Hash.ToLowerInvariant()
 if ($LauncherDigest -ne $Record.launcher_sha256) {
     throw 'Installed launcher was modified; refusing uninstall.'
@@ -73,17 +105,20 @@ $RuntimeBackup = $Record.runtime_backup
 $LauncherBackup = $Record.launcher_backup
 if ($null -ne $RuntimeBackup -or $null -ne $LauncherBackup) {
     if ($null -eq $Record.backup_root) { throw 'Install record is missing its backup root.' }
+    $BackupSession = Assert-BackupSession -Candidate $Record.backup_root
     if ($null -ne $RuntimeBackup) {
-        Assert-BackupPath -BackupRoot $Record.backup_root -Candidate $RuntimeBackup
+        Assert-BackupChild -SessionRoot $BackupSession -Candidate $RuntimeBackup -ExpectedName 'runtime'
         if (-not (Test-Path -LiteralPath $RuntimeBackup -PathType Container)) {
             throw 'Recorded runtime backup is missing.'
         }
+        Assert-NoReparsePoint -Path $RuntimeBackup
     }
     if ($null -ne $LauncherBackup) {
-        Assert-BackupPath -BackupRoot $Record.backup_root -Candidate $LauncherBackup
+        Assert-BackupChild -SessionRoot $BackupSession -Candidate $LauncherBackup -ExpectedName 'research-os.cmd'
         if (-not (Test-Path -LiteralPath $LauncherBackup -PathType Leaf)) {
             throw 'Recorded launcher backup is missing.'
         }
+        Assert-NoReparsePoint -Path $LauncherBackup
     }
 }
 
@@ -99,6 +134,11 @@ if ($WhatIf) {
     exit 0
 }
 
+Assert-NoReparsePoint -Path $LauncherPath
+Assert-NoReparsePoint -Path $RuntimeRootPath
+if ($null -ne $Record.backup_root) {
+    Assert-NoReparsePoint -Path $Record.backup_root
+}
 Remove-Item -LiteralPath $LauncherPath -Force
 Assert-SafeRuntimeRoot -Path $RuntimeRootPath
 Remove-Item -LiteralPath $RuntimeRootPath -Recurse -Force

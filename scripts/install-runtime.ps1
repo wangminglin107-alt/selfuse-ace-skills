@@ -166,11 +166,13 @@ $InstalledLauncher = $false
 try {
     if ($RuntimeExists) {
         Assert-NoReparsePoint -Path $RuntimeRootPath
+        Assert-NoReparsePoint -Path $BackupRoot
         New-Item -ItemType Directory -Path $BackupSession -Force | Out-Null
         $RuntimeBackup = Join-Path $BackupSession 'runtime'
         Move-Item -LiteralPath $RuntimeRootPath -Destination $RuntimeBackup
     }
     if ($LauncherExists) {
+        Assert-NoReparsePoint -Path $LauncherPath
         if (-not (Test-Path -LiteralPath $BackupSession)) {
             New-Item -ItemType Directory -Path $BackupSession -Force | Out-Null
         }

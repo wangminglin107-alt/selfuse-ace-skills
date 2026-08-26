@@ -31,10 +31,17 @@ resuming a run.
 |---|---|
 | `interactive` | Stop after every completed capability checkpoint. |
 | `checkpointed` | Continue until the next declared review node or blocking condition. |
-| `autonomous` | Continue to a terminal node unless a gate blocks; autonomy cannot waive gates. |
+| `autonomous` | Continue until a gate blocks, the terminal completes, or an explicit autonomous-review node pauses. |
 
 At every stop, expose the smallest meaningful next action. Do not recap unrelated work or start a
 later capability while paused.
+
+## Workflow Presets
+
+- `idea-to-novelty` routes framing, literature intelligence, and novelty audit.
+- `literature-to-theory` routes paper knowledge base, evidence synthesis, citation verification,
+  and theory architecture. Its terminal theory node is an explicit autonomous-review node, so no
+  run mode silently converts a proposal into a user selection.
 
 ## Resume Rule
 
@@ -66,4 +73,3 @@ and a durable resume token are unavailable instead of fabricating either.
 | Jumping from framing to novelty | Follow the graph through `literature-intelligence` |
 | Treating prose as a checkpoint | Use the kernel-issued checkpoint/resume identifier |
 | Continuing after a blocking gate | Persist the blocker and stop at that node |
-

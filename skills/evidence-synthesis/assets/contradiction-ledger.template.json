@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "entries": [
+    {
+      "contradiction_id": "conflict-1",
+      "synthesis_group": "group-1",
+      "row_ids": ["row-1", "row-2"],
+      "competing_claims": ["", ""],
+      "possible_scope_explanations": [],
+      "unresolved_issue": "",
+      "material": true,
+      "resolution_state": "open",
+      "boundary_note": null
+    }
+  ]
+}

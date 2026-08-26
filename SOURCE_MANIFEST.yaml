@@ -144,6 +144,124 @@ sources:
     tests: {upstream: [], local: []}
     notes: Optional provider candidate only; output is never automatically verified evidence.
 
+  - &nature_v2a
+    capability: paper-knowledge-base
+    source_kind: git
+    upstream_repo: Yuan1z0825/nature-skills
+    upstream_commit: 3817cd194c31010febb1312ab786e53cd8154333
+    source_file: skills/nature-academic-search/scripts/converters.py
+    source_sha256: 25155cd7070e34f344b20c7841c22918f1733b1cd95b5cf4ca51899728692d6d
+    reuse_mode: reference_only
+    modifications: []
+    license: &apache_v2a {spdx: Apache-2.0, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: &offline_v2a
+      network: none
+      endpoints: []
+      network_notes: The locked file is inspected offline and is not imported or executed.
+      secrets: []
+      subprocess: false
+      filesystem_scope: Read-only locked checkout outside the runtime package.
+      review_status: approved
+    tests: &unreused_v2a {upstream: [], local: []}
+    notes: Candidate for narrow adaptation after the target implementation and regression tests exist.
+
+  - <<: *nature_v2a
+    source_file: skills/nature-academic-search/scripts/academic_search.py
+    source_sha256: 48a749c71f66ab000bf28795fc7e2388b26e5c22d7c0eb0500b8fc7f5d13a96f
+    reuse_mode: conceptual
+    notes: Provider clients are excluded; only normalization and provider-separation ideas are retained.
+
+  - <<: *nature_v2a
+    capability: citation-verification
+    source_file: skills/nature-citation/scripts/nature_citation.py
+    source_sha256: 0cdc8290bc7b9294bcc8ba99cf57f202ad24251cd8fcc4b8d07c4bbfbe9f9079
+    notes: Candidate for narrow status-model adaptation; live provider code is not reused.
+
+  - &paperspine_v2a
+    capability: paper-knowledge-base
+    source_kind: git
+    upstream_repo: WUBING2023/PaperSpine
+    upstream_commit: 360ae775639a27458d4f24040b65a4cbe935b213
+    source_file: src/scripts/artifact_check.py
+    source_sha256: 2e979463addcb31fe334ef2aaefeab3e3d4eece226f34961ca022833d8b0ad7b
+    reuse_mode: conceptual
+    modifications: []
+    license: &mit_v2a {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: *offline_v2a
+    tests: *unreused_v2a
+    notes: Artifact-gate structure only; no computer-science-specific thresholds are reused.
+
+  - <<: *paperspine_v2a
+    capability: citation-verification
+    source_file: src/scripts/citation_quality_audit.py
+    source_sha256: 4d2f1717ddc19e06eb0f490d808e6ad9253d242b004eb2048ad47685196e3963
+    reuse_mode: reference_only
+    notes: Candidate for narrow audit-structure adaptation after local tests exist.
+
+  - <<: *paperspine_v2a
+    capability: evidence-synthesis
+    source_file: src/scripts/results_validation_check.py
+    source_sha256: f977562f3edfc990a6a9bd95cb11c7278cf4bb194668a2b139db7d70ffe23195
+    notes: Contribution-to-result mapping informs claim-to-passage requirements conceptually.
+
+  - capability: citation-verification
+    source_kind: git
+    upstream_repo: ganzhi-black/humanities-thesis-skill
+    upstream_commit: 9f9c97162e250df8d6c214b828bb973828a2a780
+    source_file: scripts/search.py
+    source_sha256: 4e515464397fc48f52fe1b206db2c1ed28b0fb6bcc33d6129c923b267a6b9985
+    reuse_mode: conceptual
+    modifications: []
+    license: *mit_v2a
+    security: *offline_v2a
+    tests: *unreused_v2a
+    notes: Chinese query expansion and provider separation only; the HTTP client is excluded.
+
+  - capability: citation-verification
+    source_kind: git
+    upstream_repo: Liuxiangjian-ai/reference-checker-skill
+    upstream_commit: f30bd18b79f38bb24e57cad6ea0132323e329c94
+    source_file: SKILL.md
+    source_sha256: 8f5ad92c6a8b2acab7ecf8f6d09934573f876927717b1ec00fc2be445928e353
+    reuse_mode: conceptual
+    modifications: []
+    license: *mit_v2a
+    security: *offline_v2a
+    tests: *unreused_v2a
+    notes: Source-type-specific Chinese verification routes inform vocabulary only.
+
+  - &light_v2a
+    capability: research-os
+    source_kind: git
+    upstream_repo: Light0305/Light-skills
+    upstream_commit: 6b44f57d1274eb38a6c79dc29c2d21e5e0a225a9
+    source_file: skills/light-orchestrator/scripts/execution_mode.py
+    source_sha256: d78dc3a0c5b802fb83fd8907d084a5595368578d6c800c823282e4dc1d961269
+    reuse_mode: conceptual
+    modifications: []
+    license: *mit_v2a
+    security: *offline_v2a
+    tests: *unreused_v2a
+    notes: Minimum-sufficient mode behavior informs additive V2A stop tests only.
+
+  - <<: *light_v2a
+    source_file: skills/light-orchestrator/scripts/workflow_ledger.py
+    source_sha256: d6c1a25078a3ad15dbde2ef18c388f4cd1de4bf899c059eda67b1c0fa60b4f2a
+    notes: Workflow-ledger ideas inform checkpoint invariants; no code is copied.
+
+  - capability: evidence-synthesis
+    source_kind: git
+    upstream_repo: Imbad0202/academic-research-skills
+    upstream_commit: 127ff85e4bbfcdd10b95040537b6c6bd7ad17aeb
+    source_file: scripts/evidence_rows.py
+    source_sha256: 70fed660ae6e10a644d597338d625949f2a306ffa62a83de1d079eec0489f2c8
+    reuse_mode: conceptual
+    modifications: []
+    license: {spdx: CC-BY-NC-4.0, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: *offline_v2a
+    tests: *unreused_v2a
+    notes: Non-commercial code is not copied; evidence-row requirements are independently implemented.
+
   - &local_reference
     capability: future-argument-architecture
     source_kind: local

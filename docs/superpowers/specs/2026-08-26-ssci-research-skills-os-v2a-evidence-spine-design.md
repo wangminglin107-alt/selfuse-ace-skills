@@ -18,8 +18,9 @@ V2 will be delivered as three independently useful slices rather than one large 
    and theory architecture.
 2. **V2B — empirical spine:** research design, data audit, statistical verification, and figure
    intelligence.
-3. **V2C — manuscript spine:** argument architecture, section drafting, bilingual alignment,
-   LaTeX packaging, peer review, revision, and reproducibility packaging.
+3. **V2C — writing integration spine:** connect the seven existing SSCI writing/review Skills to
+   OS evidence, state, checkpoints, and gates; add LaTeX and reproducibility packaging without
+   rewriting the established writing workflow.
 
 This specification authorizes planning for V2A only. V2B and V2C remain program-level extension
 points and require their own design amendments and implementation plans. The same real project is
@@ -29,6 +30,10 @@ instead of producing disconnected demonstrations.
 V2A preserves the V1 separation between the Core Research OS, independently callable
 capabilities, and lightweight workflows. It does not create a monolithic research Skill and does
 not place academic reasoning inside the workflow layer.
+
+The seven pre-existing local SSCI Skills remain the writing authority. V2C will build adapters,
+artifact mappings, gates, and regression tests around them. It will not replace, fork, or silently
+rewrite their prompts and scholarly rules.
 
 ## 2. Why this slice comes first
 
@@ -345,9 +350,10 @@ It must support:
 - theory pluralism and defensible descriptive work;
 - exact original-language passages with page or stable section locators.
 
-English/Chinese termbase authority and prose alignment belong to V2C. V2A may store reviewed
-translations beside original passages, but only the original passage is treated as citation
-evidence.
+English/Chinese termbase authority and prose alignment remain owned by the existing bilingual and
+section-drafting Skills. V2C will connect their outputs to the OS artifact and gate contracts. V2A
+may store reviewed translations beside original passages, but only the original passage is treated
+as citation evidence.
 
 ## 9. Upstream source decisions
 
@@ -477,8 +483,9 @@ V2A completes the project's literature and theory layer:
 - an allowed descriptive outcome if no theory is sufficiently supported.
 
 V2B will add preregistered cleaning, transformed sentiment and engagement-rate definitions,
-time-series-aware uncertainty, robustness checks, and figures. V2C will add the manuscript,
-review/revision record, and reproducibility package.
+time-series-aware uncertainty, robustness checks, and figures. V2C will route the verified evidence
+and results through the existing SSCI writing Skills, then add the manuscript checkpoint set,
+review/revision record, LaTeX packaging, and reproducibility package.
 
 The real project is not an acceptance shortcut. Automated tests use small local fixtures; the real
 project separately demonstrates that the contracts work on genuine sources and data.

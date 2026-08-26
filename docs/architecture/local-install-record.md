@@ -10,13 +10,13 @@ Skill home: `C:\Users\10710\.codex\skills`
 
 Machine record: `C:\Users\10710\.codex\skills\.research-skills-os-install.json`
 
-Runtime installed at: `2026-08-26T02:54:16.6454153Z`
+Runtime installed at: `2026-08-26T02:57:45.3539377Z`
 
 Runtime root: `C:\Users\10710\.codex\research-skills-os-runtime`
 
 PATH launcher: `C:\Users\10710\bin\research-os.cmd`
 
-Runtime installation ID: `3f9cbebf516b421285f5dca9fa9aeee1`
+Runtime installation ID: `50ffee2de0634c1680e70cbc6a53665e`
 
 ## Installed Skills
 
@@ -50,9 +50,9 @@ seven existing Skills:
 
 - Temporary skill-home integration suite: `5 passed`.
 - Native Windows PowerShell 5.1 install, idempotent reinstall, and uninstall smoke: PASS.
-- Runtime installer contract suite: `6 passed`; the combined installation suite is `11 passed`.
-  Its seven runtime distributions are exact pins with SHA-256 hashes. Malformed backup-root and
-  runtime-junction regressions are included.
+- Runtime installer contract suite: `8 passed`; the combined installation suite is `13 passed`.
+  Its seven runtime distributions are exact pins with SHA-256 hashes. Malformed backup-root,
+  runtime-junction, backup-root-junction, and launcher-only collision regressions are included.
 - Fresh ordinary PowerShell resolved `research-os` from `C:\Users\10710\bin\research-os.cmd`;
   `research-os --help` and a real `project init` smoke both passed. A second runtime install
   returned `status: unchanged`.

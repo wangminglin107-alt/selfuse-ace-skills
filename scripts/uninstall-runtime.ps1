@@ -105,6 +105,7 @@ $RuntimeBackup = $Record.runtime_backup
 $LauncherBackup = $Record.launcher_backup
 if ($null -ne $RuntimeBackup -or $null -ne $LauncherBackup) {
     if ($null -eq $Record.backup_root) { throw 'Install record is missing its backup root.' }
+    Assert-NoReparsePoint -Path $ExpectedBackupRoot
     $BackupSession = Assert-BackupSession -Candidate $Record.backup_root
     if ($null -ne $RuntimeBackup) {
         Assert-BackupChild -SessionRoot $BackupSession -Candidate $RuntimeBackup -ExpectedName 'runtime'
@@ -137,6 +138,7 @@ if ($WhatIf) {
 Assert-NoReparsePoint -Path $LauncherPath
 Assert-NoReparsePoint -Path $RuntimeRootPath
 if ($null -ne $Record.backup_root) {
+    Assert-NoReparsePoint -Path $ExpectedBackupRoot
     Assert-NoReparsePoint -Path $Record.backup_root
 }
 Remove-Item -LiteralPath $LauncherPath -Force

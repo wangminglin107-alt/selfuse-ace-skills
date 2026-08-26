@@ -164,10 +164,13 @@ $TemporaryWheelDirectory = Join-Path ([IO.Path]::GetTempPath()) "research-os-whe
 $InstalledRuntime = $false
 $InstalledLauncher = $false
 try {
+    if ($RuntimeExists -or $LauncherExists) {
+        Assert-NoReparsePoint -Path $BackupRoot
+    }
     if ($RuntimeExists) {
         Assert-NoReparsePoint -Path $RuntimeRootPath
-        Assert-NoReparsePoint -Path $BackupRoot
         New-Item -ItemType Directory -Path $BackupSession -Force | Out-Null
+        Assert-NoReparsePoint -Path $BackupRoot
         $RuntimeBackup = Join-Path $BackupSession 'runtime'
         Move-Item -LiteralPath $RuntimeRootPath -Destination $RuntimeBackup
     }
@@ -176,6 +179,7 @@ try {
         if (-not (Test-Path -LiteralPath $BackupSession)) {
             New-Item -ItemType Directory -Path $BackupSession -Force | Out-Null
         }
+        Assert-NoReparsePoint -Path $BackupRoot
         $LauncherBackup = Join-Path $BackupSession 'research-os.cmd'
         Move-Item -LiteralPath $LauncherPath -Destination $LauncherBackup
     }

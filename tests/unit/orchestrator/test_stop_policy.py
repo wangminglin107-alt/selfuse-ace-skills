@@ -38,6 +38,19 @@ def test_autonomous_mode_continues_until_terminal():
     assert policy.decide(RunMode.AUTONOMOUS, StopSignals(is_terminal=True)) is StopAction.COMPLETE
 
 
+def test_autonomous_mode_pauses_at_explicit_autonomous_review():
+    action = StopPolicy().decide(
+        RunMode.AUTONOMOUS,
+        StopSignals(autonomous_review=True),
+    )
+
+    assert action is StopAction.PAUSE
+
+
+def test_autonomous_mode_keeps_v1_default_behavior():
+    assert StopPolicy().decide(RunMode.AUTONOMOUS, StopSignals()) is StopAction.CONTINUE
+
+
 @pytest.mark.parametrize("mode", list(RunMode))
 def test_every_mode_blocks_on_global_integrity_or_security_failure(mode: RunMode):
     assert StopPolicy().decide(mode, StopSignals(global_blocked=True)) is StopAction.BLOCK

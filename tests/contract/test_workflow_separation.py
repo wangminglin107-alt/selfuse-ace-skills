@@ -10,6 +10,14 @@ from research_skills_os.core.router import Router
 ROOT = Path(__file__).parents[2]
 CAPABILITIES = ROOT / "src" / "research_skills_os" / "capabilities"
 WORKFLOW = ROOT / "src" / "research_skills_os" / "workflows" / "idea_to_novelty" / "workflow.yaml"
+V2A_WORKFLOW = (
+    ROOT
+    / "src"
+    / "research_skills_os"
+    / "workflows"
+    / "literature_to_theory"
+    / "workflow.yaml"
+)
 
 
 def load_catalog():
@@ -21,6 +29,27 @@ def load_catalog():
 
 def test_workflow_is_only_composition_metadata():
     raw = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    serialized = yaml.safe_dump(raw).casefold()
+
+    assert set(raw) == {
+        "spec_version",
+        "kind",
+        "id",
+        "version",
+        "entry_node",
+        "terminal_nodes",
+        "nodes",
+        "edges",
+        "artifact_mappings",
+        "global_gates",
+        "mode_stops",
+    }
+    for forbidden in ("prompt", "rubric", "template", "scholarly_rules", "instructions"):
+        assert forbidden not in serialized
+
+
+def test_v2a_workflow_is_only_composition_metadata():
+    raw = yaml.safe_load(V2A_WORKFLOW.read_text(encoding="utf-8"))
     serialized = yaml.safe_dump(raw).casefold()
 
     assert set(raw) == {

@@ -17,6 +17,7 @@ class StopAction(StrEnum):
 class StopSignals:
     is_terminal: bool = False
     human_review: bool = False
+    autonomous_review: bool = False
     material_uncertainty: bool = False
     conflicting_evidence: bool = False
     new_external_provider: bool = False
@@ -28,6 +29,8 @@ class StopPolicy:
         if signals.global_blocked:
             return StopAction.BLOCK
         if mode is RunMode.INTERACTIVE:
+            return StopAction.PAUSE
+        if mode is RunMode.AUTONOMOUS and signals.autonomous_review:
             return StopAction.PAUSE
         if mode is RunMode.CHECKPOINTED and any(
             (

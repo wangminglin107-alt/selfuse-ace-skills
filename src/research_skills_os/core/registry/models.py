@@ -32,6 +32,7 @@ class WorkflowNode(SpecModel):
     capability_id: str = Field(min_length=1)
     checkpoint: bool = True
     human_review: bool = False
+    autonomous_review: bool = False
 
 
 class WorkflowEdge(SpecModel):

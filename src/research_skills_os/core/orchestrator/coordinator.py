@@ -872,6 +872,7 @@ class RunCoordinator:
         return StopSignals(
             is_terminal=node.id in requested.terminal_nodes,
             human_review=(node.human_review or node.id in requested.mode_stops.checkpointed_nodes),
+            autonomous_review=node.autonomous_review,
             material_uncertainty=material_uncertainty,
         )
 

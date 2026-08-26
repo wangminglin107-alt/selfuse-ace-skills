@@ -1,0 +1,45 @@
+version: 1
+project_id: gsma-sentiment-engagement
+zotero_collection: Pilot｜GSMA情绪与互动
+obsidian_project: Research/GSMA情绪与互动
+sources:
+  - source_id: norc-gsma-method
+    title: GSMA Methodology Report February 2023
+    year: 2023
+    item_type: report
+    authors:
+      - NORC at the University of Chicago
+    url: https://gss.norc.org/gsma.html
+    content_sha256: 5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5
+    note_source: sources/norc-gsma-method.md
+    inspected_content: true
+  - source_id: brady-2017
+    title: Emotion shapes the diffusion of moralized content in social networks
+    year: 2017
+    item_type: journalArticle
+    authors:
+      - William J. Brady
+      - Julian A. Wills
+      - John T. Jost
+      - Joshua A. Tucker
+      - Jay J. Van Bavel
+    doi: 10.1073/pnas.1618923114
+    url: https://doi.org/10.1073/pnas.1618923114
+    content_sha256: 4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae
+    note_source: sources/brady-2017.md
+    inspected_content: true
+  - source_id: najafizada-2022
+    title: Analyzing sentiments and themes on cannabis in Canada using 2018 to 2020 Twitter data
+    year: 2022
+    item_type: journalArticle
+    authors:
+      - Maisam Najafizada
+      - Arifur Rahman
+      - Jennifer Donnan
+      - Zhihao Dong
+      - Lisa Bishop
+    doi: 10.1186/s42238-022-00132-1
+    url: https://doi.org/10.1186/s42238-022-00132-1
+    content_sha256: be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61
+    note_source: sources/najafizada-2022.md
+    inspected_content: true

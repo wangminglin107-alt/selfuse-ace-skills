@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "candidates": [
+    {
+      "candidate_id": "candidate-affective-diffusion",
+      "name": "情绪性语言—扩散迁移框架",
+      "theories": ["moral contagion as a transfer candidate"],
+      "construct_ids": ["aggregate-sentiment", "thirty-day-engagement"],
+      "mechanisms": ["情绪性语言可能提高消息的可分享性或反应倾向"],
+      "level_of_analysis": "account",
+      "evidence_row_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"],
+      "acknowledged_contradiction_ids": [],
+      "assumptions": [
+        "跨政治与大麻议题的语言—扩散关系具有有限可迁移性。",
+        "日级情绪汇总仍保留与互动有关的消息特征信号。"
+      ],
+      "compatibility_rationale": null,
+      "limitations": [
+        "Brady 的道德—情绪词并不等同于 VADER 情绪。",
+        "现有证据没有直接检验 GSMA 情绪与互动的关系。",
+        "账号类别—日聚合层面的结果不能下推到个人。"
+      ]
+    }
+  ]
+}

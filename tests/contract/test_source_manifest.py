@@ -43,6 +43,12 @@ V2A_REPOSITORIES = set(LOCKED_COMMITS) - {
     "Hsin-Hung/Academic-Skills",
     "LeonChaoX/Qinyan-Academic-Skills",
 }
+V2A_CAPABILITIES = {
+    "paper-knowledge-base",
+    "evidence-synthesis",
+    "citation-verification",
+    "research-os",
+}
 LOCAL_SKILLS = {
     "ssci-argument-architecture",
     "ssci-bilingual-writing",
@@ -141,7 +147,12 @@ def test_reference_only_sources_include_scipilot_and_qinyan_without_runtime_reus
 
 def test_v2a_reuse_is_traceable_and_excludes_insecure_http_client():
     manifest = load_manifest(MANIFEST)
-    v2a = [source for source in manifest.sources if source.upstream_repo in V2A_REPOSITORIES]
+    v2a = [
+        source
+        for source in manifest.sources
+        if source.upstream_repo in V2A_REPOSITORIES
+        and source.capability in V2A_CAPABILITIES
+    ]
 
     assert {source.upstream_repo for source in v2a} == V2A_REPOSITORIES
     assert all(
@@ -160,3 +171,39 @@ def test_every_locked_checkout_is_at_the_recorded_commit():
             ["git", "-C", str(checkout), "rev-parse", "HEAD"], text=True
         ).strip()
         assert head == commit
+
+
+def test_v2c_writing_capabilities_record_file_level_source_influence():
+    manifest = load_manifest(MANIFEST)
+    recorded = {
+        (source.capability, source.upstream_repo, source.source_file)
+        for source in manifest.sources
+    }
+
+    assert {
+        (
+            "ssci-argument-architecture",
+            "jin-s13/ai-research-writing-skill",
+            "references/paper-story.md",
+        ),
+        (
+            "ssci-section-drafting",
+            "jin-s13/ai-research-writing-skill",
+            "references/section-writing.md",
+        ),
+        (
+            "academic-prose-style-audit",
+            "WUBING2023/PaperSpine",
+            "src/scripts/style_metrics.py",
+        ),
+        (
+            "academic-prose-style-audit",
+            "Yuan1z0825/nature-skills",
+            "skills/nature-proposal-writer/references/chinese-review-writing-style.md",
+        ),
+        (
+            "ssci-bilingual-writing",
+            "Yuan1z0825/nature-skills",
+            "skills/nature-writing/static/fragments/language/zh-to-en.md",
+        ),
+    } <= recorded

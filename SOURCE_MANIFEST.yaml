@@ -282,17 +282,17 @@ sources:
     notes: Non-commercial code is not copied; evidence-row requirements are independently implemented.
 
   - &local_reference
-    capability: theory-architecture
+    capability: ssci-argument-architecture
     source_kind: local
     upstream_repo: local/codex-skill-ssci-argument-architecture
     upstream_commit: null
     source_file: C:/Users/10710/.codex/skills/ssci-argument-architecture/SKILL.md
     source_sha256: 75a806b44409fc614449363370533831985454c80bfc61423a8bc95d13b9405c
     reuse_mode: conceptual
-    local_target: skills/theory-architecture/SKILL.md
+    local_target: skills/ssci-argument-architecture/SKILL.md
     modifications:
-      - Retained construct, mechanism, boundary-condition, and level-of-analysis discipline under closed OS artifacts.
-      - Added explicit contradiction acknowledgement and preserved human ownership of final theory selection.
+      - Retained the argument-spine, paragraph-job, claim-evidence, and terminology discipline.
+      - Removed theory selection, literature search, prose drafting, and lifecycle routing from this capability.
     license: &local_license
       spdx: LicenseRef-Local-User-Content
       source: User-controlled local Codex skill; no package license metadata present
@@ -308,39 +308,45 @@ sources:
       review_status: approved
     tests:
       upstream: []
-      local: [tests/unit/capabilities/test_theory_architecture_gates.py, tests/acceptance/test_v2a_skill_contracts.py]
-    notes: The local source remains unchanged; V2A applies its concepts through independently tested contracts.
+      local: [tests/acceptance/test_ssci_writing_skill_contracts.py]
+    notes: The original local Skill remains unchanged; V2C narrows its reusable manuscript-architecture method.
 
   - <<: *local_reference
-    capability: future-bilingual-writing
+    capability: ssci-bilingual-writing
     upstream_repo: local/codex-skill-ssci-bilingual-writing
     source_file: C:/Users/10710/.codex/skills/ssci-bilingual-writing/SKILL.md
     source_sha256: 6606cc7a84fb2b626814dfad57b1bd6090e4b923b26e61d0523b1a03a44b9ae0
-    reuse_mode: reference_only
-    local_target: null
-    modifications: []
-    tests: &no_tests {upstream: [], local: []}
+    reuse_mode: conceptual
+    local_target: skills/ssci-bilingual-writing/SKILL.md
+    modifications:
+      - Preserved conceptual and rhetorical alignment while removing generic pipeline routing.
+      - Added exact protected-anchor comparison and terminology-ledger authority.
+    tests: &writing_contract_tests {upstream: [], local: [tests/acceptance/test_ssci_writing_skill_contracts.py]}
 
   - <<: *local_reference
     capability: research-os
     upstream_repo: local/codex-skill-ssci-paper-writer
     source_file: C:/Users/10710/.codex/skills/ssci-paper-writer/SKILL.md
     source_sha256: 186db7e52e43a0c06a1e68660f4935d3ee1f126f68d553390374b9c6c649b367
-    reuse_mode: reference_only
-    local_target: null
-    modifications: []
-    tests: *no_tests
-    notes: Preserved unchanged; V1 routing is independently implemented and tested.
+    reuse_mode: conceptual
+    local_target: skills/ssci-paper-writer/SKILL.md
+    modifications:
+      - Replaced the duplicate staged workflow with a compatibility-only route to research-os.
+      - Removed independent state, scholarly procedures, and automatic stage decisions.
+    tests: {upstream: [], local: [tests/acceptance/test_ssci_skill_ownership.py]}
+    notes: The local source remains unchanged; the project keeps its invocation name through a thin alias.
 
   - <<: *local_reference
-    capability: future-peer-review
+    capability: ssci-peer-review
     upstream_repo: local/codex-skill-ssci-peer-review
     source_file: C:/Users/10710/.codex/skills/ssci-peer-review/SKILL.md
     source_sha256: 1c64e3322521189f949291850fb59712083707043fc6b7b9e2c483f59a9d78c6
-    reuse_mode: reference_only
-    local_target: null
-    modifications: []
-    tests: *no_tests
+    reuse_mode: conceptual
+    local_target: skills/ssci-peer-review/SKILL.md
+    modifications:
+      - Retained external-review reconstruction, traceable concern fields, and calibrated resolution tests.
+      - Removed overlapping internal revision and writing procedures.
+    tests: *writing_contract_tests
 
   - <<: *local_reference
     capability: research-framing
@@ -356,21 +362,118 @@ sources:
       local: [tests/unit/capabilities/test_research_framing_gates.py, tests/acceptance/research-framing/normal.md]
 
   - <<: *local_reference
-    capability: future-revision-audit
+    capability: ssci-revision-audit
     upstream_repo: local/codex-skill-ssci-revision-audit
     source_file: C:/Users/10710/.codex/skills/ssci-revision-audit/SKILL.md
     source_sha256: cdf01018f0d416d985852bd6066b3a86e28e8bab43743243a82a41f8d1f060d3
-    reuse_mode: reference_only
-    local_target: null
-    modifications: []
-    tests: *no_tests
+    reuse_mode: conceptual
+    local_target: skills/ssci-revision-audit/SKILL.md
+    modifications:
+      - Narrowed the skill to post-revision internal regression findings and closure tests.
+      - Delegated prose rewriting, citation identity verification, and external review to canonical owners.
+    tests: *writing_contract_tests
 
   - <<: *local_reference
-    capability: future-section-drafting
+    capability: ssci-section-drafting
     upstream_repo: local/codex-skill-ssci-section-drafting
     source_file: C:/Users/10710/.codex/skills/ssci-section-drafting/SKILL.md
     source_sha256: 1d49b6db5018907c68b6c16d9c35b7d6c205de0fbb3261d99e6178f57125048e
-    reuse_mode: reference_only
-    local_target: null
-    modifications: []
-    tests: *no_tests
+    reuse_mode: conceptual
+    local_target: skills/ssci-section-drafting/SKILL.md
+    modifications:
+      - Preserved section-specific prose generation and evidence-aware handoff.
+      - Removed architecture, style diagnosis, translation, and review ownership and added constrained revision anchors.
+    tests: *writing_contract_tests
+
+  - capability: ssci-argument-architecture
+    source_kind: git
+    upstream_repo: jin-s13/ai-research-writing-skill
+    upstream_commit: 5d6e4244e532189099ca5a9c5585b23febcae955
+    source_file: references/paper-story.md
+    source_sha256: aa8e281089fa7feeb06b2a9b66b7ec8f49a20476eb73a771e172da6c5e525cd4
+    reuse_mode: conceptual
+    local_target: skills/ssci-argument-architecture/SKILL.md
+    modifications:
+      - Recast the technical story inventory as a social-science thesis, scholarly tension, counterevidence, boundary, and claim-evidence architecture.
+      - Removed computer-science module, experiment, SOTA, and fixed-contribution assumptions.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/acceptance/test_ssci_writing_skill_contracts.py]}
+    notes: Guidance was inspected at source level; no upstream runtime code is imported.
+
+  - capability: ssci-section-drafting
+    source_kind: git
+    upstream_repo: jin-s13/ai-research-writing-skill
+    upstream_commit: 5d6e4244e532189099ca5a9c5585b23febcae955
+    source_file: references/section-writing.md
+    source_sha256: 0977fe65d0fe1503f66877986ca7f14b86f54d1c6fc738c072b327be1250575c
+    reuse_mode: conceptual
+    local_target: skills/ssci-section-drafting/SKILL.md
+    modifications:
+      - Retained paragraph-role, claim-evidence, reverse-outline, and uncertainty-preservation mechanisms.
+      - Replaced engineering paper recipes with communication and sociology theoretical-note guidance.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/acceptance/test_ssci_writing_skill_contracts.py]}
+    notes: No fixed section quota or computer-science evaluation rubric is reused.
+
+  - capability: academic-prose-style-audit
+    source_kind: git
+    upstream_repo: WUBING2023/PaperSpine
+    upstream_commit: 360ae775639a27458d4f24040b65a4cbe935b213
+    source_file: src/scripts/style_metrics.py
+    source_sha256: 5025b9587508082abe806c38dbebaf2d7413fb305b35df8541de4179789c05e8
+    reuse_mode: conceptual
+    local_target: src/research_skills_os/capabilities/academic_prose_style_audit/gates.py
+    modifications:
+      - Adapted document metrics, sentence variation, paragraph openings, and connector counts for Chinese text.
+      - Replaced detector-like verdicts and fixed thresholds with explainable advisory findings; only protected-anchor loss blocks.
+    license: *mit_v2a
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/unit/capabilities/test_academic_prose_style_audit.py]}
+    notes: The local implementation is independent and intentionally narrower than the upstream metrics suite.
+
+  - capability: academic-prose-style-audit
+    source_kind: git
+    upstream_repo: Yuan1z0825/nature-skills
+    upstream_commit: 3817cd194c31010febb1312ab786e53cd8154333
+    source_file: skills/nature-proposal-writer/references/chinese-review-writing-style.md
+    source_sha256: b0f26cbbf83d9b25e50286383d23e0fd08098a543cd386c6b45b996dc198469f
+    reuse_mode: conceptual
+    local_target: skills/academic-prose-style-audit/references/zh-patterns.md
+    modifications:
+      - Retained evidence-first diagnosis of filler, mechanical transitions, repeated structures, and inflated claims.
+      - Generalized domain examples to communication and sociology and made all context-dependent patterns advisory.
+    license: *apache_v2a
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/unit/capabilities/test_academic_prose_style_audit.py]}
+
+  - capability: ssci-bilingual-writing
+    source_kind: git
+    upstream_repo: Yuan1z0825/nature-skills
+    upstream_commit: 3817cd194c31010febb1312ab786e53cd8154333
+    source_file: skills/nature-writing/static/fragments/language/zh-to-en.md
+    source_sha256: a60506956df0a5b1e006fe17aec2bc843b1a0463662f5675cb9dc6db112a96c8
+    reuse_mode: conceptual
+    local_target: skills/ssci-bilingual-writing/SKILL.md
+    modifications:
+      - Retained intent-before-syntax decomposition and bounded claim-language repair.
+      - Added protected-anchor comparison, terminology-ledger authority, and abstract-only smoke-test limits.
+    license: *apache_v2a
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/acceptance/test_ssci_writing_skill_contracts.py]}
+
+  - capability: academic-prose-style-audit
+    source_kind: git
+    upstream_repo: Spark-To-Paper-Skills/spark-to-paper-skills
+    upstream_commit: c17149def034bc777462de612926c8e3b6d01b8c
+    source_file: skills/ts-paper-refine/SKILL.md
+    source_sha256: 852432f4e6a681006124587bca77dccd6502b95ac9391e02d7111dc83c560f3b
+    reuse_mode: conceptual
+    local_target: skills/ssci-section-drafting/references/zh-style.md
+    modifications:
+      - Retained meaning-lock preservation, bounded revision, terminology consistency, and context-sensitive handling of formulaic constructions.
+      - Removed venue word bands, LaTeX mechanics, computer-science prose rules, and claims that surface patterns prove AI authorship.
+    license: {spdx: MIT, source: LICENSE at the locked commit, status: confirmed, notice_required: true}
+    security: *offline_v2a
+    tests: {upstream: [], local: [tests/unit/capabilities/test_academic_prose_style_audit.py]}

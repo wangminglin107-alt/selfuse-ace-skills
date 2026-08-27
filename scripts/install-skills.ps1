@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$SkillHome = (Join-Path $env:USERPROFILE '.codex\skills'),
+    [string]$SourceManifest = (Join-Path $PSScriptRoot '..\SOURCE_MANIFEST.yaml'),
     [switch]$Replace,
     [switch]$WhatIf
 )
@@ -9,13 +10,42 @@ $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
 $SkillNames = @(
+    'citation-verification',
+    'evidence-synthesis',
+    'research-os',
+    'research-framing',
+    'literature-intelligence',
+    'literature-to-theory',
+    'novelty-audit',
+    'idea-to-novelty',
+    'paper-knowledge-base',
+    'theory-architecture'
+)
+$ManifestCapabilities = @(
     'research-os',
     'research-framing',
     'literature-intelligence',
     'novelty-audit',
-    'idea-to-novelty'
+    'paper-knowledge-base',
+    'evidence-synthesis',
+    'citation-verification',
+    'theory-architecture'
 )
 $SourceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\skills')).Path
+$SourceManifestPath = [IO.Path]::GetFullPath($SourceManifest)
+if (-not (Test-Path -LiteralPath $SourceManifestPath -PathType Leaf)) {
+    throw "Source manifest is missing: $SourceManifestPath"
+}
+$ManifestText = Get-Content -LiteralPath $SourceManifestPath -Raw -Encoding UTF8
+if ($ManifestText -notmatch '(?m)^manifest_version:\s*["'']?1\.0["'']?\s*$') {
+    throw 'Source manifest has no supported manifest_version.'
+}
+foreach ($capability in $ManifestCapabilities) {
+    $escaped = [Regex]::Escape($capability)
+    if ($ManifestText -notmatch "(?m)^\s*(?:-\s*)?capability:\s*$escaped\s*$") {
+        throw "Source manifest is incomplete: missing capability $capability"
+    }
+}
 $SkillHomePath = [IO.Path]::GetFullPath($SkillHome)
 $RecordPath = Join-Path $SkillHomePath '.research-skills-os-install.json'
 $BackupRoot = Join-Path $SkillHomePath '.research-skills-os-backups'

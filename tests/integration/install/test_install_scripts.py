@@ -10,11 +10,25 @@ ROOT = Path(__file__).parents[3]
 INSTALLER = ROOT / "scripts" / "install-skills.ps1"
 UNINSTALLER = ROOT / "scripts" / "uninstall-skills.ps1"
 SKILL_NAMES = {
+    "citation-verification",
+    "evidence-synthesis",
     "research-os",
     "research-framing",
     "literature-intelligence",
+    "literature-to-theory",
     "novelty-audit",
     "idea-to-novelty",
+    "paper-knowledge-base",
+    "theory-architecture",
+}
+PROTECTED_SSCI_SKILLS = {
+    "ssci-argument-architecture",
+    "ssci-bilingual-writing",
+    "ssci-paper-writer",
+    "ssci-peer-review",
+    "ssci-research-framing",
+    "ssci-revision-audit",
+    "ssci-section-drafting",
 }
 POWERSHELL = shutil.which("pwsh") or shutil.which("powershell")
 
@@ -50,7 +64,7 @@ def run_script(script: Path, skill_home: Path, *arguments: str) -> subprocess.Co
 
 
 @pytest.mark.skipif(POWERSHELL is None, reason="PowerShell is required")
-def test_dry_run_names_only_five_targets_and_preserves_skill_home(tmp_path: Path):
+def test_dry_run_names_all_targets_and_preserves_skill_home(tmp_path: Path):
     skill_home = tmp_path / "skills home"
     unrelated = skill_home / "ssci-existing" / "KEEP.txt"
     unrelated.parent.mkdir(parents=True)
@@ -75,6 +89,12 @@ def test_install_is_idempotent_and_source_hashes_match(tmp_path: Path):
     unrelated = skill_home / "unrelated-skill" / "SKILL.md"
     unrelated.parent.mkdir(parents=True)
     unrelated.write_text("unrelated\n", encoding="utf-8")
+    protected_hashes = {}
+    for name in PROTECTED_SSCI_SKILLS:
+        skill = skill_home / name / "SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text(f"private content for {name}\n", encoding="utf-8")
+        protected_hashes[name] = directory_digest(skill.parent)
 
     first = run_script(INSTALLER, skill_home)
     second = run_script(INSTALLER, skill_home)
@@ -91,6 +111,22 @@ def test_install_is_idempotent_and_source_hashes_match(tmp_path: Path):
         assert item["source_sha256"] == item["installed_sha256"]
         assert item["installed_sha256"] == directory_digest(installed)
     assert unrelated.read_text(encoding="utf-8") == "unrelated\n"
+    assert {
+        name: directory_digest(skill_home / name) for name in PROTECTED_SSCI_SKILLS
+    } == protected_hashes
+
+
+@pytest.mark.skipif(POWERSHELL is None, reason="PowerShell is required")
+def test_install_rejects_incomplete_source_manifest_before_copy(tmp_path: Path):
+    skill_home = tmp_path / "skills"
+    manifest = tmp_path / "SOURCE_MANIFEST.yaml"
+    manifest.write_text('manifest_version: "1.0"\nsources: []\n', encoding="utf-8")
+
+    result = run_script(INSTALLER, skill_home, "-SourceManifest", str(manifest))
+
+    assert result.returncode != 0
+    assert "source manifest" in result.stderr.casefold()
+    assert not skill_home.exists()
 
 
 @pytest.mark.skipif(POWERSHELL is None, reason="PowerShell is required")

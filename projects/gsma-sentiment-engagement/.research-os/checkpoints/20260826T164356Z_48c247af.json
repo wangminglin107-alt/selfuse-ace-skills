@@ -1,0 +1,247 @@
+{
+  "artifacts_created": [
+    {
+      "artifact_id": "evidence-synthesis-evidence_rows",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.675187Z",
+      "human_edited": false,
+      "path": "artifacts/evidence-rows.jsonl",
+      "producing_capability": "evidence-synthesis",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "34971ebaa217e7b311621728c2f4cb4283dac387beb2488a277a0e967b36d253",
+      "source_artifact_ids": [
+        "gsma-research-brief",
+        "gsma-novelty-audit",
+        "paper-knowledge-base-document_index"
+      ],
+      "type": "evidence_rows",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "evidence-synthesis-synthesis_matrix",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.676194Z",
+      "human_edited": false,
+      "path": "artifacts/synthesis-matrix.json",
+      "producing_capability": "evidence-synthesis",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "4cf09fad85149164a67e98f8b29e16c14ca55f9eccdb17e1aba715f1b4c2f465",
+      "source_artifact_ids": [
+        "gsma-research-brief",
+        "gsma-novelty-audit",
+        "paper-knowledge-base-document_index"
+      ],
+      "type": "synthesis_matrix",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "evidence-synthesis-contradiction_ledger",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.677194Z",
+      "human_edited": false,
+      "path": "artifacts/contradiction-ledger.json",
+      "producing_capability": "evidence-synthesis",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "2e127b8ca192b0f5a087109156d9ff604aa4cdd7a1b48b0af031d71b33eef429",
+      "source_artifact_ids": [
+        "gsma-research-brief",
+        "gsma-novelty-audit",
+        "paper-knowledge-base-document_index"
+      ],
+      "type": "contradiction_ledger",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "evidence-synthesis-coverage_report",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.678193Z",
+      "human_edited": false,
+      "path": "artifacts/coverage-report.json",
+      "producing_capability": "evidence-synthesis",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "a8b649173ed7f7fffb98cefb4e4871d31c31552f9d04e767cdc5441b09df2bd7",
+      "source_artifact_ids": [
+        "gsma-research-brief",
+        "gsma-novelty-audit",
+        "paper-knowledge-base-document_index"
+      ],
+      "type": "coverage_report",
+      "verification_state": "verified"
+    }
+  ],
+  "checkpoint_id": "20260826T164356Z_48c247af",
+  "checkpoint_version": "1.0",
+  "completed_target": "evidence-synthesis",
+  "created_at": "2026-08-26T16:43:56.763112Z",
+  "evidence_added": [],
+  "failed_gates": [],
+  "input_artifacts": [
+    {
+      "artifact_id": "gsma-novelty-audit",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.510443Z",
+      "human_edited": false,
+      "path": "artifacts/novelty-audit.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-novelty-audit"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "f3f4403f04d979dd985f49d7ea7c9b4d4d456ce50915f995a625f56231e99558",
+      "source_artifact_ids": [],
+      "type": "novelty_audit",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-research-brief",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.509444Z",
+      "human_edited": false,
+      "path": "artifacts/research-brief-metadata.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-research-brief"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4c6677ddd23cce23b64037dbac68d26bbd2272bfcb6daa51840d12284427684f",
+      "source_artifact_ids": [],
+      "type": "research_brief_metadata",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-source-registry",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.502158Z",
+      "human_edited": false,
+      "path": "artifacts/source-registry.yaml",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-source-registry"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "2536ce3a3f4db043f534cde8aa07c9adcd1c2555833e5dc4d44bcfb2f72071fa",
+      "source_artifact_ids": [],
+      "type": "source_registry",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "paper-knowledge-base-document_index",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.547543Z",
+      "human_edited": false,
+      "path": "artifacts/document-index.json",
+      "producing_capability": "paper-knowledge-base",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "caeac6fd9dc37cbea4c225b0459d16bb7e3e03b6a372c3f945a1d202426bb16d",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "source-norc-gsma-method",
+        "source-brady-2017",
+        "source-najafizada-2022"
+      ],
+      "type": "document_index",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "source-brady-2017",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.505440Z",
+      "human_edited": false,
+      "path": "sources/brady-2017.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-brady-2017"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-najafizada-2022",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.507441Z",
+      "human_edited": false,
+      "path": "sources/najafizada-2022.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-najafizada-2022"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-norc-gsma-method",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.503160Z",
+      "human_edited": false,
+      "path": "sources/norc-gsma-method.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-norc-gsma-method"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    }
+  ],
+  "inputs_used": [
+    "gsma-novelty-audit",
+    "gsma-research-brief",
+    "gsma-source-registry",
+    "paper-knowledge-base-document_index",
+    "source-brady-2017",
+    "source-najafizada-2022",
+    "source-norc-gsma-method"
+  ],
+  "key_decisions": [],
+  "project_id": "gsma-sentiment-engagement",
+  "recommended_next": null,
+  "resume_from": "evidence-synthesis",
+  "run_id": "run-20260826T164356Z-558539e3",
+  "state_hash": "55fc249dd2be8b68c870898f19db833dfb6f9374a014b82155981ba43fa7809e",
+  "uncertainties": [
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "paper-knowledge-base-coverage-limit"
+    },
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "evidence-synthesis-coverage-limit"
+    }
+  ]
+}

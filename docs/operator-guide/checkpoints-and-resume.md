@@ -13,6 +13,11 @@ artifacts are satisfied. It does not rerun completed work. In `idea-to-novelty`,
 framing checkpoint resumes at `literature-intelligence`; an unchanged literature checkpoint resumes
 at `novelty-audit`.
 
+In `literature-to-theory`, the resume order is `paper-knowledge-base`, `evidence-synthesis`,
+`citation-verification`, then `theory-architecture`. The theory checkpoint always resumes into
+human review when its decision packet is still `proposed`; a candidate never counts as a user
+selection.
+
 Verification compares materialized state and every checkpoint artifact hash. Drift returns exit
 code `4` and must be reported. Choose explicitly:
 
@@ -30,3 +35,6 @@ research-os run resume --project 'C:\path with spaces\project' --checkpoint <che
 
 Never edit a checkpoint file, invent a resume token, or proceed after drift by merely describing
 the edit in prose.
+
+Every pause or handoff repeats: `Current goal`, `Current state`, `Completed`, `Next action`, and
+`Resume from`. These five fields are the minimum restart context.

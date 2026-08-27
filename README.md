@@ -10,7 +10,7 @@ For the frozen V1 development environment, install [requirements.lock](requireme
 `python -m pip install --require-hashes -r requirements.lock`, then install this project with
 `python -m pip install --no-deps -e .`.
 
-For normal local use on Windows, install the five Skills and the isolated command runtime from a
+For normal local use on Windows, install the ten Skills and the isolated command runtime from a
 PowerShell prompt in this repository:
 
 ```powershell
@@ -24,9 +24,11 @@ The runtime uses [requirements-runtime.lock](requirements-runtime.lock), lives u
 `%USERPROFILE%\bin` PATH directory. It does not alter the user's global Python packages or PATH
 value. Both installers have matching record-scoped uninstall scripts.
 
-V1 contains five installable Skills: `research-os`, `research-framing`,
-`literature-intelligence`, `novelty-audit`, and `idea-to-novelty`. The three scholarly
-capabilities are independently callable. The workflow preset only selects and sequences them.
+The install bundle contains ten Skills. V1 provides `research-os`, `research-framing`,
+`literature-intelligence`, `novelty-audit`, and `idea-to-novelty`. V2A adds
+`paper-knowledge-base`, `evidence-synthesis`, `citation-verification`, `theory-architecture`, and
+the lightweight `literature-to-theory` workflow. Every capability remains independently callable;
+workflow Skills only select and sequence capabilities.
 
 ## Start here
 
@@ -35,6 +37,9 @@ capabilities are independently callable. The workflow preset only selects and se
 - [Run modes](docs/operator-guide/run-modes.md)
 - [Checkpoints and resume](docs/operator-guide/checkpoints-and-resume.md)
 - [Privacy and providers](docs/operator-guide/privacy-and-providers.md)
+- [Evidence and citation states](docs/operator-guide/evidence-and-citation-states.md)
+- [Contradictions and theory decisions](docs/operator-guide/contradictions-and-theory-decisions.md)
+- [V2A acceptance report](docs/architecture/v2a-acceptance-report.md)
 - [Local installation record](docs/architecture/local-install-record.md)
 - [Changelog](CHANGELOG.md)
 

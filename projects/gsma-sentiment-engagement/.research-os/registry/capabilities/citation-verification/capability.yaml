@@ -1,0 +1,20 @@
+spec_version: "1.0"
+kind: capability
+id: citation-verification
+version: "1.0"
+input_types: [source_registry, document_index, evidence_rows]
+output_types: [citation_identity_audit, citation_support_audit, citation_blockers]
+entry_gates: [contract.valid, provider.policy]
+exit_gates:
+  - citation.required
+  - citation.identity
+  - citation.content_support
+  - citation.route_trace
+  - citation.blockers_visible
+  - provenance.complete
+  - uncertainty.explicit
+specializations: [communication, sociology]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

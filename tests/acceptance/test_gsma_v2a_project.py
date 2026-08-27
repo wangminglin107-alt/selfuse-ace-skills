@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -16,7 +17,10 @@ from research_skills_os.capabilities.paper_knowledge_base.gates import (
 from research_skills_os.capabilities.theory_architecture.gates import (
     evaluate_theory_architecture,
 )
+from research_skills_os.core.checkpoint.service import CheckpointService
 from research_skills_os.core.contracts.enums import GateStatus
+from research_skills_os.core.state.models import ProjectLifecycle
+from research_skills_os.core.state.repository import StateRepository
 
 ROOT = Path(__file__).parents[2]
 PROJECT = ROOT / "projects" / "gsma-sentiment-engagement"
@@ -119,3 +123,26 @@ def test_project_has_token_efficient_zotero_obsidian_sync_contract():
     assert {source["source_id"] for source in spec["sources"]} == EXPECTED_SOURCES
     assert all((PROJECT / source["note_source"]).is_file() for source in spec["sources"])
     assert all(len(source["content_sha256"]) == 64 for source in spec["sources"])
+
+
+def test_real_project_has_verified_kernel_checkpoint_and_primary_data_provenance():
+    provenance = json.loads(
+        (PROJECT / "provenance" / "gsma-data-source.json").read_text(encoding="utf-8")
+    )
+    checkpoint_id = (
+        PROJECT / ".research-os" / "current-checkpoint"
+    ).read_text(encoding="utf-8").strip()
+    checkpoint_service = CheckpointService(PROJECT)
+    checkpoint = checkpoint_service.load(checkpoint_id)
+    verification = checkpoint_service.verify_resume(checkpoint_id)
+    state = StateRepository(PROJECT).load()
+
+    assert provenance["official_landing_page"] == "https://gss.norc.org/gsma.html"
+    assert provenance["archive_sha256"] == (
+        "6732e90eb1d692e4dfa71de947318cd86aef114a3aaad83e95ebdaf2ac9ef8b0"
+    )
+    assert re.fullmatch(r"[0-9]{8}T[0-9]{6}Z_[0-9a-f]{8}", checkpoint_id)
+    assert checkpoint.completed_target == "theory-architecture"
+    assert verification.status == "verified"
+    assert state.lifecycle is ProjectLifecycle.PAUSED
+    assert state.completed_targets[-1] == "theory-architecture"

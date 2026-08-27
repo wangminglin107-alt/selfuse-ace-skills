@@ -144,7 +144,11 @@ def test_v2a_reuse_is_traceable_and_excludes_insecure_http_client():
     v2a = [source for source in manifest.sources if source.upstream_repo in V2A_REPOSITORIES]
 
     assert {source.upstream_repo for source in v2a} == V2A_REPOSITORIES
-    assert all(source.local_target and source.tests.local for source in v2a if source.reuse_mode == "adapted")
+    assert all(
+        source.local_target and source.tests.local
+        for source in v2a
+        if source.reuse_mode == "adapted"
+    )
     assert all(source.local_target is None for source in v2a if source.reuse_mode == "conceptual")
     assert all(source.source_file != "scripts/lib/http_client.py" for source in manifest.sources)
 

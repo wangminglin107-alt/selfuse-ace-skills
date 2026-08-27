@@ -6,6 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).parents[2]
 QUICKSTART = ROOT / "docs" / "operator-guide" / "quickstart.md"
+EVIDENCE_GUIDE = ROOT / "docs" / "operator-guide" / "evidence-and-citation-states.md"
+THEORY_GUIDE = ROOT / "docs" / "operator-guide" / "contradictions-and-theory-decisions.md"
 COMMAND_BLOCK = re.compile(
     r"<!-- doc-test:start quickstart -->\s*```powershell\s*(.*?)\s*```\s*"
     r"<!-- doc-test:end quickstart -->",
@@ -44,3 +46,17 @@ def test_marked_quickstart_commands_run_in_windows_path_with_spaces_and_cjk(tmp_
     assert summary["active_target"] == "research-framing"
     assert summary["workflow"] == "idea-to-novelty"
     assert (project / ".research-os" / "events.jsonl").is_file()
+
+
+def test_v2a_guides_keep_identity_support_contradiction_and_human_decisions_separate():
+    evidence = EVIDENCE_GUIDE.read_text(encoding="utf-8")
+    theory = THEORY_GUIDE.read_text(encoding="utf-8")
+
+    assert "identity_state" in evidence
+    assert "support_state" in evidence
+    assert "metadata_only" in evidence
+    assert "manual_needed" in evidence
+    assert "material contradiction" in theory
+    assert "authorization_state" in theory
+    assert "proposed" in theory
+    assert "selected" in theory

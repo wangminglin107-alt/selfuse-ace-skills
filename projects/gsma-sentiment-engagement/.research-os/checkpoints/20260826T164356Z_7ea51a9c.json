@@ -1,0 +1,179 @@
+{
+  "artifacts_created": [
+    {
+      "artifact_id": "paper-knowledge-base-document_index",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.547543Z",
+      "human_edited": false,
+      "path": "artifacts/document-index.json",
+      "producing_capability": "paper-knowledge-base",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "caeac6fd9dc37cbea4c225b0459d16bb7e3e03b6a372c3f945a1d202426bb16d",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "source-norc-gsma-method",
+        "source-brady-2017",
+        "source-najafizada-2022"
+      ],
+      "type": "document_index",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "paper-knowledge-base-corpus_status",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.548542Z",
+      "human_edited": false,
+      "path": "artifacts/corpus-status.json",
+      "producing_capability": "paper-knowledge-base",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "b74bd516b56d705491472d523c398882919d74dd3720a58031a5a5e3fe245697",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "source-norc-gsma-method",
+        "source-brady-2017",
+        "source-najafizada-2022"
+      ],
+      "type": "corpus_status",
+      "verification_state": "verified"
+    }
+  ],
+  "checkpoint_id": "20260826T164356Z_7ea51a9c",
+  "checkpoint_version": "1.0",
+  "completed_target": "paper-knowledge-base",
+  "created_at": "2026-08-26T16:43:56.607604Z",
+  "evidence_added": [],
+  "failed_gates": [],
+  "input_artifacts": [
+    {
+      "artifact_id": "gsma-novelty-audit",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.510443Z",
+      "human_edited": false,
+      "path": "artifacts/novelty-audit.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-novelty-audit"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "f3f4403f04d979dd985f49d7ea7c9b4d4d456ce50915f995a625f56231e99558",
+      "source_artifact_ids": [],
+      "type": "novelty_audit",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-research-brief",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.509444Z",
+      "human_edited": false,
+      "path": "artifacts/research-brief-metadata.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-research-brief"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4c6677ddd23cce23b64037dbac68d26bbd2272bfcb6daa51840d12284427684f",
+      "source_artifact_ids": [],
+      "type": "research_brief_metadata",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-source-registry",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.502158Z",
+      "human_edited": false,
+      "path": "artifacts/source-registry.yaml",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-source-registry"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "2536ce3a3f4db043f534cde8aa07c9adcd1c2555833e5dc4d44bcfb2f72071fa",
+      "source_artifact_ids": [],
+      "type": "source_registry",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-brady-2017",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.505440Z",
+      "human_edited": false,
+      "path": "sources/brady-2017.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-brady-2017"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-najafizada-2022",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.507441Z",
+      "human_edited": false,
+      "path": "sources/najafizada-2022.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-najafizada-2022"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-norc-gsma-method",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.503160Z",
+      "human_edited": false,
+      "path": "sources/norc-gsma-method.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-norc-gsma-method"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    }
+  ],
+  "inputs_used": [
+    "gsma-novelty-audit",
+    "gsma-research-brief",
+    "gsma-source-registry",
+    "source-brady-2017",
+    "source-najafizada-2022",
+    "source-norc-gsma-method"
+  ],
+  "key_decisions": [],
+  "project_id": "gsma-sentiment-engagement",
+  "recommended_next": null,
+  "resume_from": "paper-knowledge-base",
+  "run_id": "run-20260826T164356Z-558539e3",
+  "state_hash": "d314d768062858e0935f3adeb227252ab581a9df403126f6eb6a3bcb9372a7fa",
+  "uncertainties": [
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "paper-knowledge-base-coverage-limit"
+    }
+  ]
+}

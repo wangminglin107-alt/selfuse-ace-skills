@@ -26,3 +26,8 @@ explicit unknown or blocker; never reconstruct it from model memory.
 `idea-to-novelty` and `literature-to-theory` are workflow presets, not capabilities. The latter
 routes `paper-knowledge-base` → `evidence-synthesis` → `citation-verification` →
 `theory-architecture`; it does not duplicate any node's scholarly method.
+
+Workflow registries are validated before routing. Every node must be reachable from the entry,
+reach a terminal, respect terminal-node boundaries, and map only artifacts declared by both the
+source output and target input contracts. An invalid registry fails closed before a run or
+checkpoint is created.

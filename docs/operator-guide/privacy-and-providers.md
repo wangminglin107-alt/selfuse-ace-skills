@@ -23,5 +23,11 @@ logs, checkpoints, or source manifests.
 
 The optional Zotero—Obsidian bridge talks only to Zotero's local API and the explicitly selected
 Obsidian vault. Its default command is preview-only, its write mode has no delete operation, and its
-SHA-256 state cache skips unchanged notes. PDF attachment import remains a separate future
-capability so licensing and storage choices stay explicit.
+SHA-256 state cache skips unchanged notes and attachments.
+
+PDF archiving is opt-in per source. A `local_file` attachment must remain inside the project root,
+start with a PDF signature, and match its declared SHA-256 before any Zotero or Obsidian mutation.
+The bridge uploads it as a Zotero child attachment and records the returned key; a later run reuses
+the same hash and never overwrites or deletes an attachment. `metadata_only` records preserve the
+bibliographic item without pretending that a PDF was inspected. Obsidian uses `link_only` by
+default, so Zotero remains the binary source of truth and the vault receives a durable note link.

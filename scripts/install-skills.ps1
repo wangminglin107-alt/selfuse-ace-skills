@@ -1,13 +1,23 @@
 [CmdletBinding()]
 param(
     [string]$SkillHome = (Join-Path $env:USERPROFILE '.codex\skills'),
-    [string]$SourceManifest = (Join-Path $PSScriptRoot '..\SOURCE_MANIFEST.yaml'),
+    [string]$SourceManifest = '',
     [switch]$Replace,
     [switch]$WhatIf
 )
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
+
+# Redirected output and error text default to the OEM codepage on localized Windows;
+# pin UTF-8 so machine-readable stdout and diagnostics stay stable across hosts.
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+
+# Windows PowerShell 5.1 leaves $PSScriptRoot empty in parameter default
+# expressions, so script-relative defaults must be resolved in the body.
+if ([string]::IsNullOrWhiteSpace($SourceManifest)) {
+    $SourceManifest = Join-Path $PSScriptRoot '..\SOURCE_MANIFEST.yaml'
+}
 
 $SkillNames = @(
     'citation-verification',
@@ -19,7 +29,9 @@ $SkillNames = @(
     'novelty-audit',
     'idea-to-novelty',
     'paper-knowledge-base',
-    'theory-architecture'
+    'theory-architecture',
+    'academic-prose-style-audit',
+    'evidence-to-chinese-note'
 )
 $ManifestCapabilities = @(
     'research-os',
@@ -29,7 +41,8 @@ $ManifestCapabilities = @(
     'paper-knowledge-base',
     'evidence-synthesis',
     'citation-verification',
-    'theory-architecture'
+    'theory-architecture',
+    'academic-prose-style-audit'
 )
 $SourceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\skills')).Path
 $SourceManifestPath = [IO.Path]::GetFullPath($SourceManifest)

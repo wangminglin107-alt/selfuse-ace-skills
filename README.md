@@ -10,7 +10,7 @@ For the frozen V1 development environment, install [requirements.lock](requireme
 `python -m pip install --require-hashes -r requirements.lock`, then install this project with
 `python -m pip install --no-deps -e .`.
 
-For normal local use on Windows, install the ten Skills and the isolated command runtime from a
+For normal local use on Windows, install the twelve Skills and the isolated command runtime from a
 PowerShell prompt in this repository:
 
 ```powershell
@@ -24,10 +24,11 @@ The runtime uses [requirements-runtime.lock](requirements-runtime.lock), lives u
 `%USERPROFILE%\bin` PATH directory. It does not alter the user's global Python packages or PATH
 value. Both installers have matching record-scoped uninstall scripts.
 
-The install bundle contains ten Skills. V1 provides `research-os`, `research-framing`,
+The install bundle contains twelve Skills. V1 provides `research-os`, `research-framing`,
 `literature-intelligence`, `novelty-audit`, and `idea-to-novelty`. V2A adds
 `paper-knowledge-base`, `evidence-synthesis`, `citation-verification`, `theory-architecture`, and
-the lightweight `literature-to-theory` workflow. Every capability remains independently callable;
+the lightweight `literature-to-theory` workflow. V2C adds `academic-prose-style-audit` and the
+`evidence-to-chinese-note` workflow. Every capability remains independently callable;
 workflow Skills only select and sequence capabilities.
 
 ## Start here

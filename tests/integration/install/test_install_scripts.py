@@ -20,6 +20,8 @@ SKILL_NAMES = {
     "idea-to-novelty",
     "paper-knowledge-base",
     "theory-architecture",
+    "academic-prose-style-audit",
+    "evidence-to-chinese-note",
 }
 PROTECTED_SSCI_SKILLS = {
     "ssci-argument-architecture",

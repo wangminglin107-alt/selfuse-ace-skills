@@ -312,6 +312,21 @@ sources:
     notes: The original local Skill remains unchanged; V2C narrows its reusable manuscript-architecture method.
 
   - <<: *local_reference
+    capability: theory-architecture
+    upstream_repo: local/codex-skill-ssci-argument-architecture
+    source_file: C:/Users/10710/.codex/skills/ssci-argument-architecture/SKILL.md
+    source_sha256: 75a806b44409fc614449363370533831985454c80bfc61423a8bc95d13b9405c
+    reuse_mode: conceptual
+    local_target: skills/theory-architecture/SKILL.md
+    modifications:
+      - Retained construct, mechanism, boundary-condition, and level-of-analysis discipline under closed OS artifacts.
+      - Added explicit contradiction acknowledgement and preserved human ownership of final theory selection.
+    tests:
+      upstream: []
+      local: [tests/unit/capabilities/test_theory_architecture_gates.py, tests/acceptance/test_v2a_skill_contracts.py]
+    notes: The local source remains unchanged; V2A applies its concepts through independently tested contracts.
+
+  - <<: *local_reference
     capability: ssci-bilingual-writing
     upstream_repo: local/codex-skill-ssci-bilingual-writing
     source_file: C:/Users/10710/.codex/skills/ssci-bilingual-writing/SKILL.md

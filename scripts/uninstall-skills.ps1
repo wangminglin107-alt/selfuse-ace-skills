@@ -7,6 +7,10 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 
+# Redirected output and error text default to the OEM codepage on localized Windows;
+# pin UTF-8 so machine-readable stdout and diagnostics stay stable across hosts.
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+
 $SkillHomePath = [IO.Path]::GetFullPath($SkillHome)
 $RecordPath = Join-Path $SkillHomePath '.research-skills-os-install.json'
 $BackupRoot = [IO.Path]::GetFullPath((Join-Path $SkillHomePath '.research-skills-os-backups'))

@@ -112,7 +112,10 @@ def test_all_evidence_spine_gates_pass_without_promoting_causal_claims():
     assert any(row["evidence_role"] in {"qualifies", "null", "contradicts"} for row in rows)
     support = load_json("citation-support-audit.json")
     assert all(record["claim_strength"] != "causal" for record in support["records"])
-    assert load_json("theory-decision-packet.json")["authorization_state"] == "proposed"
+    decision = load_json("theory-decision-packet.json")
+    assert decision["authorization_state"] == "selected"
+    assert decision["selected_candidate_id"] == "candidate-affective-diffusion"
+    assert decision["user_decision_id"] == "gsma-theory-selected-20260827"
 
 
 def test_project_has_token_efficient_zotero_obsidian_sync_contract():
@@ -130,8 +133,8 @@ def test_real_project_has_verified_kernel_checkpoint_and_primary_data_provenance
         (PROJECT / "provenance" / "gsma-data-source.json").read_text(encoding="utf-8")
     )
     checkpoint_id = (
-        PROJECT / ".research-os" / "current-checkpoint"
-    ).read_text(encoding="utf-8").strip()
+        (PROJECT / ".research-os" / "current-checkpoint").read_text(encoding="utf-8").strip()
+    )
     checkpoint_service = CheckpointService(PROJECT)
     checkpoint = checkpoint_service.load(checkpoint_id)
     verification = checkpoint_service.verify_resume(checkpoint_id)
@@ -142,7 +145,7 @@ def test_real_project_has_verified_kernel_checkpoint_and_primary_data_provenance
         "6732e90eb1d692e4dfa71de947318cd86aef114a3aaad83e95ebdaf2ac9ef8b0"
     )
     assert re.fullmatch(r"[0-9]{8}T[0-9]{6}Z_[0-9a-f]{8}", checkpoint_id)
-    assert checkpoint.completed_target == "theory-architecture"
+    assert checkpoint.completed_target == "ssci-peer-review"
     assert verification.status == "verified"
-    assert state.lifecycle is ProjectLifecycle.PAUSED
-    assert state.completed_targets[-1] == "theory-architecture"
+    assert state.lifecycle is ProjectLifecycle.COMPLETED
+    assert state.completed_targets[-1] == "ssci-peer-review"

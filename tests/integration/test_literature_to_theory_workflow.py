@@ -12,9 +12,7 @@ WORKFLOWS = ROOT / "src" / "research_skills_os" / "workflows"
 
 
 def catalog():
-    return RegistryLoader(
-        capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]
-    ).load()
+    return RegistryLoader(capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]).load()
 
 
 def test_literature_to_theory_has_only_composition_nodes_in_order():
@@ -62,12 +60,14 @@ def test_mode_stops_preserve_interactive_and_checkpointed_review():
 
     assert policy.decide(RunMode.INTERACTIVE, StopSignals()) is StopAction.PAUSE
     assert theory.human_review is True
-    assert policy.decide(
-        RunMode.CHECKPOINTED, StopSignals(human_review=theory.human_review)
-    ) is StopAction.PAUSE
-    assert policy.decide(
-        RunMode.CHECKPOINTED, StopSignals(conflicting_evidence=True)
-    ) is StopAction.PAUSE
+    assert (
+        policy.decide(RunMode.CHECKPOINTED, StopSignals(human_review=theory.human_review))
+        is StopAction.PAUSE
+    )
+    assert (
+        policy.decide(RunMode.CHECKPOINTED, StopSignals(conflicting_evidence=True))
+        is StopAction.PAUSE
+    )
 
 
 def test_autonomous_mode_stops_at_theory_decision_packet():

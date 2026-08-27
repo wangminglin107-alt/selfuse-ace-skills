@@ -1,0 +1,13 @@
+spec_version: "1.0"
+kind: capability
+id: ssci-revision-audit
+version: "1.0"
+input_types: [revised_chinese_manuscript, paper_argument_map, claim_evidence_plan, terminology_ledger, citation_support_audit, prose_style_report, draft_trace]
+output_types: [revision_audit, revision_blockers]
+entry_gates: [contract.valid, provider.policy]
+exit_gates: [revision.argument_regression, revision.evidence_regression, revision.terminology_regression, revision.protected_anchor_regression, provenance.complete]
+specializations: [communication, sociology, ssci, chinese-academic-writing]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

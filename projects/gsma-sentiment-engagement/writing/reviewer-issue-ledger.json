@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "review_setup": {
+    "manuscript_type": "theoretical and research-design note; low-token systems experiment",
+    "material_received": ["revised Chinese note", "argument map", "citation regression", "style report", "revision audit"],
+    "unassessable_items": ["empirical results", "models", "figures", "full field coverage", "journal fit"]
+  },
+  "recommendation": "Major Revision",
+  "issues": [
+    {
+      "concern_id": "M-01",
+      "issue_key": "literature-coverage-too-narrow",
+      "severity": "P1",
+      "axis": "literature conversation",
+      "location": "sections 1 and 6",
+      "claim_pointer": "three sources are sufficient only for the low-token systems experiment",
+      "evidence_pointer": "document-index.json contains three verified sources",
+      "concern": "Coverage cannot support a publishable field-level contribution.",
+      "why_it_matters": "The scholarly conversation and nearest-work boundary remain underdetermined.",
+      "resolution_test": "Expand verified nearest-work coverage before making a publication contribution claim."
+    },
+    {
+      "concern_id": "M-02",
+      "issue_key": "mechanism-not-empirically-tested",
+      "severity": "P1",
+      "axis": "evidence and inference",
+      "location": "section 5",
+      "claim_pointer": "the transfer framework yields an associational expectation",
+      "evidence_pointer": "NOT_LOCATABLE: no GSMA analysis results supplied",
+      "concern": "The mechanism candidate has not yet been connected to empirical analysis.",
+      "why_it_matters": "The note cannot establish whether aggregate sentiment retains a relevant signal.",
+      "resolution_test": "Run bounded distribution and association checks or retain the analysis-framework label."
+    },
+    {
+      "concern_id": "m-01",
+      "issue_key": "evidence-id-display",
+      "severity": "P2",
+      "axis": "scholarly communication",
+      "location": "sections 2 through 4",
+      "claim_pointer": "inline E:row markers",
+      "evidence_pointer": "draft-trace.json",
+      "concern": "Machine-facing evidence markers are visible in manuscript prose.",
+      "why_it_matters": "They reduce publication readability but are valuable for provenance.",
+      "resolution_test": "Render author-year citations while preserving hidden Evidence IDs."
+    },
+    {
+      "concern_id": "m-02",
+      "issue_key": "theory-decision-timeline",
+      "severity": "P2",
+      "axis": "provenance and clarity",
+      "location": "section 6 and theory artifacts",
+      "claim_pointer": "system recommendation followed by user selection",
+      "evidence_pointer": "theory-rationale.md; theory-decision-packet.json",
+      "concern": "The decision sequence is distributed across two artifacts.",
+      "why_it_matters": "A later reader may mistake historical sequence for contradiction.",
+      "resolution_test": "Create an append-only theory decision timeline referencing both states."
+    }
+  ]
+}

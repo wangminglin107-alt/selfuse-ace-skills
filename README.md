@@ -41,6 +41,7 @@ workflow Skills only select and sequence capabilities.
 - [Evidence and citation states](docs/operator-guide/evidence-and-citation-states.md)
 - [Contradictions and theory decisions](docs/operator-guide/contradictions-and-theory-decisions.md)
 - [V2A acceptance report](docs/architecture/v2a-acceptance-report.md)
+- [V2C Chinese writing acceptance report](docs/architecture/v2c-acceptance-report.md)
 - [Local installation record](docs/architecture/local-install-record.md)
 - [Changelog](CHANGELOG.md)
 

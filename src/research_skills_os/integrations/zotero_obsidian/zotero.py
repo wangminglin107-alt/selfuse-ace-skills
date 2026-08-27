@@ -96,9 +96,7 @@ class ZoteroClient(Protocol):
 
     def find_attachment(self, parent_key: str, sha256: str) -> str | None: ...
 
-    def create_attachment(
-        self, parent_key: str, prepared: PreparedAttachment
-    ) -> str: ...
+    def create_attachment(self, parent_key: str, prepared: PreparedAttachment) -> str: ...
 
 
 def _header(headers: dict[str, str], name: str) -> str | None:
@@ -146,9 +144,7 @@ class LocalZoteroClient:
     def _ensure_ready(self) -> None:
         if self._server_id is not None:
             return
-        result = self._transport.request(
-            "GET", "/api/", {"Zotero-API-Version": "3"}, None
-        )
+        result = self._transport.request("GET", "/api/", {"Zotero-API-Version": "3"}, None)
         if result.status == 403:
             raise ZoteroUnavailable("local Zotero API is disabled")
         if result.status != 200:
@@ -199,9 +195,7 @@ class LocalZoteroClient:
         if result.status == 403:
             raise ZoteroAuthorizationDenied("Zotero local write authorization was denied")
         if result.status != 200:
-            raise ZoteroProtocolError(
-                f"Zotero authorization failed with HTTP {result.status}"
-            )
+            raise ZoteroProtocolError(f"Zotero authorization failed with HTTP {result.status}")
         raw = _json(result)
         if not isinstance(raw, dict) or not isinstance(raw.get("key"), str):
             raise ZoteroProtocolError("Zotero authorization response has no key")
@@ -307,9 +301,7 @@ class LocalZoteroClient:
         payload: dict[str, object] = {
             "itemType": source.item_type,
             "title": source.title,
-            "creators": [
-                {"creatorType": "author", "name": author} for author in source.authors
-            ],
+            "creators": [{"creatorType": "author", "name": author} for author in source.authors],
             "date": str(source.year),
             "collections": [collection_key],
             "tags": [{"tag": "research-skills-os"}],
@@ -365,9 +357,7 @@ class LocalZoteroClient:
             ):
                 keys.append(key)
         if len(keys) > 1:
-            raise ZoteroIdentityCollision(
-                f"{len(keys)} Zotero attachments share SHA-256 {sha256}"
-            )
+            raise ZoteroIdentityCollision(f"{len(keys)} Zotero attachments share SHA-256 {sha256}")
         return keys[0] if keys else None
 
     def create_attachment(self, parent_key: str, prepared: PreparedAttachment) -> str:
@@ -383,9 +373,7 @@ class LocalZoteroClient:
                         "title": prepared.filename,
                         "url": prepared.source_url or "",
                         "note": "",
-                        "tags": [
-                            {"tag": f"research-skills-os-sha256:{prepared.sha256}"}
-                        ],
+                        "tags": [{"tag": f"research-skills-os-sha256:{prepared.sha256}"}],
                         "relations": {},
                         "contentType": prepared.media_type,
                         "charset": "",
@@ -421,9 +409,7 @@ class LocalZoteroClient:
         if not all(isinstance(raw.get(field), str) for field in required):
             raise ZoteroProtocolError("Zotero upload authorization is incomplete")
         upload_body = (
-            str(raw["prefix"]).encode()
-            + prepared.path.read_bytes()
-            + str(raw["suffix"]).encode()
+            str(raw["prefix"]).encode() + prepared.path.read_bytes() + str(raw["suffix"]).encode()
         )
         uploaded = self._transport.request(
             "POST",
@@ -432,9 +418,7 @@ class LocalZoteroClient:
             upload_body,
         )
         if uploaded.status != 201:
-            raise ZoteroProtocolError(
-                f"Zotero file upload failed with HTTP {uploaded.status}"
-            )
+            raise ZoteroProtocolError(f"Zotero file upload failed with HTTP {uploaded.status}")
         self._authorized_request(
             "POST",
             f"/api/users/0/items/{attachment_key}/file",

@@ -49,4 +49,3 @@ def test_attachment_free_source_remains_backward_compatible() -> None:
     )
 
     assert source.attachment is None
-

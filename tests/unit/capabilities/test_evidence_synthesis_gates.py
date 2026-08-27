@@ -167,9 +167,9 @@ def test_opposing_roles_require_contradiction_ledger_entry(valid_row):
     opposing["source_id"] = "source-2"
     opposing["evidence_role"] = "contradicts"
 
-    result = by_id(
-        [valid_row, opposing], matrix(["row-1", "row-2"])
-    )["synthesis.contradiction_preserved"]
+    result = by_id([valid_row, opposing], matrix(["row-1", "row-2"]))[
+        "synthesis.contradiction_preserved"
+    ]
 
     assert result.status is GateStatus.FAIL
 
@@ -187,9 +187,7 @@ def test_material_unresolved_contradiction_blocks_progress(valid_row):
         "boundary_note": None,
     }
 
-    result = by_id([valid_row], ledger_value=ledger([entry]))[
-        "synthesis.material_contradictions"
-    ]
+    result = by_id([valid_row], ledger_value=ledger([entry]))["synthesis.material_contradictions"]
 
     assert result.status is GateStatus.FAIL
 
@@ -207,9 +205,7 @@ def test_nonmaterial_open_contradiction_requires_boundary_note(valid_row):
         "boundary_note": None,
     }
 
-    result = by_id([valid_row], ledger_value=ledger([entry]))[
-        "synthesis.material_contradictions"
-    ]
+    result = by_id([valid_row], ledger_value=ledger([entry]))["synthesis.material_contradictions"]
 
     assert result.status is GateStatus.FAIL
 

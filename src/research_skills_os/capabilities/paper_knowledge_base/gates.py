@@ -33,8 +33,7 @@ def _result(
 
 def _validation_findings(exc: ValidationError) -> list[str]:
     return [
-        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
-        for error in exc.errors()
+        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
     ]
 
 
@@ -80,9 +79,7 @@ def evaluate_paper_knowledge_base(
     indexed_ids = set(counts)
     for document in index.documents:
         if not _is_project_relative(document.path):
-            identity_findings.append(
-                f"source {document.source_id} path must be project-relative."
-            )
+            identity_findings.append(f"source {document.source_id} path must be project-relative.")
         recorded_hash = status.artifact_hashes.get(document.source_id)
         if recorded_hash != document.artifact_sha256:
             identity_findings.append(f"source {document.source_id} artifact hash mismatch.")

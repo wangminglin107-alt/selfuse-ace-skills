@@ -28,7 +28,7 @@ from research_skills_os.capabilities.theory_architecture.gates import (
     evaluate_theory_architecture,
 )
 from research_skills_os.core.artifacts.paths import resolve_project_path
-from research_skills_os.core.contracts.enums import GateStatus
+from research_skills_os.core.contracts.enums import GateSeverity, GateStatus
 from research_skills_os.core.contracts.models import ArtifactEnvelope, GateResult
 
 OVERCLAIM_PATTERN = re.compile(
@@ -72,9 +72,11 @@ def _load_jsonl(project_root: Path, artifact: ArtifactEnvelope | None) -> list[M
     if artifact is None:
         return []
     try:
-        lines = resolve_project_path(project_root, artifact.path).read_text(
-            encoding="utf-8"
-        ).splitlines()
+        lines = (
+            resolve_project_path(project_root, artifact.path)
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
     except (OSError, UnicodeError):
         return [{"line 0": "JSONL artifact cannot be read"}]
     records: list[Mapping[str, Any]] = []
@@ -108,6 +110,19 @@ def _fail_gate(results: list[GateResult], gate_id: str, finding: str) -> list[Ga
         else result
         for result in results
     ]
+
+
+def _semantic_gate(gate_id: str, passed: bool, finding: str) -> GateResult:
+    return GateResult(
+        gate_id=gate_id,
+        gate_version="1.0",
+        status=GateStatus.PASS if passed else GateStatus.FAIL,
+        severity=GateSeverity.BLOCKING,
+        findings=[] if passed else [finding],
+        remediation=[]
+        if passed
+        else ["Regenerate the declared writing artifact from verified inputs."],
+    )
 
 
 def evaluate_capability_artifacts(
@@ -182,4 +197,179 @@ def evaluate_capability_artifacts(
             _load_json(project_root, by_type.get("theory_decision_packet")),
             _load_text(project_root, by_type.get("theory_rationale")),
         )
+    if capability_id == "ssci-argument-architecture":
+        argument = _load_text(project_root, by_type.get("paper_argument_map")).strip()
+        outline = _load_text(project_root, by_type.get("section_outline")).strip()
+        plan = _load_json(project_root, by_type.get("claim_evidence_plan"))
+        ledger = _load_json(project_root, by_type.get("terminology_ledger"))
+        raw_claims = plan.get("claims")
+        claims: list[Any] = raw_claims if isinstance(raw_claims, list) else []
+        raw_terms = ledger.get("terms")
+        terms: list[Any] = raw_terms if isinstance(raw_terms, list) else []
+        claim_coverage = bool(claims) and all(
+            isinstance(claim, Mapping)
+            and isinstance(claim.get("evidence_ids"), list)
+            and bool(claim["evidence_ids"])
+            for claim in claims
+        )
+        terminology_complete = bool(terms) and all(
+            isinstance(term, Mapping)
+            and all(
+                isinstance(term.get(field), str) and term[field].strip()
+                for field in ("zh", "en", "definition")
+            )
+            for term in terms
+        )
+        return [
+            _semantic_gate(
+                "writing.architecture_complete",
+                bool(argument and outline and claims and terms),
+                "Argument map, section outline, claim plan, or terminology ledger is incomplete.",
+            ),
+            _semantic_gate(
+                "writing.claim_evidence_coverage",
+                claim_coverage,
+                "Every planned claim must name at least one verified evidence ID.",
+            ),
+            _semantic_gate(
+                "writing.terminology_consistent",
+                terminology_complete,
+                "Every terminology entry requires Chinese, English, and a definition.",
+            ),
+        ]
+    if capability_id == "ssci-section-drafting":
+        manuscript = _load_text(
+            project_root,
+            by_type.get("revised_chinese_manuscript") or by_type.get("chinese_manuscript"),
+        )
+        trace = _load_json(project_root, by_type.get("draft_trace"))
+        raw_claims = trace.get("claims")
+        claims = raw_claims if isinstance(raw_claims, list) else []
+        raw_anchors = trace.get("protected_anchors")
+        anchors: list[Any] = raw_anchors if isinstance(raw_anchors, list) else []
+        coverage = bool(claims) and all(
+            isinstance(claim, Mapping)
+            and isinstance(claim.get("evidence_ids"), list)
+            and bool(claim["evidence_ids"])
+            for claim in claims
+        )
+        anchors_preserved = bool(manuscript.strip()) and all(
+            isinstance(anchor, str) and anchor in manuscript for anchor in anchors
+        )
+        return [
+            _semantic_gate(
+                "writing.claim_evidence_coverage",
+                coverage,
+                "Every drafted claim must retain at least one evidence ID.",
+            ),
+            _semantic_gate(
+                "writing.protected_anchors_preserved",
+                anchors_preserved,
+                "The manuscript is empty or a protected meaning anchor is missing.",
+            ),
+            _semantic_gate(
+                "writing.terminology_consistent",
+                trace.get("terminology_status") == "pass",
+                "The draft trace does not confirm terminology consistency.",
+            ),
+        ]
+    if capability_id == "academic-prose-style-audit":
+        prose_report = _load_json(project_root, by_type.get("prose_style_report"))
+        matrix = _load_text(project_root, by_type.get("prose_revision_matrix"))
+        metrics = prose_report.get("metrics")
+        coverage = (
+            isinstance(metrics, Mapping)
+            and isinstance(metrics.get("character_count"), int)
+            and metrics["character_count"] > 0
+            and bool(matrix.strip())
+        )
+        anchors_preserved = (
+            prose_report.get("ok") is True and prose_report.get("missing_anchors") == []
+        )
+        return [
+            _semantic_gate(
+                "style.coverage",
+                coverage,
+                "Style metrics or the bounded revision matrix is missing.",
+            ),
+            _semantic_gate(
+                "style.protected_anchors",
+                anchors_preserved,
+                "The style report records one or more missing protected anchors.",
+            ),
+        ]
+    if capability_id == "ssci-revision-audit":
+        revision_audit_text = _load_text(project_root, by_type.get("revision_audit"))
+        blockers = _load_json(project_root, by_type.get("revision_blockers"))
+        regressions = blockers.get("regressions")
+        regression_states = regressions if isinstance(regressions, Mapping) else {}
+        gates = {
+            "revision.argument_regression": "argument",
+            "revision.evidence_regression": "evidence",
+            "revision.terminology_regression": "terminology",
+            "revision.protected_anchor_regression": "protected_anchors",
+        }
+        return [
+            _semantic_gate(
+                gate_id,
+                bool(revision_audit_text.strip()) and regression_states.get(field) == "pass",
+                f"The revision audit does not record a passing {field} regression check.",
+            )
+            for gate_id, field in gates.items()
+        ]
+    if capability_id == "ssci-peer-review":
+        peer_report_text = _load_text(project_root, by_type.get("peer_review_report"))
+        review_ledger = _load_json(project_root, by_type.get("reviewer_issue_ledger"))
+        setup = review_ledger.get("review_setup")
+        raw_issues = review_ledger.get("issues")
+        issues: list[Any] = raw_issues if isinstance(raw_issues, list) else []
+        material_limits = (
+            bool(peer_report_text.strip())
+            and isinstance(setup, Mapping)
+            and isinstance(setup.get("material_received"), list)
+            and bool(setup["material_received"])
+            and isinstance(setup.get("unassessable_items"), list)
+        )
+        issue_fields = {
+            "concern_id",
+            "severity",
+            "location",
+            "evidence_pointer",
+            "concern",
+            "resolution_test",
+        }
+        issue_traceability = bool(issues) and all(
+            isinstance(issue, Mapping)
+            and all(
+                isinstance(issue.get(field), str) and issue[field].strip() for field in issue_fields
+            )
+            for issue in issues
+        )
+        recommendation = review_ledger.get("recommendation")
+        severity_calibrated = recommendation in {
+            "Reject",
+            "Major Revision",
+            "Minor Revision",
+            "Accept",
+        } and all(
+            isinstance(issue, Mapping) and issue.get("severity") in {"P0", "P1", "P2"}
+            for issue in issues
+        )
+        return [
+            _semantic_gate(
+                "review.material_limits",
+                material_limits,
+                "Peer review must record received and unassessable material.",
+            ),
+            _semantic_gate(
+                "review.issue_traceability",
+                issue_traceability,
+                "Every reviewer issue requires a location, evidence pointer, and resolution test.",
+            ),
+            _semantic_gate(
+                "review.severity_calibration",
+                severity_calibrated,
+                "Recommendation or issue severity is outside the review contract.",
+            ),
+        ]
     return []

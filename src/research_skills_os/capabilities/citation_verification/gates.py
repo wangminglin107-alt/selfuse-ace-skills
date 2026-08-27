@@ -42,8 +42,7 @@ def _result(
 
 def _validation_findings(exc: ValidationError) -> list[str]:
     return [
-        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
-        for error in exc.errors()
+        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
     ]
 
 
@@ -93,9 +92,7 @@ def evaluate_citation_verification(
         }
         identifier_matches = _normal_identifier(
             identity_record.claimed_identifier
-        ) == _normal_identifier(
-            identity_record.verified_identifier
-        )
+        ) == _normal_identifier(identity_record.verified_identifier)
         core_matches = (
             title_matches
             and authors_match
@@ -144,9 +141,7 @@ def evaluate_citation_verification(
                 invalid_citation_ids.add(support_record.citation_id)
         support_result = _result("citation.content_support", support_findings)
     else:
-        support_result = _result(
-            "citation.content_support", status=GateStatus.NOT_APPLICABLE
-        )
+        support_result = _result("citation.content_support", status=GateStatus.NOT_APPLICABLE)
 
     route_findings: list[str] = []
     for route_record in identity_audit.records:

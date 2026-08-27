@@ -1,0 +1,13 @@
+spec_version: "1.0"
+kind: capability
+id: ssci-peer-review
+version: "1.0"
+input_types: [revised_chinese_manuscript, revision_audit, citation_support_audit, paper_argument_map]
+output_types: [peer_review_report, reviewer_issue_ledger]
+entry_gates: [contract.valid, provider.policy]
+exit_gates: [review.material_limits, review.issue_traceability, review.severity_calibration, provenance.complete]
+specializations: [communication, sociology, ssci, chinese-academic-writing]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

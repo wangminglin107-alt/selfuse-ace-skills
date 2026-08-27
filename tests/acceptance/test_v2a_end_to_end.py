@@ -37,9 +37,7 @@ OUTPUT_FILES = {
 
 
 def catalog():
-    return RegistryLoader(
-        capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]
-    ).load()
+    return RegistryLoader(capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]).load()
 
 
 def copy_input(project: Path, relative: str, artifact_type: str, artifact_id: str):
@@ -154,10 +152,7 @@ def test_autonomous_fixture_reaches_proposed_theory_review_with_verified_checkpo
     assert checkpoint_statuses == ["verified"] * 4
     assert coordinator.checkpoints.verify_resume(checkpoints[-1]).status == "verified"
     decision = (
-        tmp_path
-        / "artifacts"
-        / "theory-architecture"
-        / "theory-decision-packet.json"
+        tmp_path / "artifacts" / "theory-architecture" / "theory-decision-packet.json"
     ).read_text(encoding="utf-8")
     assert '"authorization_state": "proposed"' in decision
     assert '"recommendation": "descriptive"' in decision

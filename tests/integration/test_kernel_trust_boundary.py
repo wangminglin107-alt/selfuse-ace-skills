@@ -414,9 +414,7 @@ def test_v2a_kernel_rejects_forged_pass_for_metadata_only_corpus(tmp_path: Path)
 
     outcome = coordinator.complete_target(context.run_id, result)
 
-    locator_gate = next(
-        item for item in outcome.gate_results if item.gate_id == "corpus.locators"
-    )
+    locator_gate = next(item for item in outcome.gate_results if item.gate_id == "corpus.locators")
     assert outcome.action is StopAction.BLOCK
     assert locator_gate.status is GateStatus.FAIL
     assert locator_gate.gate_version == "1.0"

@@ -56,4 +56,3 @@ def prepare_attachment(spec: AttachmentSpec, project_root: Path) -> PreparedAtta
         media_type=spec.media_type,
         source_url=spec.source_url,
     )
-

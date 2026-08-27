@@ -80,10 +80,10 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
 
         if state is None:
             raise InvalidStateTransition("project_initialized must be the first event")
-        if (
-            state.lifecycle in {ProjectLifecycle.COMPLETED, ProjectLifecycle.FAILED}
-            and event.type is not EventType.RUN_STARTED
-        ):
+        if state.lifecycle in {
+            ProjectLifecycle.COMPLETED,
+            ProjectLifecycle.FAILED,
+        } and event.type not in {EventType.RUN_STARTED, EventType.CHECKPOINT_CREATED}:
             raise InvalidStateTransition("project is already terminal")
 
         updates: dict[str, Any] = {"last_sequence": event.sequence}
@@ -113,6 +113,7 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
                 active_input_artifact_ids=[],
                 current_run_artifact_ids=([] if fresh_run else state.current_run_artifact_ids),
                 completed_targets=[] if fresh_run else state.completed_targets,
+                gate_results=[] if fresh_run else state.gate_results,
                 current_checkpoint=None if fresh_run else state.current_checkpoint,
             )
             if fresh_run and isinstance(event.payload.get("goal"), str):
@@ -154,10 +155,13 @@ def reduce_events(events: Iterable[ProjectEvent]) -> ProjectState:
             target_id = _required_text(event.payload, "target_id", event)
             if state.active_target != target_id:
                 raise InvalidStateTransition("completed target is not the active target")
+            completion_id = event.payload.get("completion_id", target_id)
+            if not isinstance(completion_id, str) or not completion_id.strip():
+                raise InvalidStateTransition("target_completed requires a completion_id")
             updates.update(
                 active_target=None,
                 active_input_artifact_ids=[],
-                completed_targets=[*state.completed_targets, target_id],
+                completed_targets=[*state.completed_targets, completion_id.strip()],
             )
         elif event.type is EventType.CHECKPOINT_CREATED:
             updates["current_checkpoint"] = _required_text(event.payload, "checkpoint_id", event)

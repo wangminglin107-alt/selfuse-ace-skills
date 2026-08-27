@@ -39,9 +39,7 @@ def valid_paper_knowledge_base_artifacts(project: Path):
                 "access_state": "full_text",
                 "privacy_label": "public",
                 "content_availability": "full_text",
-                "locators": [
-                    {"page": 1, "block_id": "p1", "content_sha256": "b" * 64}
-                ],
+                "locators": [{"page": 1, "block_id": "p1", "content_sha256": "b" * 64}],
                 "extraction_method": "manual",
                 "extraction_warnings": [],
                 "version_state": "current",

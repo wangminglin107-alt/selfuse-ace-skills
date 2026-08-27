@@ -30,7 +30,7 @@ artifact_mappings:
     artifact_types: [claim_evidence_plan]
     to_node: citation-regression
   - from_node: draft
-    artifact_types: [chinese_manuscript]
+    artifact_types: [chinese_manuscript, draft_trace]
     to_node: style-audit
   - from_node: architecture
     artifact_types: [paper_argument_map, section_outline, claim_evidence_plan, terminology_ledger]

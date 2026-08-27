@@ -91,14 +91,11 @@ class WorkflowSpec(SpecModel):
         if _contains_cycle(known, self.edges):
             raise ValueError("workflow graph contains a cycle; V1 workflows must be acyclic")
         invalid_review = sorted(
-            node.id
-            for node in self.nodes
-            if node.autonomous_review and not node.human_review
+            node.id for node in self.nodes if node.autonomous_review and not node.human_review
         )
         if invalid_review:
             raise ValueError(
-                "autonomous_review requires human_review on nodes: "
-                + ", ".join(invalid_review)
+                "autonomous_review requires human_review on nodes: " + ", ".join(invalid_review)
             )
         outgoing = _adjacency(known, self.edges)
         terminal_outgoing = sorted(
@@ -106,8 +103,7 @@ class WorkflowSpec(SpecModel):
         )
         if terminal_outgoing:
             raise ValueError(
-                "terminal nodes cannot have outgoing edges: "
-                + ", ".join(terminal_outgoing)
+                "terminal nodes cannot have outgoing edges: " + ", ".join(terminal_outgoing)
             )
         reachable = _reachable_from(self.entry_node, outgoing)
         unreachable = sorted(known - reachable)
@@ -116,9 +112,7 @@ class WorkflowSpec(SpecModel):
         can_reach_terminal = _nodes_reaching(set(self.terminal_nodes), known, self.edges)
         stranded = sorted(known - can_reach_terminal)
         if stranded:
-            raise ValueError(
-                "workflow nodes cannot reach a terminal: " + ", ".join(stranded)
-            )
+            raise ValueError("workflow nodes cannot reach a terminal: " + ", ".join(stranded))
         return self
 
 
@@ -159,9 +153,7 @@ def _reachable_from(start: str, outgoing: dict[str, list[str]]) -> set[str]:
     return seen
 
 
-def _nodes_reaching(
-    targets: set[str], node_ids: set[str], edges: list[WorkflowEdge]
-) -> set[str]:
+def _nodes_reaching(targets: set[str], node_ids: set[str], edges: list[WorkflowEdge]) -> set[str]:
     incoming: dict[str, list[str]] = {node_id: [] for node_id in node_ids}
     for edge in edges:
         incoming[edge.to_node].append(edge.from_node)

@@ -64,4 +64,3 @@ def test_prepare_attachment_rejects_missing_file(tmp_path: Path) -> None:
             AttachmentSpec(status="local_file", path="missing.pdf", sha256="0" * 64),
             tmp_path,
         )
-

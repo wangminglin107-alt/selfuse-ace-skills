@@ -6,6 +6,7 @@ import pytest
 
 from research_skills_os.core.artifacts.store import ArtifactStore
 from research_skills_os.core.checkpoint.service import CheckpointService
+from research_skills_os.core.contracts.enums import GateSeverity, GateStatus
 from research_skills_os.core.contracts.models import Checkpoint
 from research_skills_os.core.errors import CheckpointIntegrityError
 from research_skills_os.core.state.models import EventType, ProjectEvent
@@ -87,6 +88,38 @@ def test_retains_previous_checkpoints_when_current_pointer_advances(tmp_path: Pa
     assert service.load(first.checkpoint_id) == first
     assert service.current() == second
     assert len(list((project_root / ".research-os" / "checkpoints").glob("*.json"))) == 2
+
+
+def test_checkpoint_lists_only_latest_unresolved_gate_failures(tmp_path: Path):
+    project_root, repository = prepared_project(tmp_path)
+    for index, (gate_id, status) in enumerate(
+        (
+            ("writing.architecture_complete", GateStatus.FAIL),
+            ("writing.architecture_complete", GateStatus.PASS),
+            ("writing.terminology_consistent", GateStatus.PASS),
+            ("writing.terminology_consistent", GateStatus.FAIL),
+        ),
+        start=6,
+    ):
+        repository.append(
+            ProjectEvent(
+                event_id=f"event-{index}",
+                type=EventType.GATE_RECORDED,
+                payload={
+                    "gate_result": {
+                        "gate_id": gate_id,
+                        "gate_version": "1.0",
+                        "status": status,
+                        "severity": GateSeverity.BLOCKING,
+                    }
+                },
+            )
+        )
+    service = CheckpointService(project_root, repository=repository)
+
+    checkpoint = service.create(repository.load(), "research-framing")
+
+    assert checkpoint.failed_gates == ["writing.terminology_consistent"]
 
 
 def test_rejects_checkpoint_for_target_not_in_completed_state(tmp_path: Path):

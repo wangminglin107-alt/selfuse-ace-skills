@@ -132,9 +132,9 @@ def test_successful_apply_returns_complete_mapping_state(tmp_path: Path) -> None
     vault_root = tmp_path / "vault"
     write_note_source(project_root)
     source = source_record()
-    result = ZoteroObsidianBridge(
-        zotero=InMemoryZotero(), vault_root=vault_root
-    ).apply(sync_spec(source), SyncState(), project_root=project_root)
+    result = ZoteroObsidianBridge(zotero=InMemoryZotero(), vault_root=vault_root).apply(
+        sync_spec(source), SyncState(), project_root=project_root
+    )
 
     record = result.state.records[source.source_id]
     assert record.identity == "doi:10.1000/test"

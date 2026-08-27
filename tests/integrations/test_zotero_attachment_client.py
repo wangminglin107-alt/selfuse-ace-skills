@@ -81,9 +81,10 @@ def test_find_attachment_uses_stable_sha256_tag(tmp_path: Path) -> None:
         ]
     )
 
-    assert LocalZoteroClient(transport=transport).find_attachment(
-        "PARENT01", prepared.sha256
-    ) == "ATTACH01"
+    assert (
+        LocalZoteroClient(transport=transport).find_attachment("PARENT01", prepared.sha256)
+        == "ATTACH01"
+    )
 
 
 def test_create_attachment_performs_full_local_upload(tmp_path: Path) -> None:
@@ -129,9 +130,7 @@ def test_create_attachment_performs_full_local_upload(tmp_path: Path) -> None:
     item_payload = json.loads(transport.received[2][3] or b"")[0]
     assert item_payload["parentItem"] == "PARENT01"
     assert item_payload["linkMode"] == "imported_file"
-    assert item_payload["tags"] == [
-        {"tag": f"research-skills-os-sha256:{prepared.sha256}"}
-    ]
+    assert item_payload["tags"] == [{"tag": f"research-skills-os-sha256:{prepared.sha256}"}]
     authorization = parse_qs((transport.received[3][3] or b"").decode())
     assert authorization["md5"] == [prepared.md5]
     assert transport.received[4][3] == b"PREFIX" + prepared.path.read_bytes() + b"SUFFIX"

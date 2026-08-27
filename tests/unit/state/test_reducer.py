@@ -132,3 +132,14 @@ def test_represents_paused_run_as_active_and_resumable():
     assert state.lifecycle is ProjectLifecycle.PAUSED
     assert state.active_run_id == "run-1"
     assert state.active_target is None
+
+
+def test_fresh_run_does_not_inherit_prior_run_gate_results():
+    history = complete_history()
+    history.append(event(11, EventType.RUN_STARTED, {"run_id": "run-2"}))
+
+    state = reduce_events(history)
+
+    assert state.lifecycle is ProjectLifecycle.RUNNING
+    assert state.active_run_id == "run-2"
+    assert state.gate_results == []

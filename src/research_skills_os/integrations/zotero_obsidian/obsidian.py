@@ -87,11 +87,7 @@ class ObsidianWriter:
     def _destination(self, request: NoteWriteRequest) -> Path:
         filename = f"{_slugify(request.source_id)}.md"
         candidate = (
-            self._vault_root
-            / request.project_path
-            / "Sources"
-            / "Papers"
-            / filename
+            self._vault_root / request.project_path / "Sources" / "Papers" / filename
         ).resolve()
         if not candidate.is_relative_to(self._vault_root):
             raise ObsidianPathError("note destination is outside the vault")
@@ -111,7 +107,10 @@ class ObsidianWriter:
         temporary_path: Path | None = None
         try:
             with tempfile.NamedTemporaryFile(
-                mode="wb", prefix=f".{destination.name}.", suffix=".tmp", dir=destination.parent,
+                mode="wb",
+                prefix=f".{destination.name}.",
+                suffix=".tmp",
+                dir=destination.parent,
                 delete=False,
             ) as temporary:
                 temporary.write(encoded)

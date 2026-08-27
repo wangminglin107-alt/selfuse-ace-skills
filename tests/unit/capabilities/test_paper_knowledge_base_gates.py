@@ -62,10 +62,7 @@ def valid_status():
 
 
 def by_id(index, status):
-    return {
-        result.gate_id: result
-        for result in evaluate_paper_knowledge_base(index, status)
-    }
+    return {result.gate_id: result for result in evaluate_paper_knowledge_base(index, status)}
 
 
 def test_valid_document_index_passes_in_stable_gate_order(valid_index, valid_status):

@@ -150,8 +150,7 @@ def test_v2a_reuse_is_traceable_and_excludes_insecure_http_client():
     v2a = [
         source
         for source in manifest.sources
-        if source.upstream_repo in V2A_REPOSITORIES
-        and source.capability in V2A_CAPABILITIES
+        if source.upstream_repo in V2A_REPOSITORIES and source.capability in V2A_CAPABILITIES
     ]
 
     assert {source.upstream_repo for source in v2a} == V2A_REPOSITORIES
@@ -176,8 +175,7 @@ def test_every_locked_checkout_is_at_the_recorded_commit():
 def test_v2c_writing_capabilities_record_file_level_source_influence():
     manifest = load_manifest(MANIFEST)
     recorded = {
-        (source.capability, source.upstream_repo, source.source_file)
-        for source in manifest.sources
+        (source.capability, source.upstream_repo, source.source_file) for source in manifest.sources
     }
 
     assert {

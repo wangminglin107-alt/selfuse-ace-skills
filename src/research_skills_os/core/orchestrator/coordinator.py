@@ -48,7 +48,12 @@ from research_skills_os.core.orchestrator.stop_policy import (
     StopSignals,
 )
 from research_skills_os.core.orchestrator.transitions import RunLifecycle
-from research_skills_os.core.registry.models import CapabilitySpec, RegistryCatalog, WorkflowSpec
+from research_skills_os.core.registry.models import (
+    CapabilitySpec,
+    RegistryCatalog,
+    WorkflowNode,
+    WorkflowSpec,
+)
 from research_skills_os.core.router import Router
 from research_skills_os.core.state.models import (
     EventType,
@@ -198,13 +203,21 @@ class RunCoordinator:
         request = self._load_request(run_id)
         spec = self._resolve_allowed_capability(request, target_id)
         rerun = self._validate_workflow_boundary(request, target_id, state.completed_targets)
+        requested = self.router.resolve(request.target)
+        workflow_node = (
+            self._current_workflow_node(request, target_id, state.completed_targets)
+            if isinstance(requested, WorkflowSpec)
+            else None
+        )
         entry_request = self._request_with_available_inputs(request, target_id, state)
         input_verifications, pending_inputs = self._prepare_entry_inputs(entry_request, state)
         entry_summary = self.gates.run(
             [*spec.entry_gates, "artifacts.integrity"],
             GateContext(
                 request=entry_request,
-                required_input_types=frozenset(spec.input_types),
+                required_input_types=frozenset(
+                    self._required_input_types(request, spec, workflow_node)
+                ),
                 artifact_verifications=tuple(input_verifications),
             ),
         )
@@ -290,8 +303,20 @@ class RunCoordinator:
         }:
             raise InvalidStateTransition("target completion requires a completed result status")
         spec = self._resolve_allowed_capability(request, result.target_id)
+        requested = self.router.resolve(request.target)
+        workflow_node = (
+            self._current_workflow_node(
+                request,
+                result.target_id,
+                state.completed_targets,
+            )
+            if isinstance(requested, WorkflowSpec)
+            else None
+        )
         present_outputs = {artifact.type for artifact in result.artifacts}
-        missing_outputs = sorted(set(spec.output_types) - present_outputs)
+        missing_outputs = sorted(
+            self._required_output_types(request, spec, workflow_node) - present_outputs
+        )
         if missing_outputs:
             raise InvalidStateTransition(
                 f"missing declared output types: {', '.join(missing_outputs)}"
@@ -385,12 +410,20 @@ class RunCoordinator:
             ProjectEvent(
                 event_id=f"target-complete-{uuid4().hex}",
                 type=EventType.TARGET_COMPLETED,
-                payload={"target_id": result.target_id},
+                payload={
+                    "target_id": result.target_id,
+                    "completion_id": self._workflow_completion_id(
+                        request,
+                        result.target_id,
+                        state.completed_targets,
+                    ),
+                },
             )
         )
         effective_signals = signals or self._stop_signals(
             request,
             result.target_id,
+            completed_targets=state.completed_targets,
             material_uncertainty=any(item.material for item in result.uncertainties),
         )
         action = self.stop_policy.decide(request.mode, effective_signals)
@@ -416,12 +449,6 @@ class RunCoordinator:
                 )
             )
 
-        checkpoint = self.checkpoints.create(
-            self.repository.load(),
-            result.target_id,
-            inputs_used=state.active_input_artifact_ids,
-            artifacts_created=result.artifacts,
-        )
         if action is StopAction.COMPLETE:
             self.repository.append(
                 ProjectEvent(
@@ -430,6 +457,17 @@ class RunCoordinator:
                     payload={"run_id": run_id},
                 )
             )
+        checkpoint = self.checkpoints.create(
+            self.repository.load(),
+            self._workflow_completion_id(
+                request,
+                result.target_id,
+                state.completed_targets,
+            ),
+            run_id=run_id,
+            inputs_used=state.active_input_artifact_ids,
+            artifacts_created=result.artifacts,
+        )
         status = {
             StopAction.CONTINUE: result.status,
             StopAction.PAUSE: RunStatus.PAUSED,
@@ -494,27 +532,38 @@ class RunCoordinator:
                     payload={"artifact": artifact.model_dump(mode="json")},
                 )
             )
+        request = self._load_request(checkpoint.run_id)
+        next_target_id = (
+            self._capability_for_completion(request, checkpoint.completed_target)
+            if decision is ResumeDecision.RERUN
+            else self._next_workflow_target(request, self.repository.load().completed_targets)
+        )
+        lifecycle = RunLifecycle.RUNNING
+        if next_target_id is None and decision is ResumeDecision.ACCEPT_DRIFT:
+            self.repository.append(
+                ProjectEvent(
+                    event_id=f"run-completed-{uuid4().hex}",
+                    type=EventType.RUN_COMPLETED,
+                    payload={"run_id": checkpoint.run_id},
+                )
+            )
+            lifecycle = RunLifecycle.COMPLETED
         if decision is ResumeDecision.ACCEPT_DRIFT:
             accepted_state = self.repository.load()
             self.checkpoints.create(
                 accepted_state,
                 checkpoint.completed_target,
+                run_id=checkpoint.run_id,
                 inputs_used=checkpoint.inputs_used,
                 artifacts_created=[
                     accepted_state.artifacts[artifact.artifact_id]
                     for artifact in checkpoint.artifacts_created
                 ],
             )
-        request = self._load_request(checkpoint.run_id)
-        next_target_id = (
-            checkpoint.completed_target
-            if decision is ResumeDecision.RERUN
-            else self._next_workflow_target(request, self.repository.load().completed_targets)
-        )
         return self._context(
             checkpoint.run_id,
             request,
-            RunLifecycle.RUNNING,
+            lifecycle,
             next_target_id=next_target_id,
         )
 
@@ -617,7 +666,17 @@ class RunCoordinator:
         requested = self.router.resolve(request.target)
         if not isinstance(requested, WorkflowSpec):
             return request
-        node_id = next(node.id for node in requested.nodes if node.capability_id == capability_id)
+        matching_nodes = [node for node in requested.nodes if node.capability_id == capability_id]
+        node = (
+            matching_nodes[0]
+            if len(matching_nodes) == 1
+            else self._current_workflow_node(
+                request,
+                capability_id,
+                state.completed_targets,
+            )
+        )
+        node_id = node.id
         node_capabilities = {node.id: node.capability_id for node in requested.nodes}
         inputs = list(request.inputs)
         present_ids = {item.artifact_id for item in inputs}
@@ -646,6 +705,126 @@ class RunCoordinator:
                     )
                 )
         return request.model_copy(update={"inputs": inputs})
+
+    def _completion_key(self, workflow: WorkflowSpec, node: WorkflowNode) -> str:
+        repeated = sum(item.capability_id == node.capability_id for item in workflow.nodes) > 1
+        return node.id if repeated else node.capability_id
+
+    def _completed_node_ids(
+        self,
+        workflow: WorkflowSpec,
+        completed_targets: list[str],
+    ) -> set[str]:
+        completed = set(completed_targets)
+        return {
+            node.id for node in workflow.nodes if self._completion_key(workflow, node) in completed
+        }
+
+    def _select_workflow_node(
+        self,
+        request: ExecutionRequest,
+        capability_id: str,
+        completed_targets: list[str],
+    ) -> WorkflowNode:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            raise InvalidStateTransition("node selection requires a workflow request")
+        completed_nodes = self._completed_node_ids(requested, completed_targets)
+        for node in requested.nodes:
+            if node.capability_id != capability_id or node.id in completed_nodes:
+                continue
+            predecessors = {edge.from_node for edge in requested.edges if edge.to_node == node.id}
+            if predecessors <= completed_nodes:
+                return node
+        raise InvalidStateTransition(
+            f"workflow capability has no incomplete legal node: {capability_id}"
+        )
+
+    def _current_workflow_node(
+        self,
+        request: ExecutionRequest,
+        capability_id: str,
+        completed_targets: list[str],
+    ) -> WorkflowNode:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            raise InvalidStateTransition("node selection requires a workflow request")
+        if self._rerun_is_authorized(capability_id):
+            checkpoint = self.checkpoints.current()
+            if checkpoint is not None:
+                for node in requested.nodes:
+                    if (
+                        node.capability_id == capability_id
+                        and self._completion_key(requested, node) == checkpoint.completed_target
+                    ):
+                        return node
+        return self._select_workflow_node(request, capability_id, completed_targets)
+
+    def _workflow_completion_id(
+        self,
+        request: ExecutionRequest,
+        capability_id: str,
+        completed_targets: list[str],
+    ) -> str:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            return capability_id
+        node = self._current_workflow_node(request, capability_id, completed_targets)
+        return self._completion_key(requested, node)
+
+    def _capability_for_completion(
+        self,
+        request: ExecutionRequest,
+        completion_id: str,
+    ) -> str:
+        requested = self.router.resolve(request.target)
+        if not isinstance(requested, WorkflowSpec):
+            return completion_id
+        for node in requested.nodes:
+            if self._completion_key(requested, node) == completion_id:
+                return node.capability_id
+        raise InvalidStateTransition(f"unknown workflow completion: {completion_id}")
+
+    def _required_input_types(
+        self,
+        request: ExecutionRequest,
+        spec: CapabilitySpec,
+        node: WorkflowNode | None,
+    ) -> set[str]:
+        if node is None:
+            return set(spec.input_types)
+        requested = self.router.resolve(request.target)
+        assert isinstance(requested, WorkflowSpec)
+        mapped = {
+            artifact_type
+            for mapping in requested.artifact_mappings
+            if mapping.to_node == node.id
+            for artifact_type in mapping.artifact_types
+        }
+        initial = {item.type for item in request.inputs if item.type in set(spec.input_types)}
+        return mapped | initial
+
+    def _required_output_types(
+        self,
+        request: ExecutionRequest,
+        spec: CapabilitySpec,
+        node: WorkflowNode | None,
+    ) -> set[str]:
+        if node is None:
+            return set(spec.output_types)
+        requested = self.router.resolve(request.target)
+        assert isinstance(requested, WorkflowSpec)
+        repeated = sum(item.capability_id == node.capability_id for item in requested.nodes) > 1
+        if not repeated:
+            return set(spec.output_types)
+        mapped = {
+            artifact_type
+            for mapping in requested.artifact_mappings
+            if mapping.from_node == node.id
+            for artifact_type in mapping.artifact_types
+            if artifact_type in set(spec.output_types)
+        }
+        return mapped or set(spec.output_types)
 
     def _prepare_entry_inputs(
         self,
@@ -726,19 +905,11 @@ class RunCoordinator:
         requested = self.router.resolve(request.target)
         if not isinstance(requested, WorkflowSpec):
             return False
-        nodes = {node.capability_id: node for node in requested.nodes}
-        node = nodes[capability_id]
         rerun = self._rerun_is_authorized(capability_id)
-        if capability_id in completed_targets and not rerun:
-            raise InvalidStateTransition(
-                f"workflow capability is already completed: {capability_id}"
-            )
-        predecessors = {
-            next(item.capability_id for item in requested.nodes if item.id == edge.from_node)
-            for edge in requested.edges
-            if edge.to_node == node.id
-        }
-        missing_predecessors = sorted(predecessors - set(completed_targets))
+        node = self._current_workflow_node(request, capability_id, completed_targets)
+        completed_nodes = self._completed_node_ids(requested, completed_targets)
+        predecessors = {edge.from_node for edge in requested.edges if edge.to_node == node.id}
+        missing_predecessors = sorted(predecessors - completed_nodes)
         if missing_predecessors:
             raise InvalidStateTransition(
                 "workflow predecessors are incomplete: " + ", ".join(missing_predecessors)
@@ -772,10 +943,11 @@ class RunCoordinator:
         if not state.decisions or state.decisions[-1].description != "Resume decision: rerun":
             return False
         checkpoint = self.checkpoints.current()
+        if checkpoint is None or checkpoint.run_id != state.active_run_id:
+            return False
+        request = self._load_request(checkpoint.run_id)
         return (
-            checkpoint is not None
-            and checkpoint.run_id == state.active_run_id
-            and checkpoint.completed_target == capability_id
+            self._capability_for_completion(request, checkpoint.completed_target) == capability_id
         )
 
     def _enforce_current_checkpoint(
@@ -863,12 +1035,13 @@ class RunCoordinator:
         request: ExecutionRequest,
         capability_id: str,
         *,
+        completed_targets: list[str],
         material_uncertainty: bool,
     ) -> StopSignals:
         requested = self.router.resolve(request.target)
         if isinstance(requested, CapabilitySpec):
             return StopSignals(is_terminal=True, material_uncertainty=material_uncertainty)
-        node = next(node for node in requested.nodes if node.capability_id == capability_id)
+        node = self._current_workflow_node(request, capability_id, completed_targets)
         return StopSignals(
             is_terminal=node.id in requested.terminal_nodes,
             human_review=(node.human_review or node.id in requested.mode_stops.checkpointed_nodes),
@@ -882,16 +1055,12 @@ class RunCoordinator:
         requested = self.router.resolve(request.target)
         if not isinstance(requested, WorkflowSpec):
             return None
-        completed = set(completed_targets)
+        completed_nodes = self._completed_node_ids(requested, completed_targets)
         for node in requested.nodes:
-            if node.capability_id in completed:
+            if node.id in completed_nodes:
                 continue
-            predecessors = {
-                next(item.capability_id for item in requested.nodes if item.id == edge.from_node)
-                for edge in requested.edges
-                if edge.to_node == node.id
-            }
-            if predecessors <= completed:
+            predecessors = {edge.from_node for edge in requested.edges if edge.to_node == node.id}
+            if predecessors <= completed_nodes:
                 return node.capability_id
         return None
 

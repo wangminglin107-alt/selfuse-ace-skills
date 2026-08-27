@@ -41,8 +41,7 @@ def _not_applicable(gate_id: str) -> GateResult:
 
 def _validation_findings(exc: ValidationError) -> list[str]:
     return [
-        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
-        for error in exc.errors()
+        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
     ]
 
 
@@ -165,9 +164,7 @@ def evaluate_theory_architecture(
                 f"candidate {candidate.candidate_id} omits material contradictions: "
                 f"{', '.join(missing)}."
             )
-    contradictions = _result(
-        "theory.contradictions_acknowledged", contradiction_findings
-    )
+    contradictions = _result("theory.contradictions_acknowledged", contradiction_findings)
 
     no_forced_findings: list[str] = []
     if parsed_decision.recommendation != "descriptive":

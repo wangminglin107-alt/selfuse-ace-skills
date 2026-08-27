@@ -2,6 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from research_skills_os.core.contracts.enums import RunMode, TargetKind
+from research_skills_os.core.contracts.models import (
+    ExecutionRequest,
+    InputArtifactRef,
+    TargetRef,
+)
+from research_skills_os.core.orchestrator.coordinator import RunCoordinator
 from research_skills_os.core.registry.loader import RegistryLoader
 
 ROOT = Path(__file__).parents[2]
@@ -48,15 +55,12 @@ def test_revision_and_review_receive_explicit_traceable_artifacts() -> None:
         for mapping in workflow.artifact_mappings
     }
 
-    assert {"chinese_manuscript", "draft_trace"} <= mappings[
-        ("draft", "citation-regression")
-    ]
+    assert {"chinese_manuscript", "draft_trace"} <= mappings[("draft", "citation-regression")]
+    assert {"chinese_manuscript", "draft_trace"} <= mappings[("draft", "style-audit")]
     assert {"prose_style_report", "prose_revision_matrix"} <= mappings[
         ("style-audit", "constrained-revision")
     ]
-    assert "revised_chinese_manuscript" in mappings[
-        ("constrained-revision", "revision-audit")
-    ]
+    assert "revised_chinese_manuscript" in mappings[("constrained-revision", "revision-audit")]
     assert "revision_audit" in mappings[("revision-audit", "peer-review")]
 
 
@@ -69,3 +73,104 @@ def test_mode_stops_keep_interactive_and_checkpointed_control() -> None:
         "constrained-revision",
     ]
     assert workflow.mode_stops.autonomous_terminal_only is True
+
+
+def writing_request() -> ExecutionRequest:
+    return ExecutionRequest(
+        request_id="writing-repeat-test",
+        project_id="project-1",
+        target=TargetRef(kind=TargetKind.WORKFLOW, id="evidence-to-chinese-note"),
+        mode=RunMode.AUTONOMOUS,
+        goal="Exercise both drafting nodes",
+        inputs=[
+            InputArtifactRef(
+                artifact_id="rows",
+                type="evidence_rows",
+                path_or_uri="artifacts/evidence.jsonl",
+            ),
+            InputArtifactRef(
+                artifact_id="support",
+                type="citation_support_audit",
+                path_or_uri="artifacts/support.json",
+            ),
+        ],
+    )
+
+
+def test_repeated_capability_resolves_each_workflow_node_in_order(tmp_path: Path) -> None:
+    catalog, _ = load_workflow()
+    coordinator = RunCoordinator(tmp_path, catalog)
+    request = writing_request()
+
+    first = coordinator._select_workflow_node(
+        request,
+        "ssci-section-drafting",
+        ["ssci-argument-architecture"],
+    )
+    second = coordinator._select_workflow_node(
+        request,
+        "ssci-section-drafting",
+        [
+            "ssci-argument-architecture",
+            "draft",
+            "citation-verification",
+            "academic-prose-style-audit",
+        ],
+    )
+
+    assert first.id == "draft"
+    assert second.id == "constrained-revision"
+
+
+def test_workflow_node_requires_only_initial_and_mapped_inputs(tmp_path: Path) -> None:
+    catalog, _ = load_workflow()
+    coordinator = RunCoordinator(tmp_path, catalog)
+    request = writing_request()
+    spec = catalog.capabilities["ssci-section-drafting"]
+    node = coordinator._select_workflow_node(
+        request,
+        "ssci-section-drafting",
+        ["ssci-argument-architecture"],
+    )
+
+    required = coordinator._required_input_types(request, spec, node)
+
+    assert required == {
+        "paper_argument_map",
+        "section_outline",
+        "claim_evidence_plan",
+        "terminology_ledger",
+        "evidence_rows",
+        "citation_support_audit",
+    }
+
+
+def test_repeated_capability_requires_outputs_for_the_active_node_only(tmp_path: Path) -> None:
+    catalog, _ = load_workflow()
+    coordinator = RunCoordinator(tmp_path, catalog)
+    request = writing_request()
+    spec = catalog.capabilities["ssci-section-drafting"]
+    first = coordinator._select_workflow_node(
+        request,
+        "ssci-section-drafting",
+        ["ssci-argument-architecture"],
+    )
+    second = coordinator._select_workflow_node(
+        request,
+        "ssci-section-drafting",
+        [
+            "ssci-argument-architecture",
+            "draft",
+            "citation-verification",
+            "academic-prose-style-audit",
+        ],
+    )
+
+    assert coordinator._required_output_types(request, spec, first) == {
+        "chinese_manuscript",
+        "draft_trace",
+    }
+    assert coordinator._required_output_types(request, spec, second) == {
+        "revised_chinese_manuscript",
+        "draft_trace",
+    }

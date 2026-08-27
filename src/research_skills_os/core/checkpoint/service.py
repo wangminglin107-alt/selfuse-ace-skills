@@ -60,6 +60,11 @@ def _resume_state_hash(state: ProjectState) -> str:
     return hashlib.sha256(canonical).hexdigest()
 
 
+def _unresolved_failed_gate_ids(state: ProjectState) -> list[str]:
+    latest_status = {result.gate_id: result.status for result in state.gate_results}
+    return [gate_id for gate_id, status in latest_status.items() if status is GateStatus.FAIL]
+
+
 def _atomic_write_text(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
@@ -91,6 +96,7 @@ class CheckpointService:
         state: ProjectState,
         completed_target: str,
         *,
+        run_id: str | None = None,
         inputs_used: list[str] | None = None,
         artifacts_created: list[ArtifactEnvelope] | None = None,
     ) -> Checkpoint:
@@ -98,8 +104,11 @@ class CheckpointService:
 
         if completed_target not in state.completed_targets:
             raise CheckpointIntegrityError(f"target is not completed: {completed_target}")
-        if state.active_run_id is None:
+        resolved_run_id = state.active_run_id or run_id
+        if resolved_run_id is None:
             raise CheckpointIntegrityError("checkpoint requires an active resumable run")
+        if run_id is not None and state.active_run_id not in {None, run_id}:
+            raise CheckpointIntegrityError("checkpoint run does not match active run")
 
         now = datetime.now(UTC)
         resolved_inputs = (
@@ -129,16 +138,14 @@ class CheckpointService:
         checkpoint = Checkpoint(
             checkpoint_id=_checkpoint_id(now),
             project_id=state.project_id,
-            run_id=state.active_run_id,
+            run_id=resolved_run_id,
             completed_target=completed_target,
             inputs_used=resolved_inputs,
             input_artifacts=input_artifacts,
             artifacts_created=resolved_outputs,
             key_decisions=state.decisions,
             uncertainties=state.uncertainties,
-            failed_gates=[
-                result.gate_id for result in state.gate_results if result.status is GateStatus.FAIL
-            ],
+            failed_gates=_unresolved_failed_gate_ids(state),
             resume_from=completed_target,
             state_hash=_resume_state_hash(state),
             created_at=now,

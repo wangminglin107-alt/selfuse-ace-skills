@@ -2,7 +2,13 @@ spec_version: "1.0"
 kind: capability
 id: citation-verification
 version: "1.0"
-input_types: [source_registry, document_index, evidence_rows]
+input_types:
+  - source_registry
+  - document_index
+  - evidence_rows
+  - chinese_manuscript
+  - draft_trace
+  - claim_evidence_plan
 output_types: [citation_identity_audit, citation_support_audit, citation_blockers]
 entry_gates: [contract.valid, provider.policy]
 exit_gates:

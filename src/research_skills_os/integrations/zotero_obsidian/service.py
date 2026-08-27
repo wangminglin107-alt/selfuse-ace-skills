@@ -72,9 +72,7 @@ class ZoteroObsidianBridge:
                 source.attachment is not None
                 and source.attachment.status is AttachmentStatus.LOCAL_FILE
             ):
-                prepared[source.source_id] = prepare_attachment(
-                    source.attachment, project_root
-                )
+                prepared[source.source_id] = prepare_attachment(source.attachment, project_root)
         plan = build_sync_plan(spec, state)
         sources = {source.source_id: source for source in spec.sources}
         records = dict(state.records)

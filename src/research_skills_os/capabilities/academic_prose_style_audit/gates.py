@@ -45,9 +45,7 @@ def _repeated_ngrams(text: str, size: int = 6) -> list[str]:
     return sorted(gram for gram, count in counts.items() if count >= 3)
 
 
-def audit_prose(
-    text: str, protected_anchors: tuple[str, ...] = ()
-) -> ProseStyleReport:
+def audit_prose(text: str, protected_anchors: tuple[str, ...] = ()) -> ProseStyleReport:
     """Return deterministic diagnostics; only missing protected anchors block."""
 
     paragraphs = _paragraphs(text)

@@ -11,12 +11,7 @@ ROOT = Path(__file__).parents[2]
 CAPABILITIES = ROOT / "src" / "research_skills_os" / "capabilities"
 WORKFLOW = ROOT / "src" / "research_skills_os" / "workflows" / "idea_to_novelty" / "workflow.yaml"
 V2A_WORKFLOW = (
-    ROOT
-    / "src"
-    / "research_skills_os"
-    / "workflows"
-    / "literature_to_theory"
-    / "workflow.yaml"
+    ROOT / "src" / "research_skills_os" / "workflows" / "literature_to_theory" / "workflow.yaml"
 )
 
 

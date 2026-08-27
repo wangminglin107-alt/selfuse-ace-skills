@@ -79,9 +79,7 @@ def factory(client: InMemoryZotero) -> Callable[[], InMemoryZotero]:
     return lambda: client
 
 
-def test_preview_reports_actions_without_writing(
-    tmp_path: Path, capsys: object
-) -> None:
+def test_preview_reports_actions_without_writing(tmp_path: Path, capsys: object) -> None:
     spec = write_project(tmp_path)
     vault = tmp_path / "vault"
     client = InMemoryZotero()

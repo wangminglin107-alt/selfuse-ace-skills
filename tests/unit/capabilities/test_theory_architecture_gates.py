@@ -172,8 +172,6 @@ def test_selected_theory_requires_user_decision_id():
 
 
 def test_selected_theory_with_user_decision_passes():
-    decision = valid_decision(
-        authorization_state="selected", user_decision_id="decision-user-1"
-    )
+    decision = valid_decision(authorization_state="selected", user_decision_id="decision-user-1")
 
     assert by_id(decision=decision)["theory.user_decision"].status is GateStatus.PASS

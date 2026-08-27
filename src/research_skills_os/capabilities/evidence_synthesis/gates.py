@@ -36,8 +36,7 @@ def _result(gate_id: str, findings: list[str] | None = None) -> GateResult:
 
 def _validation_findings(exc: ValidationError) -> list[str]:
     return [
-        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
-        for error in exc.errors()
+        f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}" for error in exc.errors()
     ]
 
 
@@ -120,9 +119,7 @@ def evaluate_evidence_synthesis(
                 f"contradiction {entry.contradiction_id} references unknown rows: "
                 f"{', '.join(unknown)}."
             )
-    contradiction_preserved = _result(
-        "synthesis.contradiction_preserved", contradiction_findings
-    )
+    contradiction_preserved = _result("synthesis.contradiction_preserved", contradiction_findings)
 
     material_findings: list[str] = []
     for entry in parsed_ledger.entries:
@@ -138,9 +135,7 @@ def evaluate_evidence_synthesis(
             material_findings.append(
                 f"non-material contradiction {entry.contradiction_id} lacks a boundary note."
             )
-    material_contradictions = _result(
-        "synthesis.material_contradictions", material_findings
-    )
+    material_contradictions = _result("synthesis.material_contradictions", material_findings)
 
     coverage_findings: list[str] = []
     duplicate_rows = sorted(

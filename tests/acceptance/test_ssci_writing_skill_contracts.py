@@ -11,9 +11,7 @@ SKILLS = ROOT / "skills"
 
 
 def catalog():
-    return RegistryLoader(
-        capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]
-    ).load()
+    return RegistryLoader(capability_roots=[CAPABILITIES], workflow_roots=[WORKFLOWS]).load()
 
 
 def test_argument_architecture_consumes_upstream_theory_without_recreating_it() -> None:
@@ -60,9 +58,7 @@ def test_section_drafting_is_the_only_registered_manuscript_writer() -> None:
 
 
 def test_drafting_skill_routes_theoretical_note_and_chinese_style_on_demand() -> None:
-    skill = (SKILLS / "ssci-section-drafting" / "SKILL.md").read_text(
-        encoding="utf-8"
-    )
+    skill = (SKILLS / "ssci-section-drafting" / "SKILL.md").read_text(encoding="utf-8")
     assert "references/theoretical-note.md" in skill
     assert "references/zh-style.md" in skill
     assert "does not select theory" in skill

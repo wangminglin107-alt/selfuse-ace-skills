@@ -1,0 +1,13 @@
+spec_version: "1.0"
+kind: capability
+id: ssci-section-drafting
+version: "1.0"
+input_types: [paper_argument_map, section_outline, claim_evidence_plan, terminology_ledger, evidence_rows, citation_support_audit, prose_style_report, prose_revision_matrix, chinese_manuscript]
+output_types: [chinese_manuscript, revised_chinese_manuscript, draft_trace, author_input_needed]
+entry_gates: [contract.valid, provider.policy]
+exit_gates: [writing.claim_evidence_coverage, writing.protected_anchors_preserved, writing.terminology_consistent, provenance.complete, uncertainty.explicit]
+specializations: [communication, sociology, ssci, chinese-academic-writing]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

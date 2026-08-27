@@ -181,9 +181,7 @@ def test_duplicate_exact_identity_is_reported_instead_of_guessed() -> None:
     transport = ScriptedTransport(
         [
             ExpectedRequest("GET", "/api/", ready_result()),
-            ExpectedRequest(
-                "GET", "/api/users/0/items/top?q=10.1000%2Ftest", json_result(payload)
-            ),
+            ExpectedRequest("GET", "/api/users/0/items/top?q=10.1000%2Ftest", json_result(payload)),
         ]
     )
 

@@ -60,9 +60,7 @@ class RegistryLoader:
                         f"workflow {workflow.id} maps undeclared outputs from "
                         f"{source.id}: {', '.join(unknown_types)}"
                     )
-                rejected_types = sorted(
-                    set(mapping.artifact_types) - set(target.input_types)
-                )
+                rejected_types = sorted(set(mapping.artifact_types) - set(target.input_types))
                 if rejected_types:
                     raise SpecLoadError(
                         f"workflow {workflow.id} target {target.id} does not accept mapped "

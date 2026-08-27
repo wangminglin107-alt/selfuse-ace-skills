@@ -19,6 +19,7 @@ from research_skills_os.core.contracts.models import (
 from research_skills_os.core.errors import CheckpointIntegrityError, InvalidStateTransition
 from research_skills_os.core.orchestrator.coordinator import ResumeDecision, RunCoordinator
 from research_skills_os.core.orchestrator.stop_policy import StopAction
+from research_skills_os.core.orchestrator.transitions import RunLifecycle
 from research_skills_os.core.registry.loader import RegistryLoader
 from research_skills_os.core.registry.models import CapabilitySpec
 from research_skills_os.core.state.models import ProjectLifecycle
@@ -328,6 +329,41 @@ def test_accept_drift_rejects_missing_checkpoint_artifact(tmp_path: Path):
 
     with pytest.raises(InvalidStateTransition, match="missing artifacts require rerun"):
         coordinator.resume(paused.checkpoint_id, ResumeDecision.ACCEPT_DRIFT)
+
+
+def test_accept_drift_at_terminal_checkpoint_completes_the_run(tmp_path: Path):
+    coordinator, loaded, request, context = start(tmp_path, RunMode.INTERACTIVE)
+    terminal = None
+    for index, capability_id in enumerate(
+        ("research-framing", "literature-intelligence", "novelty-audit")
+    ):
+        spec = loaded.capabilities[capability_id]
+        coordinator.begin_target(context.run_id, capability_id)
+        terminal = coordinator.complete_target(
+            context.run_id,
+            passing_result(tmp_path, request, context.run_id, spec),
+        )
+        if index < 2:
+            coordinator.resume(terminal.checkpoint_id, ResumeDecision.CONTINUE)
+
+    assert terminal is not None
+    checkpoint = coordinator.checkpoints.load(terminal.checkpoint_id)
+    edited = checkpoint.artifacts_created[0]
+    path = tmp_path / edited.path
+    path.write_text(
+        path.read_text(encoding="utf-8") + "\nHuman terminal review.\n",
+        encoding="utf-8",
+        newline="\n",
+    )
+
+    resumed = coordinator.resume(terminal.checkpoint_id, ResumeDecision.ACCEPT_DRIFT)
+
+    state = coordinator.repository.load()
+    assert resumed.lifecycle is RunLifecycle.COMPLETED
+    assert resumed.next_target_id is None
+    assert state.lifecycle is ProjectLifecycle.COMPLETED
+    assert state.active_run_id is None
+    assert coordinator.checkpoints.verify_resume(state.current_checkpoint).status == "verified"
 
 
 def test_autonomous_next_target_cannot_bypass_drifted_boundary(tmp_path: Path):

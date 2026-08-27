@@ -1,0 +1,23 @@
+{
+  "theory_candidates": {
+    "schema_version": "1.0",
+    "candidates": []
+  },
+  "construct_map": {
+    "schema_version": "1.0",
+    "known_evidence_row_ids": [],
+    "material_contradiction_ids": [],
+    "constructs": [],
+    "relations": []
+  },
+  "theory_rationale": "Verified evidence does not yet establish a defensible mechanism.",
+  "theory_decision_packet": {
+    "schema_version": "1.0",
+    "recommendation": "descriptive",
+    "selected_candidate_id": null,
+    "authorization_state": "proposed",
+    "user_decision_id": null,
+    "rationale": "Verified evidence does not yet establish a defensible mechanism.",
+    "acknowledged_contradiction_ids": []
+  }
+}

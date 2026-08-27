@@ -1,0 +1,30 @@
+spec_version: "1.0"
+kind: capability
+id: literature-intelligence
+version: "1.0"
+input_types:
+  - research_brief_markdown
+  - research_brief_metadata
+output_types:
+  - search_ledger
+  - source_registry
+  - evidence_map
+entry_gates:
+  - contract.valid
+  - provider.policy
+exit_gates:
+  - literature.search_trace
+  - literature.source_trace
+  - literature.claim_links
+  - literature.status_consistency
+  - provenance.complete
+  - uncertainty.explicit
+specializations:
+  - communication
+  - sociology
+providers:
+  - local-manual
+resumable: true
+network: optional
+side_effects:
+  - write_project_artifacts

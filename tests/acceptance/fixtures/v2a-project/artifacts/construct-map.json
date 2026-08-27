@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "known_evidence_row_ids": ["row-a", "row-b"],
+  "material_contradiction_ids": [],
+  "constructs": [
+    {"construct_id": "account-type", "label": "Account type", "definition": "Synthetic archive account classification.", "level_of_analysis": "account", "evidence_row_ids": ["row-a", "row-b"]},
+    {"construct_id": "engagement", "label": "Thirty-day engagement", "definition": "Synthetic thirty-day interaction outcome.", "level_of_analysis": "account", "evidence_row_ids": ["row-a", "row-b"]}
+  ],
+  "relations": []
+}

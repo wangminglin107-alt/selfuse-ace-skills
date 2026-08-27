@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "blockers": [],
+  "regressions": {
+    "argument": "pass",
+    "evidence": "pass",
+    "terminology": "pass",
+    "protected_anchors": "pass"
+  },
+  "open_issues": ["A-01", "A-02", "A-03", "A-04"],
+  "pilot_disposition": "continue_to_external_peer_review"
+}

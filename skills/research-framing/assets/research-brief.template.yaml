@@ -1,0 +1,31 @@
+schema_version: "1.0"
+phenomenon: ""
+research_problem: ""
+unit_of_analysis: ""
+level_of_analysis: ""
+population_context:
+  status: unknown
+  value: null
+  basis: explicit_unknown
+temporal_scope:
+  status: unknown
+  value: null
+  basis: explicit_unknown
+geographic_scope:
+  status: unknown
+  value: null
+  basis: explicit_unknown
+constructs:
+  - name: ""
+    working_definition: ""
+    basis: user_input
+research_questions:
+  - ""
+provisional_contribution:
+  type: empirical
+  statement: ""
+  status: provisional
+assumptions: []
+uncertainties: []
+user_decisions: []
+claims: []

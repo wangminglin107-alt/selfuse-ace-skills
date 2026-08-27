@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "known_evidence_row_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"],
+  "material_contradiction_ids": [],
+  "constructs": [
+    {
+      "construct_id": "aggregate-sentiment",
+      "label": "日级聚合情绪",
+      "definition": "按日和账号类别汇总的文本情绪指标，而非个人态度。",
+      "level_of_analysis": "account",
+      "evidence_row_ids": ["row-najafizada-context"]
+    },
+    {
+      "construct_id": "thirty-day-engagement",
+      "label": "三十日互动",
+      "definition": "原推文发布后 30 天内获得的转推、回复和引用总数。",
+      "level_of_analysis": "account",
+      "evidence_row_ids": ["row-norc-measure", "row-brady-association"]
+    }
+  ],
+  "relations": [
+    {
+      "from_construct_id": "aggregate-sentiment",
+      "to_construct_id": "thirty-day-engagement",
+      "mechanism": "待检验的同层关联；可能受到时间趋势、议题和账号类别混杂。",
+      "evidence_row_ids": ["row-brady-association", "row-najafizada-context"],
+      "cross_level_rationale": null
+    }
+  ]
+}

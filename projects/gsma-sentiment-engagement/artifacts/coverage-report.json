@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "source_ids": ["norc-gsma-method", "brady-2017", "najafizada-2022"],
+  "question_dimensions": ["measure_definition", "cross_topic_association", "cannabis_sentiment_context"],
+  "downstream_claim_ids": ["claim-engagement-definition", "claim-cross-topic-precedent", "claim-time-context"],
+  "uncovered_dimensions": [],
+  "coverage_limits": [
+    "The pilot does not estimate the GSMA association yet.",
+    "The selected literature is sufficient for a tracer bullet, not an exhaustive review.",
+    "No evidence supports individual-level or causal interpretation."
+  ]
+}

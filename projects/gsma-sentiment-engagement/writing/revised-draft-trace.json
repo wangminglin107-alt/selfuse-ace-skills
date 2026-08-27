@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {"source_id": "norc-gsma-method", "evidence_ids": ["row-norc-measure"]},
+    {"source_id": "brady-2017", "evidence_ids": ["row-brady-association"]},
+    {"source_id": "najafizada-2022", "evidence_ids": ["row-najafizada-context"]}
+  ],
+  "claims": [
+    {"claim_id": "claim-engagement-definition", "evidence_ids": ["row-norc-measure"], "manuscript_section": "二"},
+    {"claim_id": "claim-cross-topic-precedent", "evidence_ids": ["row-brady-association"], "manuscript_section": "三"},
+    {"claim_id": "claim-time-context", "evidence_ids": ["row-najafizada-context"], "manuscript_section": "四"},
+    {"claim_id": "claim-mechanism-transfer", "evidence_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"], "manuscript_section": "五"},
+    {"claim_id": "claim-pilot-boundary", "evidence_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"], "manuscript_section": "六"}
+  ],
+  "protected_anchors": [
+    "账号类别—日聚合",
+    "三十日互动",
+    "关联而非因果",
+    "VADER 不等同于道德—情绪词",
+    "三篇材料仅用于低 Token 系统实验"
+  ],
+  "terminology_status": "pass",
+  "claim_boundary": "associational",
+  "revision_pass": 1,
+  "resolved_style_items": ["S-01", "S-02"],
+  "citation_regression_status": "pass"
+}

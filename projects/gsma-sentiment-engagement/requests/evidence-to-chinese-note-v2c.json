@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0",
+  "request_id": "gsma-chinese-note-v2c-low-token",
+  "project_id": "gsma-sentiment-engagement",
+  "target": {"kind": "workflow", "id": "evidence-to-chinese-note"},
+  "mode": "autonomous",
+  "goal": "Run a low-token three-source systems experiment and produce an approximately 2,000-Chinese-character theoretical note with all seven audit boundaries.",
+  "inputs": [
+    {"artifact_id": "gsma-research-brief", "type": "research_brief_metadata", "path_or_uri": "artifacts/research-brief-metadata.json"},
+    {"artifact_id": "gsma-novelty-audit", "type": "novelty_audit", "path_or_uri": "artifacts/novelty-audit.json"},
+    {"artifact_id": "theory-architecture-theory_decision_packet", "type": "theory_decision_packet", "path_or_uri": "artifacts/theory-decision-packet.json"},
+    {"artifact_id": "theory-architecture-theory_rationale", "type": "theory_rationale", "path_or_uri": "artifacts/theory-rationale.md"},
+    {"artifact_id": "evidence-synthesis-synthesis_matrix", "type": "synthesis_matrix", "path_or_uri": "artifacts/synthesis-matrix.json"},
+    {"artifact_id": "evidence-synthesis-contradiction_ledger", "type": "contradiction_ledger", "path_or_uri": "artifacts/contradiction-ledger.json"},
+    {"artifact_id": "citation-verification-citation_support_audit", "type": "citation_support_audit", "path_or_uri": "artifacts/citation-support-audit.json"},
+    {"artifact_id": "evidence-synthesis-evidence_rows", "type": "evidence_rows", "path_or_uri": "artifacts/evidence-rows.jsonl"},
+    {"artifact_id": "gsma-source-registry", "type": "source_registry", "path_or_uri": "artifacts/source-registry.yaml"},
+    {"artifact_id": "paper-knowledge-base-document_index", "type": "document_index", "path_or_uri": "artifacts/document-index.json"}
+  ],
+  "constraints": {"domain": "communication", "language": "zh", "network": "deny", "stop_after": null},
+  "user_decisions": {
+    "theory_decision_id": "gsma-theory-selected-20260827",
+    "pilot_scope": "Use only the three already verified sources and approximately 2,000 Chinese characters to expose system defects rather than conduct publishable research."
+  }
+}

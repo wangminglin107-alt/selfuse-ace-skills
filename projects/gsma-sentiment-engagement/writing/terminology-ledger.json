@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "terms": [
+    {"id": "aggregate-sentiment", "zh": "聚合情绪", "en": "aggregate sentiment", "definition": "账号类别—日层面的VADER汇总指标", "avoid": ["个人情绪", "公众态度"]},
+    {"id": "thirty-day-engagement", "zh": "三十日互动", "en": "thirty-day engagement", "definition": "发布后30天内转推、回复和引用的总数", "avoid": ["曝光量", "传播效果"]},
+    {"id": "affective-diffusion", "zh": "情绪性语言—扩散迁移框架", "en": "affective-language diffusion transfer framework", "definition": "从跨议题关联证据提出、等待GSMA检验的机制候选", "avoid": ["已证实机制", "因果模型"]},
+    {"id": "unit", "zh": "账号类别—日聚合", "en": "account-category-day aggregate", "definition": "本试验的分析和推论单位", "avoid": ["用户", "个体"]}
+  ]
+}

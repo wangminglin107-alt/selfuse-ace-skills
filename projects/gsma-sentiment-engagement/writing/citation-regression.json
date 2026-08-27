@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "content_claims_requested": true,
+  "records": [
+    {
+      "support_id": "v2c-support-norc-definition",
+      "citation_id": "citation-norc",
+      "claim_id": "claim-engagement-definition",
+      "claim_text": "GSMA 的互动指标是发布后 30 天内转推、回复和引用的总数。",
+      "evidence_row_id": "row-norc-measure",
+      "evidence_content_sha256": "0c3527505ad098c870ced31617c762545e685f3bcd9ed2d857e36c5a7725461b",
+      "locator": {"page": 3, "section": "Engagement", "block_id": "norc-engagement-p3", "content_sha256": "0c3527505ad098c870ced31617c762545e685f3bcd9ed2d857e36c5a7725461b"},
+      "support_state": "supports",
+      "claim_strength": "descriptive",
+      "passage_strength": "descriptive",
+      "verifier_note": "正文保留了30天窗口、三类互动和非曝光边界。"
+    },
+    {
+      "support_id": "v2c-support-brady-precedent",
+      "citation_id": "citation-brady",
+      "claim_id": "claim-cross-topic-precedent",
+      "claim_text": "在政治议题推文中，道德—情绪词数量与消息扩散呈正向关联。",
+      "evidence_row_id": "row-brady-association",
+      "evidence_content_sha256": "82ea5033286607c7f47d3cf3fea233ce7c8083a2f27d99432da73157ae3bc5eb",
+      "locator": {"page": 1, "section": "Abstract", "block_id": "brady-diffusion-p1", "content_sha256": "82ea5033286607c7f47d3cf3fea233ce7c8083a2f27d99432da73157ae3bc5eb"},
+      "support_state": "supports",
+      "claim_strength": "associational",
+      "passage_strength": "associational",
+      "verifier_note": "正文没有把20%迁移为GSMA效应，并明确了议题和指标差异。"
+    },
+    {
+      "support_id": "v2c-support-najafizada-context",
+      "citation_id": "citation-najafizada",
+      "claim_id": "claim-time-context",
+      "claim_text": "加拿大大麻相关推文的月度情绪极性在研究期间发生描述性变化。",
+      "evidence_row_id": "row-najafizada-context",
+      "evidence_content_sha256": "ef35235899bcff174e90afcf4e2c33b5714536ef7d9fcd53e843f4d8fb6ae98c",
+      "locator": {"page": 4, "section": "Results", "block_id": "najafizada-sentiment-p4", "content_sha256": "ef35235899bcff174e90afcf4e2c33b5714536ef7d9fcd53e843f4d8fb6ae98c"},
+      "support_state": "supports",
+      "claim_strength": "descriptive",
+      "passage_strength": "descriptive",
+      "verifier_note": "正文只用该证据说明时间变化和控制必要性，没有声称互动关系。"
+    }
+  ]
+}

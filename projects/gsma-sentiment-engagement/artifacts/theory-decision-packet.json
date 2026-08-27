@@ -1,0 +1,9 @@
+{
+ "schema_version": "1.0",
+ "recommendation": "mechanism_framework",
+ "selected_candidate_id": "candidate-affective-diffusion",
+ "authorization_state": "selected",
+ "user_decision_id": "gsma-theory-selected-20260827",
+ "rationale": "用户确认采纳情绪性语言—扩散迁移框架作为机制性假设指导后续分析；三层局限（道德-情绪词与VADER构念差异、无GSMA直接证据、聚合层不可下推个人）作为边界条件保留。",
+ "acknowledged_contradiction_ids": []
+}

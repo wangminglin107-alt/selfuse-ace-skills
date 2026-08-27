@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "groups": [
+    {
+      "group_id": "sentiment-engagement-framing",
+      "row_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"],
+      "provisional_claim": "现有材料支持开展聚合层面的情绪—互动关联检验，但不能预设方向、效应大小或跨议题可迁移性。",
+      "downstream_claim_ids": ["claim-engagement-definition", "claim-cross-topic-precedent", "claim-time-context"]
+    }
+  ]
+}

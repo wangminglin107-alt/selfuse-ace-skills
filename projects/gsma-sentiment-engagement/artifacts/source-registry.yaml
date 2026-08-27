@@ -1,0 +1,34 @@
+schema_version: "1.0"
+archive:
+  title: General Social Media Archive February 2023 CSV release
+  official_url: https://gss.norc.org/content/dam/gss/get-documentation/pdf/gsma/gsma_feb2023_csv.zip
+  landing_page: https://gss.norc.org/gsma.html
+  sha256: 6732e90eb1d692e4dfa71de947318cd86aef114a3aaad83e95ebdaf2ac9ef8b0
+  retrieved_at: 2026-08-26
+included_sources:
+  - source_id: norc-gsma-method
+    route: official_source
+    official_url: https://gss.norc.org/content/dam/gss/get-documentation/pdf/gsma/GSMA%20Methodology%20Report%20February%202023.pdf
+    local_cache_sha256: 2eac4683b2f968dddfac3ebfeb800a06b83a897811d59fbcae78d9dc83b4142e
+    content_state: inspected_full_text
+  - source_id: brady-2017
+    route: doi
+    doi: 10.1073/pnas.1618923114
+    official_url: https://doi.org/10.1073/pnas.1618923114
+    local_cache_sha256: 5c8b6bc5c7721b61fb269dbd014655208c5f910cb26291a4413921e7d0d97f25
+    content_state: inspected_full_text
+  - source_id: najafizada-2022
+    route: doi
+    doi: 10.1186/s42238-022-00132-1
+    official_url: https://doi.org/10.1186/s42238-022-00132-1
+    local_cache_sha256: a8ca95c0377bd70495056566c43118181f394480c3655dcce8a399d88a183da7
+    content_state: inspected_full_text
+candidate_sources:
+  - source_id: cavazos-rehg-2014
+    title: Characterizing the Followers and Tweets of a Marijuana-Focused Twitter Handle
+    doi: 10.2196/jmir.3247
+    status: metadata_only
+    exclusion_reason: 为保持最小试验规模，未将其内容用于任何研究主张。
+search_limits:
+  - 这不是系统综述；只选择足以验证证据链的三个来源。
+  - Brady 研究用于跨议题理论迁移候选，不能替代 GSMA 数据分析。

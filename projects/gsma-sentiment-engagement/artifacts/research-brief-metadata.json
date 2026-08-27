@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "phenomenon": "Daily aggregate sentiment and thirty-day engagement in marijuana-related Twitter content",
+  "research_problem": "It is not yet known whether NORC GSMA VADER sentiment measures are associated with thirty-day engagement after accounting for time and account category.",
+  "unit_of_analysis": "account-category-day aggregate",
+  "level_of_analysis": "account",
+  "population_context": {
+    "status": "known",
+    "value": "English-language marijuana-related Twitter records represented in GSMA PowerTrack All Daily",
+    "basis": "Official NORC methodology"
+  },
+  "temporal_scope": {
+    "status": "known",
+    "value": "2016-08-01 through 2022-02-28",
+    "basis": "Official NORC methodology"
+  },
+  "geographic_scope": {
+    "status": "known",
+    "value": "United States or unspecified location",
+    "basis": "Official NORC methodology"
+  },
+  "constructs": [
+    {
+      "name": "aggregate sentiment",
+      "working_definition": "Daily VADER compound or positive-to-negative score aggregated within a GSMA account category.",
+      "basis": "NORC GSMA methodology"
+    },
+    {
+      "name": "thirty-day engagement",
+      "working_definition": "Retweets, replies, and quotes received within thirty days of the original tweet, aggregated by day and category.",
+      "basis": "NORC GSMA methodology"
+    }
+  ],
+  "research_questions": [
+    "How are GSMA daily aggregate sentiment measures associated with thirty-day engagement across account categories?"
+  ],
+  "provisional_contribution": {
+    "type": "empirical",
+    "statement": "Provide a bounded descriptive and associational account of sentiment and engagement in the archived GSMA series.",
+    "status": "provisional"
+  },
+  "assumptions": [
+    "The official variable definitions and archive release remain applicable to the cached files."
+  ],
+  "uncertainties": [
+    "The selected literature is a tracer bullet rather than exhaustive coverage.",
+    "The usable distribution of engagement variables has not yet been analysed."
+  ],
+  "user_decisions": [
+    "Keep the pilot small and use an associational claim boundary."
+  ],
+  "claims": [
+    {
+      "kind": "framing",
+      "statement": "The unit of inference is an account-category-day aggregate, not an individual.",
+      "evidence_refs": ["norc-gsma-method"]
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/source-manifest.schema.json",
+  "title": "Research Skills OS source manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_version", "sources"],
+  "properties": {
+    "manifest_version": {"const": "1.0"},
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["spdx", "source", "status", "notice_required"],
+      "properties": {
+        "spdx": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "status": {"const": "confirmed"},
+        "notice_required": {"type": "boolean"}
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["network", "endpoints", "network_notes", "secrets", "subprocess", "filesystem_scope", "review_status"],
+      "properties": {
+        "network": {"enum": ["none", "optional", "required"]},
+        "endpoints": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "network_notes": {"type": "string", "minLength": 1},
+        "secrets": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "subprocess": {"type": "boolean"},
+        "filesystem_scope": {"type": "string", "minLength": 1},
+        "review_status": {"const": "approved"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"network": {"enum": ["optional", "required"]}}},
+          "then": {"properties": {"endpoints": {"minItems": 1}}}
+        }
+      ]
+    },
+    "tests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["upstream", "local"],
+      "properties": {
+        "upstream": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "local": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["capability", "source_kind", "upstream_repo", "upstream_commit", "source_file", "source_sha256", "reuse_mode", "modifications", "license", "security", "tests"],
+      "properties": {
+        "capability": {"type": "string", "minLength": 1},
+        "source_kind": {"enum": ["git", "local"]},
+        "upstream_repo": {"type": "string", "minLength": 1},
+        "upstream_commit": {"type": ["string", "null"]},
+        "source_file": {"type": "string", "minLength": 1},
+        "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "reuse_mode": {"enum": ["conceptual", "reference_only", "verbatim", "extracted", "adapted"]},
+        "local_target": {"type": ["string", "null"], "minLength": 1},
+        "modifications": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "license": {"$ref": "#/$defs/license"},
+        "security": {"$ref": "#/$defs/security"},
+        "tests": {"$ref": "#/$defs/tests"},
+        "notes": {"type": ["string", "null"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"source_kind": {"const": "git"}}},
+          "then": {"properties": {"upstream_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}},
+          "else": {"properties": {"upstream_commit": {"type": "null"}}}
+        },
+        {
+          "if": {"properties": {"reuse_mode": {"enum": ["verbatim", "extracted", "adapted"]}}},
+          "then": {"required": ["local_target"]}
+        },
+        {
+          "if": {"properties": {"reuse_mode": {"const": "adapted"}}},
+          "then": {
+            "properties": {
+              "modifications": {"minItems": 1},
+              "tests": {"properties": {"local": {"minItems": 1}}}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+

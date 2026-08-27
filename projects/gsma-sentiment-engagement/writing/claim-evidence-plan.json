@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "claims": [
+    {"claim_id": "claim-engagement-definition", "strength": "descriptive", "evidence_ids": ["row-norc-measure"], "allowed": "GSMA互动是发布后30天内的转推、回复和引用总数", "prohibited": "互动等同于曝光或个人态度"},
+    {"claim_id": "claim-cross-topic-precedent", "strength": "associational", "evidence_ids": ["row-brady-association"], "allowed": "政治议题中的道德—情绪词与扩散呈正向关联", "prohibited": "该效应必然适用于GSMA"},
+    {"claim_id": "claim-time-context", "strength": "descriptive", "evidence_ids": ["row-najafizada-context"], "allowed": "大麻推文情绪极性存在月度变化", "prohibited": "月度变化由某一事件导致"},
+    {"claim_id": "claim-mechanism-transfer", "strength": "interpretive", "evidence_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"], "allowed": "情绪性语言—扩散关系可作为待检验的迁移框架", "prohibited": "机制已经在GSMA中成立"},
+    {"claim_id": "claim-pilot-boundary", "strength": "author-decision", "evidence_ids": ["row-norc-measure", "row-brady-association", "row-najafizada-context"], "allowed": "三篇材料仅用于低Token系统实验", "prohibited": "三篇材料构成完整综述"}
+  ]
+}

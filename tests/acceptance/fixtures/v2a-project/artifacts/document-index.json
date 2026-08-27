@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "documents": [
+    {
+      "source_id": "source-a",
+      "title": "Fixture Source A",
+      "authors": ["Fixture Author A"],
+      "identifiers": {},
+      "artifact_id": "source-a",
+      "path": "inputs/sources/source-a.md",
+      "artifact_sha256": "a504d982c35a30d65a76f0a65959bfa334909525acb7045ff6c441e8aeee4fed",
+      "imported_at": "2026-08-26T12:00:00Z",
+      "document_type": "report",
+      "language": "en",
+      "access_state": "full_text",
+      "privacy_label": "public",
+      "content_availability": "full_text",
+      "locators": [{"page": null, "section": "Findings", "block_id": "source-a-findings", "content_sha256": "4bee83a06838420b43293169df2ded47dcf910f111b1594784b60ba0e6178838"}],
+      "extraction_method": "manual-markdown",
+      "extraction_warnings": [],
+      "version_state": "current",
+      "supersedes_source_id": null,
+      "superseded_by_source_id": null,
+      "metadata_verification": "verified"
+    },
+    {
+      "source_id": "source-b",
+      "title": "Fixture Source B",
+      "authors": ["Fixture Author B"],
+      "identifiers": {},
+      "artifact_id": "source-b",
+      "path": "inputs/sources/source-b.md",
+      "artifact_sha256": "95b1c26cf51dc77cf05228e5cab3b20038dafccafeac3bbf77424fed646b3171",
+      "imported_at": "2026-08-26T12:00:00Z",
+      "document_type": "report",
+      "language": "en",
+      "access_state": "full_text",
+      "privacy_label": "public",
+      "content_availability": "full_text",
+      "locators": [{"page": null, "section": "Findings", "block_id": "source-b-findings", "content_sha256": "a299acc0e0a0a784f49e8fff795e624c3356dddf7ab970a6cb52af59b7e6a387"}],
+      "extraction_method": "manual-markdown",
+      "extraction_warnings": [],
+      "version_state": "current",
+      "supersedes_source_id": null,
+      "superseded_by_source_id": null,
+      "metadata_verification": "verified"
+    }
+  ]
+}

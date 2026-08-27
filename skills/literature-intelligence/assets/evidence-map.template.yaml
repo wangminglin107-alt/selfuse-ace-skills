@@ -1,0 +1,5 @@
+schema_version: "1.0"
+claims: []
+coverage_limits:
+  - "No source content has been verified."
+unsupported_claims: []

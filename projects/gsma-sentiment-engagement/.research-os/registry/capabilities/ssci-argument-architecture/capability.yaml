@@ -1,0 +1,13 @@
+spec_version: "1.0"
+kind: capability
+id: ssci-argument-architecture
+version: "1.0"
+input_types: [research_brief_metadata, novelty_audit, theory_decision_packet, theory_rationale, synthesis_matrix, contradiction_ledger, citation_support_audit, evidence_rows]
+output_types: [paper_argument_map, section_outline, claim_evidence_plan, terminology_ledger]
+entry_gates: [contract.valid, provider.policy]
+exit_gates: [writing.architecture_complete, writing.claim_evidence_coverage, writing.terminology_consistent, provenance.complete, uncertainty.explicit]
+specializations: [communication, sociology, ssci, chinese-academic-writing]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

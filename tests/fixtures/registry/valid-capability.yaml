@@ -1,0 +1,21 @@
+spec_version: "1.0"
+kind: capability
+id: research-framing
+version: "1.0"
+input_types:
+  - idea_memo
+output_types:
+  - research_brief
+entry_gates:
+  - contract.valid
+exit_gates:
+  - provenance.complete
+specializations:
+  - social-science.communication
+providers:
+  - local-manual
+resumable: true
+network: none
+side_effects:
+  - writes_project_artifacts
+

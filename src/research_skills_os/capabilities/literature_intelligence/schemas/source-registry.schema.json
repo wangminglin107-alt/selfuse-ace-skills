@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/source-registry/1.0",
+  "title": "Source Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["source_id", "title", "status", "decision", "decision_reason", "provenance", "metadata_verification", "content_verification"],
+        "properties": {
+          "source_id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "status": { "enum": ["candidate", "retrieved", "screened", "verified_metadata", "verified_content", "excluded"] },
+          "decision": { "enum": ["include", "exclude", "pending"] },
+          "decision_reason": { "type": "string", "minLength": 1 },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["provider", "locator", "retrieved_at", "content_sha256"],
+            "properties": {
+              "provider": { "type": "string", "minLength": 1 },
+              "locator": { "type": "string", "minLength": 1 },
+              "retrieved_at": { "type": "string", "format": "date-time" },
+              "content_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+            }
+          },
+          "metadata_verification": { "enum": ["unverified", "verified"] },
+          "content_verification": { "enum": ["unavailable", "unverified", "verified"] }
+        }
+      }
+    }
+  }
+}

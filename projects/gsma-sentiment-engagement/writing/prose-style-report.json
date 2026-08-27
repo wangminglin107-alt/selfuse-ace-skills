@@ -1,0 +1,31 @@
+{
+  "findings": [
+    {
+      "code": "repeated_ngram",
+      "severity": "advisory",
+      "unit": "document",
+      "excerpt": "Brady 等",
+      "message": "作者名和机制说明在相邻部分重复出现；检查是否为必要归因，不据此机械改写。"
+    }
+  ],
+  "metrics": {
+    "character_count": 2353,
+    "paragraph_count": 19,
+    "sentence_count": 58,
+    "formulaic_filler_count": 0,
+    "connector_count": 3,
+    "connectors_per_1000_characters": 1.27,
+    "sentence_length_stddev": 21.46,
+    "repeated_opening_count": 0,
+    "repeated_ngram_count": 15
+  },
+  "protected_anchors": [
+    "账号类别—日聚合",
+    "三十日互动",
+    "关联而非因果",
+    "VADER 不等同于道德—情绪词",
+    "三篇材料仅用于低 Token 系统实验"
+  ],
+  "missing_anchors": [],
+  "ok": true
+}

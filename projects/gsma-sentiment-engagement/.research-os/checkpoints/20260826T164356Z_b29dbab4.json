@@ -1,0 +1,253 @@
+{
+  "artifacts_created": [
+    {
+      "artifact_id": "citation-verification-citation_identity_audit",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.866463Z",
+      "human_edited": false,
+      "path": "artifacts/citation-identity-audit.json",
+      "producing_capability": "citation-verification",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "733d0a46886fda2ba17aad47433d00c56c71e40944187abca83516665cf5aced",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "paper-knowledge-base-document_index",
+        "evidence-synthesis-evidence_rows"
+      ],
+      "type": "citation_identity_audit",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "citation-verification-citation_support_audit",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.867463Z",
+      "human_edited": false,
+      "path": "artifacts/citation-support-audit.json",
+      "producing_capability": "citation-verification",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "7c0278794ec5cf1b2c30691e5f0708a84c67bbc05e83d27ed5917982ed3c02d8",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "paper-knowledge-base-document_index",
+        "evidence-synthesis-evidence_rows"
+      ],
+      "type": "citation_support_audit",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "citation-verification-citation_blockers",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.868462Z",
+      "human_edited": false,
+      "path": "artifacts/citation-blockers.json",
+      "producing_capability": "citation-verification",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "64ec0a7c39626d2202bd8522d48b451b12f53de85db3958af306481b4be20213",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "paper-knowledge-base-document_index",
+        "evidence-synthesis-evidence_rows"
+      ],
+      "type": "citation_blockers",
+      "verification_state": "verified"
+    }
+  ],
+  "checkpoint_id": "20260826T164356Z_b29dbab4",
+  "checkpoint_version": "1.0",
+  "completed_target": "citation-verification",
+  "created_at": "2026-08-26T16:43:56.958719Z",
+  "evidence_added": [],
+  "failed_gates": [],
+  "input_artifacts": [
+    {
+      "artifact_id": "evidence-synthesis-evidence_rows",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.675187Z",
+      "human_edited": false,
+      "path": "artifacts/evidence-rows.jsonl",
+      "producing_capability": "evidence-synthesis",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "34971ebaa217e7b311621728c2f4cb4283dac387beb2488a277a0e967b36d253",
+      "source_artifact_ids": [
+        "gsma-research-brief",
+        "gsma-novelty-audit",
+        "paper-knowledge-base-document_index"
+      ],
+      "type": "evidence_rows",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "gsma-novelty-audit",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.510443Z",
+      "human_edited": false,
+      "path": "artifacts/novelty-audit.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-novelty-audit"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "f3f4403f04d979dd985f49d7ea7c9b4d4d456ce50915f995a625f56231e99558",
+      "source_artifact_ids": [],
+      "type": "novelty_audit",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-research-brief",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.509444Z",
+      "human_edited": false,
+      "path": "artifacts/research-brief-metadata.json",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-research-brief"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4c6677ddd23cce23b64037dbac68d26bbd2272bfcb6daa51840d12284427684f",
+      "source_artifact_ids": [],
+      "type": "research_brief_metadata",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "gsma-source-registry",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.502158Z",
+      "human_edited": false,
+      "path": "artifacts/source-registry.yaml",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:gsma-source-registry"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "2536ce3a3f4db043f534cde8aa07c9adcd1c2555833e5dc4d44bcfb2f72071fa",
+      "source_artifact_ids": [],
+      "type": "source_registry",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "paper-knowledge-base-document_index",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.547543Z",
+      "human_edited": false,
+      "path": "artifacts/document-index.json",
+      "producing_capability": "paper-knowledge-base",
+      "provenance_references": [
+        "project:provenance/gsma-data-source.json"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "public",
+      "sha256": "caeac6fd9dc37cbea4c225b0459d16bb7e3e03b6a372c3f945a1d202426bb16d",
+      "source_artifact_ids": [
+        "gsma-source-registry",
+        "source-norc-gsma-method",
+        "source-brady-2017",
+        "source-najafizada-2022"
+      ],
+      "type": "document_index",
+      "verification_state": "verified"
+    },
+    {
+      "artifact_id": "source-brady-2017",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.505440Z",
+      "human_edited": false,
+      "path": "sources/brady-2017.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-brady-2017"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-najafizada-2022",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.507441Z",
+      "human_edited": false,
+      "path": "sources/najafizada-2022.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-najafizada-2022"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    },
+    {
+      "artifact_id": "source-norc-gsma-method",
+      "contract_version": "1.0",
+      "created_at": "2026-08-26T16:43:56.503160Z",
+      "human_edited": false,
+      "path": "sources/norc-gsma-method.md",
+      "producing_capability": "local-manual",
+      "provenance_references": [
+        "user-input:source-norc-gsma-method"
+      ],
+      "schema_version": "1.0",
+      "sensitivity": "internal",
+      "sha256": "5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5",
+      "source_artifact_ids": [],
+      "type": "source_document",
+      "verification_state": "unverified"
+    }
+  ],
+  "inputs_used": [
+    "evidence-synthesis-evidence_rows",
+    "gsma-novelty-audit",
+    "gsma-research-brief",
+    "gsma-source-registry",
+    "paper-knowledge-base-document_index",
+    "source-brady-2017",
+    "source-najafizada-2022",
+    "source-norc-gsma-method"
+  ],
+  "key_decisions": [],
+  "project_id": "gsma-sentiment-engagement",
+  "recommended_next": null,
+  "resume_from": "citation-verification",
+  "run_id": "run-20260826T164356Z-558539e3",
+  "state_hash": "204e4134c3eadcf54966bbdfde987890a71522ecbd771959eedf50b7a6b222d2",
+  "uncertainties": [
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "paper-knowledge-base-coverage-limit"
+    },
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "evidence-synthesis-coverage-limit"
+    },
+    {
+      "description": "The three-source pilot is a tracer bullet and not exhaustive field coverage.",
+      "material": false,
+      "uncertainty_id": "citation-verification-coverage-limit"
+    }
+  ]
+}

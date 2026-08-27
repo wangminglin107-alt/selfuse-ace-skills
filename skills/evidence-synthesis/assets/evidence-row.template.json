@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "row_id": "row-1",
+  "synthesis_group": "group-1",
+  "question_dimension": "",
+  "source_id": "source-1",
+  "artifact_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "exact_passage": "",
+  "reviewed_translation": null,
+  "passage_language": "en",
+  "locator": {
+    "page": 1,
+    "section": null,
+    "block_id": "p1-b1",
+    "content_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "source_claim": "",
+  "author_inference": null,
+  "study_context": "",
+  "method": "",
+  "population": "",
+  "boundary_conditions": [],
+  "evidence_role": "background",
+  "verification_status": "manual_needed",
+  "verifier_note": "",
+  "downstream_claim_ids": []
+}

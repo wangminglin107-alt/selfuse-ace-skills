@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "title": "General Social Media Archive February 2023 CSV release",
+  "publisher": "NORC at the University of Chicago",
+  "official_landing_page": "https://gss.norc.org/gsma.html",
+  "archive_url": "https://gss.norc.org/content/dam/gss/get-documentation/pdf/gsma/gsma_feb2023_csv.zip",
+  "archive_sha256": "6732e90eb1d692e4dfa71de947318cd86aef114a3aaad83e95ebdaf2ac9ef8b0",
+  "methodology_url": "https://gss.norc.org/content/dam/gss/get-documentation/pdf/gsma/GSMA%20Methodology%20Report%20February%202023.pdf",
+  "methodology_sha256": "2eac4683b2f968dddfac3ebfeb800a06b83a897811d59fbcae78d9dc83b4142e",
+  "retrieved_at": "2026-08-26",
+  "retrieval_state": "verified_local_cache",
+  "privacy": "public",
+  "notes": [
+    "Archive and methodology hashes were computed from the downloaded official files.",
+    "The current checkpoint covers literature and theory preparation, not statistical results."
+  ]
+}

@@ -1,0 +1,12 @@
+project_id: gsma-sentiment-engagement
+title: GSMA 日级情绪与三十日互动的关联性试验
+question: 在 NORC GSMA PowerTrack 日级汇总数据中，VADER 情绪指标与三十日互动指标呈现怎样的关联？
+unit_of_analysis: account-category-day aggregate
+claim_boundary: associational
+mode: checkpointed
+status: pilot_ready_for_data_analysis
+scope_limits:
+  - 这是小型可用性试验，不估计个体态度或心理状态。
+  - 现阶段只完成来源、证据、引文和理论架构验证，尚未报告数据分析结果。
+  - 文献用于界定变量和解释边界，不替代对 GSMA 数据的直接分析。
+next_action: 对归档数据运行描述性统计和预注册的关联模型。

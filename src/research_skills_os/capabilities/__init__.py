@@ -1,0 +1,1 @@
+"""Independently callable scholarly capabilities."""

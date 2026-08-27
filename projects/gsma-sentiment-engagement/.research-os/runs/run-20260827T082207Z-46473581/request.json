@@ -1,0 +1,74 @@
+{
+  "constraints": {
+    "domain": "communication",
+    "language": "zh",
+    "network": "deny",
+    "stop_after": null
+  },
+  "contract_version": "1.0",
+  "goal": "Run a low-token three-source systems experiment and produce an approximately 2,000-Chinese-character theoretical note with all seven audit boundaries.",
+  "inputs": [
+    {
+      "artifact_id": "gsma-research-brief",
+      "path_or_uri": "artifacts/research-brief-metadata.json",
+      "type": "research_brief_metadata"
+    },
+    {
+      "artifact_id": "gsma-novelty-audit",
+      "path_or_uri": "artifacts/novelty-audit.json",
+      "type": "novelty_audit"
+    },
+    {
+      "artifact_id": "theory-architecture-theory_decision_packet",
+      "path_or_uri": "artifacts/theory-decision-packet.json",
+      "type": "theory_decision_packet"
+    },
+    {
+      "artifact_id": "theory-architecture-theory_rationale",
+      "path_or_uri": "artifacts/theory-rationale.md",
+      "type": "theory_rationale"
+    },
+    {
+      "artifact_id": "evidence-synthesis-synthesis_matrix",
+      "path_or_uri": "artifacts/synthesis-matrix.json",
+      "type": "synthesis_matrix"
+    },
+    {
+      "artifact_id": "evidence-synthesis-contradiction_ledger",
+      "path_or_uri": "artifacts/contradiction-ledger.json",
+      "type": "contradiction_ledger"
+    },
+    {
+      "artifact_id": "citation-verification-citation_support_audit",
+      "path_or_uri": "artifacts/citation-support-audit.json",
+      "type": "citation_support_audit"
+    },
+    {
+      "artifact_id": "evidence-synthesis-evidence_rows",
+      "path_or_uri": "artifacts/evidence-rows.jsonl",
+      "type": "evidence_rows"
+    },
+    {
+      "artifact_id": "gsma-source-registry",
+      "path_or_uri": "artifacts/source-registry.yaml",
+      "type": "source_registry"
+    },
+    {
+      "artifact_id": "paper-knowledge-base-document_index",
+      "path_or_uri": "artifacts/document-index.json",
+      "type": "document_index"
+    }
+  ],
+  "mode": "autonomous",
+  "prior_checkpoint": null,
+  "project_id": "gsma-sentiment-engagement",
+  "request_id": "gsma-chinese-note-v2c-low-token",
+  "target": {
+    "id": "evidence-to-chinese-note",
+    "kind": "workflow"
+  },
+  "user_decisions": {
+    "pilot_scope": "Use only the three already verified sources and approximately 2,000 Chinese characters to expose system defects rather than conduct publishable research.",
+    "theory_decision_id": "gsma-theory-selected-20260827"
+  }
+}

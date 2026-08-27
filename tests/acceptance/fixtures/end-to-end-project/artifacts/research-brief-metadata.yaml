@@ -1,0 +1,23 @@
+schema_version: "1.0"
+phenomenon: Creators publicly frame a platform exit as an obligation claim.
+research_problem: How exit announcements position obligations among creators, platforms, and audiences.
+unit_of_analysis: A public creator exit announcement.
+level_of_analysis: Message.
+population_context: {status: unknown, value: null, basis: explicit_unknown}
+temporal_scope: {status: unknown, value: null, basis: explicit_unknown}
+geographic_scope: {status: unknown, value: null, basis: explicit_unknown}
+constructs:
+  - name: obligation claim
+    working_definition: A statement assigning duties or responsibilities to an actor.
+    basis: user_input
+research_questions:
+  - How do public creator exit announcements position platform obligations?
+provisional_contribution:
+  type: empirical
+  statement: Describe obligation framing within the bounded fixture corpus.
+  status: provisional
+assumptions: []
+uncertainties:
+  - Platform, geography, period, and population boundaries are unknown.
+user_decisions: []
+claims: []

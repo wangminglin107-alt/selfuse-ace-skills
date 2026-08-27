@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "artifact_hashes": {
+    "norc-gsma-method": "5ad864fa3a01fb9593298759c6f1238a4b8a3c3de72f872dbd870106964f98c5",
+    "brady-2017": "4fc73853320b2c7d39336c1eb206e4abcaba5d89669e931568509a5d4daeb5ae",
+    "najafizada-2022": "be0418a732aecdc432157fc31aaeeea75bcc1110042affe109bbd7b2b1995a61"
+  },
+  "unresolved_duplicate_groups": [],
+  "privacy_declared": true,
+  "coverage_limits": [
+    "Three-source tracer bullet, not a systematic review.",
+    "Only manually inspected passages can support downstream claims."
+  ]
+}

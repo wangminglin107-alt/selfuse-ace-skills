@@ -1,0 +1,51 @@
+{
+  "constraints": {
+    "domain": "other",
+    "language": "bilingual",
+    "network": "deny",
+    "stop_after": null
+  },
+  "contract_version": "1.0",
+  "goal": "Create a verified literature-and-theory checkpoint for the bounded GSMA pilot.",
+  "inputs": [
+    {
+      "artifact_id": "gsma-source-registry",
+      "path_or_uri": "artifacts/source-registry.yaml",
+      "type": "source_registry"
+    },
+    {
+      "artifact_id": "source-norc-gsma-method",
+      "path_or_uri": "sources/norc-gsma-method.md",
+      "type": "source_document"
+    },
+    {
+      "artifact_id": "source-brady-2017",
+      "path_or_uri": "sources/brady-2017.md",
+      "type": "source_document"
+    },
+    {
+      "artifact_id": "source-najafizada-2022",
+      "path_or_uri": "sources/najafizada-2022.md",
+      "type": "source_document"
+    },
+    {
+      "artifact_id": "gsma-research-brief",
+      "path_or_uri": "artifacts/research-brief-metadata.json",
+      "type": "research_brief_metadata"
+    },
+    {
+      "artifact_id": "gsma-novelty-audit",
+      "path_or_uri": "artifacts/novelty-audit.json",
+      "type": "novelty_audit"
+    }
+  ],
+  "mode": "autonomous",
+  "prior_checkpoint": null,
+  "project_id": "gsma-sentiment-engagement",
+  "request_id": "gsma-literature-theory-v2a",
+  "target": {
+    "id": "literature-to-theory",
+    "kind": "workflow"
+  },
+  "user_decisions": {}
+}

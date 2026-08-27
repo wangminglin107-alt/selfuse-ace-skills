@@ -1,0 +1,36 @@
+{
+  "citation_identity_audit": {
+    "schema_version": "1.0",
+    "records": [
+      {
+        "citation_id": "citation-1",
+        "source_id": "source-1",
+        "source_type": "article",
+        "claimed_title": "",
+        "claimed_authors": [""],
+        "claimed_container": "",
+        "claimed_year": 2026,
+        "claimed_identifier": null,
+        "verified_title": "",
+        "verified_authors": [""],
+        "verified_container": "",
+        "verified_year": 2026,
+        "verified_identifier": null,
+        "route": "manual",
+        "official_record_locator": null,
+        "identity_state": "manual_needed",
+        "publication_status": "manual_needed",
+        "status_note": ""
+      }
+    ]
+  },
+  "citation_support_audit": {
+    "schema_version": "1.0",
+    "content_claims_requested": true,
+    "records": []
+  },
+  "citation_blockers": {
+    "schema_version": "1.0",
+    "blockers": []
+  }
+}

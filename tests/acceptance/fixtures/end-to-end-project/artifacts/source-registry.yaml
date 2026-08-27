@@ -1,0 +1,14 @@
+schema_version: "1.0"
+sources:
+  - source_id: source-1
+    title: Candidate work supplied for offline fixture validation
+    status: candidate
+    decision: pending
+    decision_reason: Full text is unavailable and no substantive screening decision is possible.
+    provenance:
+      provider: local-manual
+      locator: fixture:candidate-record
+      retrieved_at: 2026-08-25T12:00:00Z
+      content_sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    metadata_verification: unverified
+    content_verification: unavailable

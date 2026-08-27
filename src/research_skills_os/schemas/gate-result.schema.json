@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "GateSeverity": {
+      "enum": [
+        "info",
+        "advisory",
+        "blocking"
+      ],
+      "title": "GateSeverity",
+      "type": "string"
+    },
+    "GateStatus": {
+      "enum": [
+        "pass",
+        "warn",
+        "fail",
+        "not_applicable"
+      ],
+      "title": "GateStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "gate_id": {
+      "minLength": 1,
+      "title": "Gate Id",
+      "type": "string"
+    },
+    "gate_version": {
+      "minLength": 1,
+      "title": "Gate Version",
+      "type": "string"
+    },
+    "remediation": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Remediation",
+      "type": "array"
+    },
+    "severity": {
+      "$ref": "#/$defs/GateSeverity"
+    },
+    "status": {
+      "$ref": "#/$defs/GateStatus"
+    }
+  },
+  "required": [
+    "gate_id",
+    "gate_version",
+    "status",
+    "severity"
+  ],
+  "title": "GateResult",
+  "type": "object"
+}

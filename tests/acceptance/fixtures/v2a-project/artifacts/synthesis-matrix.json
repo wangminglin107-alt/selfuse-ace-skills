@@ -1,0 +1,4 @@
+{
+  "schema_version": "1.0",
+  "groups": [{"group_id": "account-engagement", "row_ids": ["row-a", "row-b"], "provisional_claim": "The bounded fixture contains heterogeneous associational patterns.", "downstream_claim_ids": ["claim-association", "claim-null"]}]
+}

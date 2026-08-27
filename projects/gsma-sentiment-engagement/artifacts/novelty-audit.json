@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "research_question": "How are GSMA daily aggregate sentiment measures associated with thirty-day engagement across account categories?",
+  "candidate_contribution": {
+    "classification": "empirical",
+    "statement": "A bounded secondary analysis linking official GSMA sentiment and engagement measures."
+  },
+  "nearest_work": [
+    {
+      "source_id": "brady-2017",
+      "title": "Emotion shapes the diffusion of moralized content in social networks",
+      "verification_status": "verified_content",
+      "comparisons": [
+        {
+          "dimension": "topic and measurement",
+          "candidate_position": "Cannabis discourse, VADER sentiment, and thirty-day composite engagement",
+          "nearest_work_position": "Political discourse, moral-emotional word counts, and retweet diffusion",
+          "evidence_refs": ["row-brady-association"]
+        }
+      ]
+    },
+    {
+      "source_id": "najafizada-2022",
+      "title": "Analyzing sentiments and themes on cannabis in Canada using 2018 to 2020 Twitter data",
+      "verification_status": "verified_content",
+      "comparisons": [
+        {
+          "dimension": "outcome",
+          "candidate_position": "Tests a sentiment-engagement association",
+          "nearest_work_position": "Reports descriptive sentiment and themes without testing engagement",
+          "evidence_refs": ["row-najafizada-context"]
+        }
+      ]
+    }
+  ],
+  "novelty_claims": [],
+  "verdict": "insufficient_evidence",
+  "verdict_rationale": "The three-source tracer bullet identifies a potentially useful comparison but cannot establish field-level novelty.",
+  "revision_recommendation": "Run the GSMA analysis and expand nearest-work coverage before making a novelty claim.",
+  "search_absence_as_evidence": false,
+  "coverage_limits": [
+    "This is not a systematic review.",
+    "One metadata-only candidate was excluded from content claims."
+  ]
+}

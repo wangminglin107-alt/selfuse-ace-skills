@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/coverage-report/1.0",
+  "title": "Coverage Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "source_ids", "question_dimensions", "downstream_claim_ids", "uncovered_dimensions", "coverage_limits"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "source_ids": {"type": "array", "items": {"type": "string"}},
+    "question_dimensions": {"type": "array", "items": {"type": "string"}},
+    "downstream_claim_ids": {"type": "array", "items": {"type": "string"}},
+    "uncovered_dimensions": {"type": "array", "items": {"type": "string"}},
+    "coverage_limits": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/research-brief/1.0",
+  "title": "Research Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "phenomenon",
+    "research_problem",
+    "unit_of_analysis",
+    "level_of_analysis",
+    "population_context",
+    "temporal_scope",
+    "geographic_scope",
+    "constructs",
+    "research_questions",
+    "provisional_contribution",
+    "assumptions",
+    "uncertainties",
+    "user_decisions",
+    "claims"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "phenomenon": { "type": "string", "minLength": 1 },
+    "research_problem": { "type": "string", "minLength": 1 },
+    "unit_of_analysis": { "type": "string", "minLength": 1 },
+    "level_of_analysis": { "type": "string", "minLength": 1 },
+    "population_context": { "$ref": "#/$defs/boundedScope" },
+    "temporal_scope": { "$ref": "#/$defs/boundedScope" },
+    "geographic_scope": { "$ref": "#/$defs/boundedScope" },
+    "constructs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/construct" }
+    },
+    "research_questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "provisional_contribution": { "$ref": "#/$defs/contribution" },
+    "assumptions": { "type": "array", "items": { "type": "string" } },
+    "uncertainties": { "type": "array", "items": { "type": "string" } },
+    "user_decisions": { "type": "array", "items": { "type": "string" } },
+    "claims": { "type": "array", "items": { "$ref": "#/$defs/claim" } }
+  },
+  "$defs": {
+    "boundedScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "value", "basis"],
+      "properties": {
+        "status": { "enum": ["known", "unknown"] },
+        "value": { "type": ["string", "null"] },
+        "basis": { "type": "string", "minLength": 1 }
+      }
+    },
+    "construct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "working_definition", "basis"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "working_definition": { "type": "string", "minLength": 1 },
+        "basis": { "type": "string", "minLength": 1 }
+      }
+    },
+    "contribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "statement", "status"],
+      "properties": {
+        "type": { "enum": ["theoretical", "empirical", "methodological", "conceptual"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "status": { "const": "provisional" }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "statement", "evidence_refs"],
+      "properties": {
+        "kind": { "enum": ["framing", "empirical_observation", "literature", "novelty"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "evidence_refs": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

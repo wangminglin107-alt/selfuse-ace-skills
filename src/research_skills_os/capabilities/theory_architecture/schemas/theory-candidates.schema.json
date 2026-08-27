@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/theory-candidates/1.0",
+  "title": "Theory Candidates",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidates"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "candidates": {"type": "array", "items": {"type": "object", "required": ["candidate_id", "name", "theories", "construct_ids", "mechanisms", "level_of_analysis", "evidence_row_ids", "acknowledged_contradiction_ids", "assumptions", "compatibility_rationale", "limitations"]}}
+  }
+}

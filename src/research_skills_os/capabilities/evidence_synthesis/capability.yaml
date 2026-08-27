@@ -1,0 +1,21 @@
+spec_version: "1.0"
+kind: capability
+id: evidence-synthesis
+version: "1.0"
+input_types: [research_brief_metadata, novelty_audit, document_index]
+output_types: [evidence_rows, synthesis_matrix, contradiction_ledger, coverage_report]
+entry_gates: [contract.valid, provider.policy]
+exit_gates:
+  - synthesis.required
+  - synthesis.content_trace
+  - synthesis.source_inference_boundary
+  - synthesis.contradiction_preserved
+  - synthesis.material_contradictions
+  - synthesis.coverage
+  - provenance.complete
+  - uncertainty.explicit
+specializations: [communication, sociology]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

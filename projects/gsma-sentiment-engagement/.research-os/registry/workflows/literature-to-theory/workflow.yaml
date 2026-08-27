@@ -1,0 +1,69 @@
+spec_version: "1.0"
+kind: workflow
+id: literature-to-theory
+version: "1.0"
+entry_node: knowledge-base
+terminal_nodes:
+  - theory
+nodes:
+  - id: knowledge-base
+    capability_id: paper-knowledge-base
+    checkpoint: true
+    human_review: false
+    autonomous_review: false
+  - id: synthesis
+    capability_id: evidence-synthesis
+    checkpoint: true
+    human_review: false
+    autonomous_review: false
+  - id: verification
+    capability_id: citation-verification
+    checkpoint: true
+    human_review: false
+    autonomous_review: false
+  - id: theory
+    capability_id: theory-architecture
+    checkpoint: true
+    human_review: true
+    autonomous_review: true
+edges:
+  - from: knowledge-base
+    to: synthesis
+  - from: knowledge-base
+    to: verification
+  - from: synthesis
+    to: verification
+  - from: synthesis
+    to: theory
+  - from: verification
+    to: theory
+artifact_mappings:
+  - from_node: knowledge-base
+    artifact_types:
+      - document_index
+    to_node: synthesis
+  - from_node: knowledge-base
+    artifact_types:
+      - document_index
+    to_node: verification
+  - from_node: synthesis
+    artifact_types:
+      - evidence_rows
+    to_node: verification
+  - from_node: synthesis
+    artifact_types:
+      - synthesis_matrix
+      - contradiction_ledger
+    to_node: theory
+  - from_node: verification
+    artifact_types:
+      - citation_support_audit
+    to_node: theory
+global_gates:
+  - artifacts.integrity
+  - provider.policy
+mode_stops:
+  interactive_after_each: true
+  checkpointed_nodes:
+    - theory
+  autonomous_terminal_only: false

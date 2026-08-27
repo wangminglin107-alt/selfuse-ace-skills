@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/citation-support-audit/1.0",
+  "title": "Citation Support Audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "content_claims_requested", "records"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "content_claims_requested": {"type": "boolean"},
+    "records": {"type": "array", "items": {"type": "object", "required": ["support_id", "citation_id", "claim_id", "claim_text", "evidence_row_id", "evidence_content_sha256", "locator", "support_state", "claim_strength", "passage_strength", "verifier_note"]}}
+  }
+}

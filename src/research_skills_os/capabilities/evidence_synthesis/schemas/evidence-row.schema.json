@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-skills-os.local/schemas/evidence-row/1.0",
+  "title": "Evidence Row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "row_id", "synthesis_group", "question_dimension", "source_id", "artifact_sha256", "exact_passage", "reviewed_translation", "passage_language", "locator", "source_claim", "author_inference", "study_context", "method", "population", "boundary_conditions", "evidence_role", "verification_status", "verifier_note", "downstream_claim_ids"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "row_id": {"type": "string", "minLength": 1},
+    "synthesis_group": {"type": "string", "minLength": 1},
+    "question_dimension": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "artifact_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "exact_passage": {"type": "string"},
+    "reviewed_translation": {"type": ["string", "null"]},
+    "passage_language": {"type": "string", "minLength": 1},
+    "locator": {"type": "object"},
+    "source_claim": {"type": "string", "minLength": 1},
+    "author_inference": {"type": ["string", "null"]},
+    "study_context": {"type": "string", "minLength": 1},
+    "method": {"type": "string", "minLength": 1},
+    "population": {"type": "string", "minLength": 1},
+    "boundary_conditions": {"type": "array", "items": {"type": "string"}},
+    "evidence_role": {"enum": ["supports", "qualifies", "contradicts", "null", "background"]},
+    "verification_status": {"enum": ["verified_content", "manual_needed"]},
+    "verifier_note": {"type": "string", "minLength": 1},
+    "downstream_claim_ids": {"type": "array", "items": {"type": "string"}}
+  }
+}

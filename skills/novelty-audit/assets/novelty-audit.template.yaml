@@ -1,0 +1,13 @@
+schema_version: "1.0"
+research_question: ""
+candidate_contribution:
+  classification: empirical
+  statement: ""
+nearest_work: []
+novelty_claims: []
+verdict: insufficient_evidence
+verdict_rationale: "No verified nearest-work comparison is available."
+revision_recommendation: "Retrieve and inspect the nearest candidate work."
+search_absence_as_evidence: false
+coverage_limits:
+  - "No field-wide novelty conclusion is established."

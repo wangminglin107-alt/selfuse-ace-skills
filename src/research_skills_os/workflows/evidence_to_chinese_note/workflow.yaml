@@ -1,0 +1,75 @@
+spec_version: "1.0"
+kind: workflow
+id: evidence-to-chinese-note
+version: "1.0"
+entry_node: architecture
+terminal_nodes: [peer-review]
+nodes:
+  - {id: architecture, capability_id: ssci-argument-architecture, checkpoint: true}
+  - {id: draft, capability_id: ssci-section-drafting, checkpoint: true}
+  - {id: citation-regression, capability_id: citation-verification, checkpoint: true}
+  - {id: style-audit, capability_id: academic-prose-style-audit, checkpoint: true}
+  - {id: constrained-revision, capability_id: ssci-section-drafting, checkpoint: true}
+  - {id: revision-audit, capability_id: ssci-revision-audit, checkpoint: true}
+  - {id: peer-review, capability_id: ssci-peer-review, checkpoint: true}
+edges:
+  - {from: architecture, to: draft}
+  - {from: draft, to: citation-regression}
+  - {from: citation-regression, to: style-audit}
+  - {from: style-audit, to: constrained-revision}
+  - {from: constrained-revision, to: revision-audit}
+  - {from: revision-audit, to: peer-review}
+artifact_mappings:
+  - from_node: architecture
+    artifact_types: [paper_argument_map, section_outline, claim_evidence_plan, terminology_ledger]
+    to_node: draft
+  - from_node: draft
+    artifact_types: [chinese_manuscript, draft_trace]
+    to_node: citation-regression
+  - from_node: architecture
+    artifact_types: [claim_evidence_plan]
+    to_node: citation-regression
+  - from_node: draft
+    artifact_types: [chinese_manuscript]
+    to_node: style-audit
+  - from_node: architecture
+    artifact_types: [paper_argument_map, section_outline, claim_evidence_plan, terminology_ledger]
+    to_node: constrained-revision
+  - from_node: draft
+    artifact_types: [chinese_manuscript]
+    to_node: constrained-revision
+  - from_node: citation-regression
+    artifact_types: [citation_support_audit]
+    to_node: constrained-revision
+  - from_node: style-audit
+    artifact_types: [prose_style_report, prose_revision_matrix]
+    to_node: constrained-revision
+  - from_node: constrained-revision
+    artifact_types: [revised_chinese_manuscript, draft_trace]
+    to_node: revision-audit
+  - from_node: architecture
+    artifact_types: [paper_argument_map, claim_evidence_plan, terminology_ledger]
+    to_node: revision-audit
+  - from_node: citation-regression
+    artifact_types: [citation_support_audit]
+    to_node: revision-audit
+  - from_node: style-audit
+    artifact_types: [prose_style_report]
+    to_node: revision-audit
+  - from_node: constrained-revision
+    artifact_types: [revised_chinese_manuscript]
+    to_node: peer-review
+  - from_node: revision-audit
+    artifact_types: [revision_audit]
+    to_node: peer-review
+  - from_node: citation-regression
+    artifact_types: [citation_support_audit]
+    to_node: peer-review
+  - from_node: architecture
+    artifact_types: [paper_argument_map]
+    to_node: peer-review
+global_gates: [artifacts.integrity, provider.policy, provenance.complete]
+mode_stops:
+  interactive_after_each: true
+  checkpointed_nodes: [citation-regression, constrained-revision]
+  autonomous_terminal_only: true

@@ -14,7 +14,8 @@ downstream statement. Metadata validity never substitutes for content support.
 
 Capability: `citation-verification`
 
-Inputs: `source_registry`, `document_index`, `evidence_rows`.
+Inputs: `source_registry`, `document_index`, `evidence_rows`; post-draft regression may additionally
+consume `chinese_manuscript`, `draft_trace`, and `claim_evidence_plan`.
 
 Outputs: `citation_identity_audit`, `citation_support_audit`, `citation_blockers`.
 
@@ -46,6 +47,11 @@ Descriptive or associational text cannot establish a stronger causal statement. 
 
 Every unresolved mismatch has a corresponding open item in `citation_blockers`. A metadata-only
 audit may verify identity, but content support remains unavailable or not applicable.
+
+For post-draft regression, compare each manuscript claim and citation against the approved
+claim-evidence plan and draft trace. Reuse verified identity records when their source hash and
+publication status are unchanged; rerun content-support judgment for changed claims. Do not rewrite
+the manuscript.
 
 ## Common Mistakes
 

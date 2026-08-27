@@ -7,10 +7,11 @@ import re
 from dataclasses import dataclass
 from typing import Protocol
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 from uuid import uuid4
 
+from research_skills_os.integrations.zotero_obsidian.attachments import PreparedAttachment
 from research_skills_os.integrations.zotero_obsidian.models import SyncSource
 from research_skills_os.integrations.zotero_obsidian.planner import source_identity
 
@@ -65,9 +66,8 @@ class UrllibTransport:
     def request(
         self, method: str, path: str, headers: dict[str, str], body: bytes | None
     ) -> HttpResult:
-        request = Request(
-            f"{self._base_url}{path}", data=body, headers=headers, method=method
-        )
+        url = path if path.startswith(("http://", "https://")) else f"{self._base_url}{path}"
+        request = Request(url, data=body, headers=headers, method=method)
         try:
             with urlopen(request, timeout=self._timeout_seconds) as response:
                 return HttpResult(
@@ -93,6 +93,12 @@ class ZoteroClient(Protocol):
     def create_item(self, source: SyncSource, collection_key: str) -> str: ...
 
     def add_to_collection(self, item_key: str, collection_key: str) -> None: ...
+
+    def find_attachment(self, parent_key: str, sha256: str) -> str | None: ...
+
+    def create_attachment(
+        self, parent_key: str, prepared: PreparedAttachment
+    ) -> str: ...
 
 
 def _header(headers: dict[str, str], name: str) -> str | None:
@@ -205,17 +211,33 @@ class LocalZoteroClient:
         return key
 
     def _write(self, method: str, path: str, payload: object) -> HttpResult:
+        return self._authorized_request(
+            method,
+            path,
+            {"Content-Type": "application/json"},
+            json.dumps(payload).encode(),
+            {200, 204},
+        )
+
+    def _authorized_request(
+        self,
+        method: str,
+        path: str,
+        extra_headers: dict[str, str],
+        body: bytes,
+        accepted_statuses: set[int],
+    ) -> HttpResult:
         key = self._authorize()
         headers = {
-            "Content-Type": "application/json",
+            **extra_headers,
             "Zotero-API-Version": "3",
             "Zotero-Server-ID": self._required_server_id(),
             "Zotero-API-Key": key,
         }
         if method == "POST":
             headers["Zotero-Write-Token"] = uuid4().hex
-        result = self._transport.request(method, path, headers, json.dumps(payload).encode())
-        if result.status not in {200, 204}:
+        result = self._transport.request(method, path, headers, body)
+        if result.status not in accepted_statuses:
             raise ZoteroProtocolError(f"Zotero write failed with HTTP {result.status}")
         return result
 
@@ -314,3 +336,110 @@ class LocalZoteroClient:
             f"/api/users/0/items/{item_key}",
             {"version": version, "collections": [*collections, collection_key]},
         )
+
+    def find_attachment(self, parent_key: str, sha256: str) -> str | None:
+        raw = _json(self._read(f"/api/users/0/items/{parent_key}/children"))
+        if not isinstance(raw, list):
+            raise ZoteroProtocolError("Zotero child items response is not a list")
+        expected = f"research-skills-os-sha256:{sha256}"
+        keys: list[str] = []
+        for item in raw:
+            if not isinstance(item, dict) or not isinstance(item.get("data"), dict):
+                continue
+            data = item["data"]
+            tags = data.get("tags")
+            tag_values = (
+                {
+                    tag.get("tag")
+                    for tag in tags
+                    if isinstance(tag, dict) and isinstance(tag.get("tag"), str)
+                }
+                if isinstance(tags, list)
+                else set()
+            )
+            key = item.get("key")
+            if (
+                data.get("itemType") == "attachment"
+                and expected in tag_values
+                and isinstance(key, str)
+            ):
+                keys.append(key)
+        if len(keys) > 1:
+            raise ZoteroIdentityCollision(
+                f"{len(keys)} Zotero attachments share SHA-256 {sha256}"
+            )
+        return keys[0] if keys else None
+
+    def create_attachment(self, parent_key: str, prepared: PreparedAttachment) -> str:
+        attachment_key = _created_key(
+            self._write(
+                "POST",
+                "/api/users/0/items",
+                [
+                    {
+                        "itemType": "attachment",
+                        "parentItem": parent_key,
+                        "linkMode": "imported_file",
+                        "title": prepared.filename,
+                        "url": prepared.source_url or "",
+                        "note": "",
+                        "tags": [
+                            {"tag": f"research-skills-os-sha256:{prepared.sha256}"}
+                        ],
+                        "relations": {},
+                        "contentType": prepared.media_type,
+                        "charset": "",
+                        "filename": prepared.filename,
+                    }
+                ],
+            )
+        )
+        precondition = {
+            "If-None-Match": "*",
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        authorization = self._authorized_request(
+            "POST",
+            f"/api/users/0/items/{attachment_key}/file",
+            precondition,
+            urlencode(
+                {
+                    "md5": prepared.md5,
+                    "filename": prepared.filename,
+                    "filesize": prepared.size,
+                    "mtime": prepared.mtime_ms,
+                }
+            ).encode(),
+            {200},
+        )
+        raw = _json(authorization)
+        if not isinstance(raw, dict):
+            raise ZoteroProtocolError("Zotero upload authorization is not an object")
+        if raw.get("exists") == 1:
+            return attachment_key
+        required = ("url", "contentType", "prefix", "suffix", "uploadKey")
+        if not all(isinstance(raw.get(field), str) for field in required):
+            raise ZoteroProtocolError("Zotero upload authorization is incomplete")
+        upload_body = (
+            str(raw["prefix"]).encode()
+            + prepared.path.read_bytes()
+            + str(raw["suffix"]).encode()
+        )
+        uploaded = self._transport.request(
+            "POST",
+            str(raw["url"]),
+            {"Content-Type": str(raw["contentType"])},
+            upload_body,
+        )
+        if uploaded.status != 201:
+            raise ZoteroProtocolError(
+                f"Zotero file upload failed with HTTP {uploaded.status}"
+            )
+        self._authorized_request(
+            "POST",
+            f"/api/users/0/items/{attachment_key}/file",
+            precondition,
+            urlencode({"upload": str(raw["uploadKey"])}).encode(),
+            {204},
+        )
+        return attachment_key

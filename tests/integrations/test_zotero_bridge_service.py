@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import pytest
 
 from research_skills_os.integrations.zotero_obsidian import SyncSource, SyncSpec, SyncState
+from research_skills_os.integrations.zotero_obsidian.attachments import PreparedAttachment
 from research_skills_os.integrations.zotero_obsidian.service import ZoteroObsidianBridge
 from research_skills_os.integrations.zotero_obsidian.zotero import ZoteroUnavailable
 
@@ -16,6 +18,7 @@ class InMemoryZotero:
     collections: dict[str, str] = field(default_factory=dict)
     fail_collection: bool = False
     created_items: int = 0
+    attachments: dict[tuple[str, str], str] = field(default_factory=dict)
 
     def ensure_collection(self, name: str) -> str:
         if self.fail_collection:
@@ -34,6 +37,15 @@ class InMemoryZotero:
 
     def add_to_collection(self, item_key: str, collection_key: str) -> None:
         return None
+
+    def find_attachment(self, parent_key: str, sha256: str) -> str | None:
+        return self.attachments.get((parent_key, sha256))
+
+    def create_attachment(self, parent_key: str, prepared: PreparedAttachment) -> str:
+        sha256 = prepared.sha256
+        key = f"ATTACH{len(self.attachments) + 1:02d}"
+        self.attachments[(parent_key, sha256)] = key
+        return key
 
 
 def write_note_source(project_root: Path, text: str = "Evidence ID: E-01") -> None:
@@ -164,3 +176,27 @@ def test_uninspected_source_cannot_be_promoted_to_obsidian(tmp_path: Path) -> No
         )
 
     assert list(vault_root.rglob("*.md")) == []
+
+
+def test_local_pdf_is_archived_once_and_persisted_in_state(tmp_path: Path) -> None:
+    project_root = tmp_path / "project"
+    vault_root = tmp_path / "vault"
+    write_note_source(project_root)
+    pdf = b"%PDF-1.7\n%%EOF\n"
+    (project_root / "sources").mkdir()
+    (project_root / "sources" / "paper.pdf").write_bytes(pdf)
+    digest = hashlib.sha256(pdf).hexdigest()
+    source = source_record(
+        attachment={"status": "local_file", "path": "sources/paper.pdf", "sha256": digest}
+    )
+    zotero = InMemoryZotero()
+    bridge = ZoteroObsidianBridge(zotero=zotero, vault_root=vault_root)
+
+    first = bridge.apply(sync_spec(source), SyncState(), project_root=project_root)
+    second = bridge.apply(sync_spec(source), first.state, project_root=project_root)
+
+    record = first.state.records[source.source_id]
+    assert record.zotero_attachment_key == "ATTACH01"
+    assert record.attachment_sha256 == digest
+    assert len(zotero.attachments) == 1
+    assert second.skipped == (source.source_id,)

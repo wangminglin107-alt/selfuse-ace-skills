@@ -47,6 +47,12 @@ def build_sync_plan(spec: SyncSpec, state: SyncState) -> SyncPlan:
         elif prior.identity != identity:
             kind = SyncActionKind.UPSERT
             reason = "bibliographic identity changed"
+        elif source.attachment is not None and (
+            prior.attachment_status != source.attachment.status
+            or prior.attachment_sha256 != source.attachment.sha256
+        ):
+            kind = SyncActionKind.UPSERT
+            reason = "attachment declaration changed"
         elif prior.content_sha256 != source.content_sha256:
             kind = SyncActionKind.REFRESH_NOTE
             reason = "content hash changed"

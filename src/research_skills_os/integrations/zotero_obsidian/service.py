@@ -6,7 +6,12 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict
 
+from research_skills_os.integrations.zotero_obsidian.attachments import (
+    PreparedAttachment,
+    prepare_attachment,
+)
 from research_skills_os.integrations.zotero_obsidian.models import (
+    AttachmentStatus,
     SyncActionKind,
     SyncPlan,
     SyncSpec,
@@ -61,10 +66,20 @@ class ZoteroObsidianBridge:
 
     def apply(self, spec: SyncSpec, state: SyncState, *, project_root: Path) -> SyncResult:
         notes = _load_note_sources(spec, project_root)
+        prepared: dict[str, PreparedAttachment] = {}
+        for source in spec.sources:
+            if (
+                source.attachment is not None
+                and source.attachment.status is AttachmentStatus.LOCAL_FILE
+            ):
+                prepared[source.source_id] = prepare_attachment(
+                    source.attachment, project_root
+                )
         plan = build_sync_plan(spec, state)
         sources = {source.source_id: source for source in spec.sources}
         records = dict(state.records)
         item_keys: dict[str, str] = {}
+        attachment_keys: dict[str, str] = {}
         upserts = [action for action in plan.actions if action.kind is SyncActionKind.UPSERT]
         collection_key = self._zotero.ensure_collection(spec.zotero_collection) if upserts else None
 
@@ -73,15 +88,22 @@ class ZoteroObsidianBridge:
             if action.kind is SyncActionKind.SKIP:
                 continue
             if action.kind is SyncActionKind.REFRESH_NOTE:
-                item_keys[action.source_id] = records[action.source_id].zotero_item_key
-                continue
-            assert collection_key is not None
-            item_key = self._zotero.find_item(action.identity)
-            if item_key is None:
-                item_key = self._zotero.create_item(source, collection_key)
+                item_key = records[action.source_id].zotero_item_key
             else:
-                self._zotero.add_to_collection(item_key, collection_key)
+                assert collection_key is not None
+                found_item_key = self._zotero.find_item(action.identity)
+                if found_item_key is None:
+                    item_key = self._zotero.create_item(source, collection_key)
+                else:
+                    item_key = found_item_key
+                    self._zotero.add_to_collection(item_key, collection_key)
             item_keys[action.source_id] = item_key
+            attachment = prepared.get(action.source_id)
+            if attachment is not None:
+                attachment_key = self._zotero.find_attachment(item_key, attachment.sha256)
+                if attachment_key is None:
+                    attachment_key = self._zotero.create_attachment(item_key, attachment)
+                attachment_keys[action.source_id] = attachment_key
 
         created_or_linked: list[str] = []
         refreshed_notes: list[str] = []
@@ -108,6 +130,9 @@ class ZoteroObsidianBridge:
                 content_sha256=source.content_sha256,
                 zotero_item_key=item_key,
                 obsidian_note=note_path.relative_to(self._vault_root).as_posix(),
+                attachment_status=(source.attachment.status if source.attachment else None),
+                attachment_sha256=(source.attachment.sha256 if source.attachment else None),
+                zotero_attachment_key=attachment_keys.get(source.source_id),
             )
             if action.kind is SyncActionKind.UPSERT:
                 created_or_linked.append(source.source_id)

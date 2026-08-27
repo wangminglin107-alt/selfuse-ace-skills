@@ -90,14 +90,42 @@ class WorkflowSpec(SpecModel):
                 )
         if _contains_cycle(known, self.edges):
             raise ValueError("workflow graph contains a cycle; V1 workflows must be acyclic")
+        invalid_review = sorted(
+            node.id
+            for node in self.nodes
+            if node.autonomous_review and not node.human_review
+        )
+        if invalid_review:
+            raise ValueError(
+                "autonomous_review requires human_review on nodes: "
+                + ", ".join(invalid_review)
+            )
+        outgoing = _adjacency(known, self.edges)
+        terminal_outgoing = sorted(
+            terminal for terminal in self.terminal_nodes if outgoing[terminal]
+        )
+        if terminal_outgoing:
+            raise ValueError(
+                "terminal nodes cannot have outgoing edges: "
+                + ", ".join(terminal_outgoing)
+            )
+        reachable = _reachable_from(self.entry_node, outgoing)
+        unreachable = sorted(known - reachable)
+        if unreachable:
+            raise ValueError("unreachable workflow nodes: " + ", ".join(unreachable))
+        can_reach_terminal = _nodes_reaching(set(self.terminal_nodes), known, self.edges)
+        stranded = sorted(known - can_reach_terminal)
+        if stranded:
+            raise ValueError(
+                "workflow nodes cannot reach a terminal: " + ", ".join(stranded)
+            )
         return self
 
 
 def _contains_cycle(node_ids: set[str], edges: list[WorkflowEdge]) -> bool:
-    outgoing: dict[str, list[str]] = {node_id: [] for node_id in node_ids}
+    outgoing = _adjacency(node_ids, edges)
     indegree = dict.fromkeys(node_ids, 0)
     for edge in edges:
-        outgoing[edge.from_node].append(edge.to_node)
         indegree[edge.to_node] += 1
     ready = sorted(node_id for node_id, degree in indegree.items() if degree == 0)
     visited = 0
@@ -110,6 +138,42 @@ def _contains_cycle(node_ids: set[str], edges: list[WorkflowEdge]) -> bool:
                 ready.append(target)
                 ready.sort()
     return visited != len(node_ids)
+
+
+def _adjacency(node_ids: set[str], edges: list[WorkflowEdge]) -> dict[str, list[str]]:
+    outgoing: dict[str, list[str]] = {node_id: [] for node_id in node_ids}
+    for edge in edges:
+        outgoing[edge.from_node].append(edge.to_node)
+    return outgoing
+
+
+def _reachable_from(start: str, outgoing: dict[str, list[str]]) -> set[str]:
+    seen: set[str] = set()
+    ready = [start]
+    while ready:
+        node = ready.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        ready.extend(outgoing[node])
+    return seen
+
+
+def _nodes_reaching(
+    targets: set[str], node_ids: set[str], edges: list[WorkflowEdge]
+) -> set[str]:
+    incoming: dict[str, list[str]] = {node_id: [] for node_id in node_ids}
+    for edge in edges:
+        incoming[edge.to_node].append(edge.from_node)
+    seen: set[str] = set()
+    ready = list(targets)
+    while ready:
+        node = ready.pop()
+        if node in seen:
+            continue
+        seen.add(node)
+        ready.extend(incoming[node])
+    return seen
 
 
 class RegistryCatalog(SpecModel):

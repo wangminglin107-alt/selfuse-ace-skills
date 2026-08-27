@@ -53,11 +53,20 @@ class RegistryLoader:
                     )
             for mapping in workflow.artifact_mappings:
                 source = capabilities[nodes[mapping.from_node].capability_id]
+                target = capabilities[nodes[mapping.to_node].capability_id]
                 unknown_types = sorted(set(mapping.artifact_types) - set(source.output_types))
                 if unknown_types:
                     raise SpecLoadError(
                         f"workflow {workflow.id} maps undeclared outputs from "
                         f"{source.id}: {', '.join(unknown_types)}"
+                    )
+                rejected_types = sorted(
+                    set(mapping.artifact_types) - set(target.input_types)
+                )
+                if rejected_types:
+                    raise SpecLoadError(
+                        f"workflow {workflow.id} target {target.id} does not accept mapped "
+                        f"artifact types: {', '.join(rejected_types)}"
                     )
         return RegistryCatalog(
             capabilities={key: capabilities[key] for key in sorted(capabilities)},

@@ -66,3 +66,31 @@ def test_drafting_skill_routes_theoretical_note_and_chinese_style_on_demand() ->
     assert "references/theoretical-note.md" in skill
     assert "references/zh-style.md" in skill
     assert "does not select theory" in skill
+
+
+def test_bilingual_writing_aligns_meaning_without_owning_drafting() -> None:
+    spec = catalog().capabilities["ssci-bilingual-writing"]
+
+    assert {"chinese_manuscript", "terminology_ledger"} <= set(spec.input_types)
+    assert set(spec.output_types) == {
+        "english_manuscript",
+        "translated_abstract",
+        "bilingual_alignment_report",
+    }
+    assert "chinese_manuscript" not in spec.output_types
+
+
+def test_revision_audit_reports_internal_regressions_without_rewriting() -> None:
+    spec = catalog().capabilities["ssci-revision-audit"]
+
+    assert {"revised_chinese_manuscript", "prose_style_report"} <= set(spec.input_types)
+    assert set(spec.output_types) == {"revision_audit", "revision_blockers"}
+    assert not ({"chinese_manuscript", "revised_chinese_manuscript"} & set(spec.output_types))
+
+
+def test_peer_review_is_external_and_has_no_rewrite_output() -> None:
+    spec = catalog().capabilities["ssci-peer-review"]
+
+    assert {"revised_chinese_manuscript", "revision_audit"} <= set(spec.input_types)
+    assert set(spec.output_types) == {"peer_review_report", "reviewer_issue_ledger"}
+    assert not ({"chinese_manuscript", "revised_chinese_manuscript"} & set(spec.output_types))

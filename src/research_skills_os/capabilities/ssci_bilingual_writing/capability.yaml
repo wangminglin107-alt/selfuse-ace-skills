@@ -1,0 +1,17 @@
+spec_version: "1.0"
+kind: capability
+id: ssci-bilingual-writing
+version: "1.0"
+input_types: [chinese_manuscript, revised_chinese_manuscript, terminology_ledger, protected_anchors]
+output_types: [english_manuscript, translated_abstract, bilingual_alignment_report]
+entry_gates: [contract.valid, provider.policy]
+exit_gates:
+  - bilingual.meaning_alignment
+  - bilingual.terminology_consistency
+  - writing.protected_anchors_preserved
+  - provenance.complete
+specializations: [communication, sociology, ssci, chinese-english]
+providers: [local-manual]
+resumable: true
+network: none
+side_effects: [write_project_artifacts]

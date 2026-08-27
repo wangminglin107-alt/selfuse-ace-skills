@@ -42,6 +42,9 @@ later capability while paused.
 - `literature-to-theory` routes paper knowledge base, evidence synthesis, citation verification,
   and theory architecture. Its terminal theory node is an explicit autonomous-review node, so no
   run mode silently converts a proposal into a user selection.
+- `evidence-to-chinese-note` routes approved theory and evidence through manuscript architecture,
+  Chinese drafting, citation regression, prose-style diagnosis, constrained revision, internal
+  audit, and external peer review. It never owns those scholarly procedures itself.
 
 ## Resume Rule
 
